@@ -39,10 +39,8 @@
     
     .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; padding: 20px;}
     .modal.active { display: flex; }
-    
     .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
     .filter-btn.active { background: var(--primary); color: white; }
-
     .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
     .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
     .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
@@ -53,6 +51,7 @@
 </head>
 <body>
 
+  <!-- MODAL TOAST -->
   <div id="custom-toast"><span id="t-icon"></span><span id="t-msg"></span></div>
 
   <div id="app-container">
@@ -71,11 +70,14 @@
     <div id="dashboard-view" class="view">
       <div class="dash-header">
         <div><h2 style="font-size:20px; font-weight:800;">Hi, <span id="user-name">User</span></h2></div>
-        <button onclick="doLogout()" class="btn-primary btn-secondary" style="width: auto; padding: 8px 16px;">Logout</button>
+        <div style="display:flex; gap:8px;">
+           <button onclick="refreshData('DASHBOARD')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+           <button onclick="doLogout()" class="btn-primary btn-secondary" style="width: auto; padding: 8px 16px;">Logout</button>
+        </div>
       </div>
       <div class="menu-grid">
-        <div class="glass menu-card" onclick="switchView('pengajuan-view'); updateFormLogic();">
-          <div style="font-size:32px;">📝</div><div style="font-weight:800; font-size:14px;">Pengajuan</div>
+        <div class="glass menu-card" onclick="switchView('pengajuan-view'); initForm('NEW');">
+          <div style="font-size:32px;">📝</div><div style="font-weight:800; font-size:14px;">Pengajuan Baru</div>
         </div>
         <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
           <div id="badge-tagihan" class="badge-count" style="display:none;">0</div>
@@ -89,7 +91,7 @@
           </div>
         </div>
         <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
-          <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Kasir (Komisi)</div>
+          <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Kasir (Uang Muter)</div>
         </div>
         <div class="glass menu-card admin-only" id="menu-admin" onclick="switchView('admin-view'); setDefaultDatesAdmin(); loadAdmin();" style="grid-column: span 2; display:none; background:rgba(0,122,255,0.05); border:1px solid rgba(0,122,255,0.2);">
           <div style="font-size:24px; display:inline-block; margin-right:10px;">👑</div><div style="font-weight:800; font-size:14px; display:inline-block; color:var(--primary);">Dashboard Admin</div>
@@ -97,21 +99,25 @@
       </div>
     </div>
 
-    <!-- PENGAJUAN -->
+    <!-- PENGAJUAN / EDIT FULL FORM -->
     <div id="pengajuan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px;">Form Pengajuan Baru</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px;" id="form-title">Form Pengajuan</h2>
+        <button onclick="refreshData('FORM')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
       </div>
 
       <div class="glass" style="padding: 24px;">
+        <input type="hidden" id="form-mode" value="NEW">
+        <input type="hidden" id="form-edit-id" value="">
+
         <label class="input-label">Identitas Pelanggan</label>
         <div style="display:flex; gap:10px; margin-bottom: 12px;">
             <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1;" onblur="cekDataPelanggan()">
             <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
         </div>
         <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap" style="margin-bottom: 12px;">
-        <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Auto)" readonly style="margin-bottom: 20px; background:#f0f0f5; color:gray;">
+        <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Akan Auto-Generate)" readonly style="margin-bottom: 20px; background:#f0f0f5; color:gray;">
 
         <label class="input-label">Jenis Transaksi</label>
         <select id="kategori" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
@@ -146,10 +152,10 @@
           <div id="bunga-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
         </div>
 
-        <label class="input-label">Catatan</label>
-        <textarea id="catatan" class="custom-input" rows="2" style="margin-bottom: 20px;" placeholder="Barang yang dibeli / Note tambahan..."></textarea>
+        <label class="input-label">Catatan Tambahan (Wajib Jika Edit)</label>
+        <textarea id="catatan" class="custom-input" rows="2" style="margin-bottom: 20px;" placeholder="Barang / Alasan Edit..."></textarea>
 
-        <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Pengajuan</button>
+        <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
       </div>
     </div>
 
@@ -157,13 +163,14 @@
     <div id="pelanggan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px;">Data Pelanggan</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px;">Data Pelanggan</h2>
+        <button onclick="refreshData('PELANGGAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
       </div>
       <input type="text" id="search-pelanggan" class="custom-input" placeholder="🔍 Cari Nama / No WA..." onkeyup="filterPelanggan()" style="margin-bottom: 16px;">
       <div id="list-pelanggan"></div>
     </div>
 
-    <!-- TIMELINE RIWAYAT VIEW -->
+    <!-- TIMELINE VIEW -->
     <div id="detail-riwayat-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -181,15 +188,14 @@
     <div id="tagihan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px;">Jadwal Tagihan</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px;">Jadwal Tagihan</h2>
+        <button onclick="refreshData('TAGIHAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
       </div>
-      
       <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:8px;">
          <button class="filter-btn active" id="f-semua" onclick="filterTagihan('SEMUA')">Semua</button>
          <button class="filter-btn" id="f-pinjaman" onclick="filterTagihan('Pinjaman Uang')">Pinjaman</button>
-         <button class="filter-btn" id="f-baju" onclick="filterTagihan('Beli Baju')">Baju / PO</button>
+         <button class="filter-btn" id="f-baju" onclick="filterTagihan('Baju')">Baju / PO</button>
       </div>
-
       <div id="list-tagihan"></div>
     </div>
 
@@ -197,14 +203,25 @@
     <div id="setoran-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px;">Setoran Kasir</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px;">Setoran Kasir</h2>
+        <button onclick="refreshData('SETORAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
       </div>
       <div class="glass" style="padding: 24px; text-align:center; margin-bottom:16px;">
          <div style="font-size:12px; font-weight:bold; color:gray;">KOMISI HAK STAFF (10% BUNGA)</div>
          <div id="tot-komisi" style="font-size:20px; font-weight:900; color:var(--success); margin-bottom: 16px;">Rp 0</div>
-         <div style="font-size:12px; font-weight:bold; color:gray;">WAJIB DISETOR KE ADMIN</div>
-         <div id="tot-setoran" style="font-size:28px; font-weight:900; color:var(--danger); margin-bottom: 20px;">Rp 0</div>
-         <button class="btn-primary" onclick="bukaModalSetor()">Setor Sekarang</button>
+         
+         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px;">
+            <div style="background:rgba(255,149,0,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(255,149,0,0.3);">
+               <div style="font-size:10px; font-weight:800; color:var(--warning);">SALDO BUNGA (WAJIB SETOR)</div>
+               <div id="tot-setor-bunga" style="font-size:16px; font-weight:900; color:var(--text-main);">Rp 0</div>
+            </div>
+            <div style="background:rgba(0,122,255,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(0,122,255,0.3);">
+               <div style="font-size:10px; font-weight:800; color:var(--primary);">SALDO MODAL (DI KASIR)</div>
+               <div id="tot-setor-pokok" style="font-size:16px; font-weight:900; color:var(--text-main);">Rp 0</div>
+            </div>
+         </div>
+         
+         <button class="btn-primary" onclick="bukaModalSetor()">Lakukan Setoran</button>
       </div>
     </div>
 
@@ -212,7 +229,8 @@
     <div id="admin-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px; color:var(--primary);">Dashboard Admin</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px; color:var(--primary);">Dashboard Admin</h2>
+        <button onclick="refreshData('ADMIN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
       </div>
 
       <div class="glass" style="padding:16px; margin-bottom:16px; display:flex; gap:8px; align-items:center;">
@@ -229,11 +247,11 @@
       <div class="glass" style="padding:24px 20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div>
          <div id="adm-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
-         <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Kembali (Uang Ready)</div>
+         <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Kembali (Di Kasir Staff & Admin)</div>
          <div id="adm-ready" style="font-size:24px; font-weight:900; margin-bottom:16px;">Rp 0</div>
          
          <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.25); padding:12px; border-radius:16px; margin-bottom:16px;">
-            <div><span style="font-size:11px; opacity:0.9;">Laba Bunga Masuk</span><br><b id="adm-bunga" style="font-size:15px;">Rp 0</b></div>
+            <div><span style="font-size:11px; opacity:0.9;">Laba Bunga Realisasi</span><br><b id="adm-bunga" style="font-size:15px;">Rp 0</b></div>
             <div style="text-align:right;"><span style="font-size:11px; opacity:0.9;">Komisi Staff Keluar</span><br><b id="adm-komisi" style="font-size:15px;">Rp 0</b></div>
          </div>
          <div style="text-align:center; padding-top:16px; border-top:1px dashed rgba(255,255,255,0.3);">
@@ -251,7 +269,7 @@
         <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()">Buat Akun Staff</button>
       </div>
 
-      <h3 style="font-size:15px; margin-bottom:12px;">Menunggu Approval Setoran</h3>
+      <h3 style="font-size:15px; margin-bottom:12px;">Approval Setoran Kasir</h3>
       <div id="adm-list-setor"></div>
       <h3 style="font-size:15px; margin-bottom:12px; margin-top:20px;">Request Edit/Hapus (>24 Jam)</h3>
       <div id="adm-list-req"></div>
@@ -259,27 +277,14 @@
       <div id="adm-list-log" style="max-height: 400px; overflow-y:auto; padding-right:6px; margin-bottom:40px;"></div>
     </div>
 
-    <!-- MODAL EDIT DATA (MODERN) -->
-    <div id="modal-edit" class="modal">
-      <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
-         <h3 style="margin-bottom:16px;">Ubah Data Tagihan</h3>
-         <input type="hidden" id="edit-id">
-         <div style="font-size:11px; color:gray; margin-bottom:16px;">Catatan: Perubahan di bawah 24 jam akan langsung di-approve sistem.</div>
-         <label class="input-label">Aksi</label>
-         <select id="edit-tipe" class="custom-input" style="margin-bottom:12px;" onchange="let d=document.getElementById('wrap-edit-data'); if(this.value==='EDIT') d.style.display='block'; else d.style.display='none';">
-            <option value="EDIT">Ubah Teks Data (Nama/HP/Nominal)</option>
-            <option value="DELETE">Hapus Tagihan Sepenuhnya</option>
-         </select>
-         <div id="wrap-edit-data">
-             <input type="text" id="edit-nama" class="custom-input" placeholder="Nama Pelanggan" style="margin-bottom: 12px; padding: 12px;">
-             <input type="tel" id="edit-hp" class="custom-input" placeholder="No HP Baru" style="margin-bottom: 12px; padding: 12px;">
-             <input type="number" id="edit-nom" class="custom-input" placeholder="Nominal Pinjaman/Baju Baru" style="margin-bottom: 12px; padding: 12px;">
-         </div>
-         <label class="input-label">Alasan / Note Wajib</label>
-         <input type="text" id="edit-alasan" class="custom-input" placeholder="Misal: Salah ketik nominal..." style="margin-bottom: 20px; padding: 12px;">
-         
-         <button class="btn-primary" id="btn-proses-edit" onclick="prosesEdit()">Kirim Permintaan</button>
-         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-edit').classList.remove('active')">Batal</button>
+    <!-- MODAL PILIHAN EDIT/HAPUS -->
+    <div id="modal-pilih-aksi" class="modal">
+      <div class="glass" style="width:100%; max-width:400px; padding: 24px; text-align:center;">
+         <h3 style="margin-bottom:16px;">Pilih Aksi</h3>
+         <input type="hidden" id="pilih-id">
+         <button class="btn-primary" style="background:var(--warning);" onclick="bukaFormEdit()">✏️ Buka Form Edit Data</button>
+         <button class="btn-primary" style="background:var(--danger);" onclick="prosesHapus()">🗑️ Hapus Tagihan Ini</button>
+         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-pilih-aksi').classList.remove('active')">Batal</button>
       </div>
     </div>
 
@@ -297,16 +302,27 @@
       </div>
     </div>
 
-    <!-- MODAL SETORAN -->
+    <!-- MODAL SETORAN KASIR -->
     <div id="modal-setor" class="modal">
       <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
-         <h3 style="margin-bottom:16px;">Form Setoran</h3>
-         <label class="input-label">Metode Setoran</label>
-         <select id="metode-setor" class="custom-input" style="margin-bottom: 16px;">
-            <option value="CASH">CASH (Tunai)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
+         <h3 style="margin-bottom:16px;">Pilih Jenis Setoran</h3>
+         
+         <label class="input-label">Uang yang disetor</label>
+         <select id="tipe-setoran" class="custom-input" style="margin-bottom: 16px;">
+            <option value="BUNGA_SAJA">Setor Bunga Saja (Modal Diputar)</option>
+            <option value="FULL">Setor Bunga & Modal Semua</option>
          </select>
-         <div style="font-size:12px; color:gray; margin-bottom: 16px;">Admin akan melakukan pengecekan mutasi manual jika TF.</div>
-         <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim ke Admin</button>
+
+         <label class="input-label">Metode Setoran</label>
+         <select id="metode-setor" class="custom-input" style="margin-bottom: 16px;" onchange="let f = document.getElementById('wrap-catatan-setor'); if(this.value==='TF') f.style.display='block'; else f.style.display='none';">
+            <option value="CASH">CASH (Tunai langsung)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
+         </select>
+         <div id="wrap-catatan-setor" style="display:none;">
+            <input type="text" id="catatan-setor" class="custom-input" placeholder="Wajib: Catat Nama & Rekening Tujuan..." style="margin-bottom: 16px;">
+            <div style="font-size:12px; color:gray; margin-bottom: 16px;">Admin akan melakukan pengecekan mutasi manual jika TF.</div>
+         </div>
+         
+         <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim Permintaan Setor</button>
          <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-setor').classList.remove('active')">Batal</button>
       </div>
     </div>
@@ -314,35 +330,38 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxSB7C8WiTNdGFVmQTLlLd7_sPCM7Dl3TpbucC5LFYGqzV_MC1HXy2gsa1D_18yy2pTmw/exec"; 
-    let currentUser = null, sessionToken = "", listBayarUnsetor = [], totalUangSetor = 0;
+    const API_URL = "https://script.google.com/macros/s/AKfycbzeSxBP_wn73Che-iNQ7RyUOzKworDYEGOp4XNw59SQgnYcKuT53SNzMztEQn8YlshGwg/exec"; 
+    
+    let currentUser = null, sessionToken = "", listBayarUnsetor = [];
     let globalPelangganData = [], globalTagihanData = [];
 
     // --- PWA INSTALL & SESSION ---
     let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e;
-      document.getElementById('btn-install-app').style.display = 'block';
-    });
-    document.getElementById('btn-install-app').addEventListener('click', async () => {
-      if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('btn-install-app').style.display = 'none'; deferredPrompt = null; }
-    });
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('btn-install-app').style.display = 'block'; });
+    document.getElementById('btn-install-app').addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('btn-install-app').style.display = 'none'; deferredPrompt = null; } });
 
     window.onload = () => {
        let sess = JSON.parse(localStorage.getItem('nao_session'));
        if (sess && sess.expiry > new Date().getTime()) {
-           currentUser = sess.user; sessionToken = sess.token;
-           document.getElementById('user-name').innerText = currentUser.name; 
+           currentUser = sess.user; sessionToken = sess.token; document.getElementById('user-name').innerText = currentUser.name; 
            if(currentUser.role === 'Admin') document.getElementById('menu-admin').style.display = 'block';
            switchView('dashboard-view'); loadDataDashboard();
        }
     };
 
+    function refreshData(view) {
+        if(view==='DASHBOARD') loadDataDashboard();
+        else if(view==='TAGIHAN') loadTagihan();
+        else if(view==='PELANGGAN') loadPelanggan();
+        else if(view==='SETORAN') loadSetoran();
+        else if(view==='ADMIN') loadAdmin();
+    }
+
     function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
     function formatRp(a) { return "Rp " + parseInt(a).toLocaleString('id-ID'); }
     function showToast(msg, type='success') { let t = document.getElementById('custom-toast'); document.getElementById('t-icon').innerText = type === 'success' ? '✅' : '⚠️'; document.getElementById('t-msg').innerText = msg; t.className = type; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
-    // --- DATA PELANGGAN (AUTO FILL) ---
+    // --- CEK PELANGGAN ---
     async function cekDataPelanggan() {
         let hp = document.getElementById('no-hp'); let v = hp.value.replace(/[^0-9+]/g, ''); 
         if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v; hp.value = v;
@@ -354,6 +373,17 @@
     }
 
     // --- FORM LOGIC & TENOR ---
+    function initForm(mode) {
+       document.getElementById('form-mode').value = mode;
+       if (mode === 'NEW') {
+          document.getElementById('form-title').innerText = "Form Pengajuan Baru";
+          document.getElementById('nama-peminjam').value = ''; document.getElementById('no-hp').value = ''; document.getElementById('kode-cust').value = ''; document.getElementById('catatan').value = '';
+          updateFormLogic();
+       } else {
+          document.getElementById('form-title').innerText = "Form Edit Data";
+       }
+    }
+
     function updateFormLogic() {
       let cat = document.getElementById('kategori').value;
       let wPinj = document.getElementById('wrap-pinjaman'), wBaju = document.getElementById('wrap-baju'), tempo = document.getElementById('tempo'), wBunga = document.getElementById('wrap-bunga');
@@ -395,7 +425,7 @@
            currentUser = res.data; sessionToken = res.token; 
            localStorage.setItem('nao_session', JSON.stringify({user: currentUser, token: sessionToken, expiry: res.expiry}));
            document.getElementById('user-name').innerText = currentUser.name; 
-           if(currentUser.role === 'Admin') document.getElementById('menu-admin').style.display = 'block';
+           if(currentUser.role === 'Admin') document.getElementById('menu-admin').style.display = 'block'; else document.getElementById('menu-admin').style.display = 'none';
            switchView('dashboard-view'); loadDataDashboard();
         } else showToast(res.message, 'error');
       } catch(e) { showToast("Error Server", 'error'); }
@@ -403,22 +433,33 @@
     }
     function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); localStorage.removeItem('nao_session'); switchView('login-view'); }
 
-    // --- SUBMIT ---
+    // --- SUBMIT PENGAJUAN / EDIT ---
     async function submitPengajuan() {
       let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan..."; btn.disabled = true;
       let cat = document.getElementById('kategori').value, nom = cat==='Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : document.getElementById('nominal-baju').value;
       let tmp = parseInt(document.getElementById('tempo').value) || 0;
       let date = new Date(); if (tmp > 0) date.setDate(date.getDate() + tmp);
+      
+      let note = document.getElementById('catatan').value;
+      let mode = document.getElementById('form-mode').value;
+
+      if (mode === 'EDIT' && !note) { showToast("Alasan edit wajib diisi di catatan!", "error"); btn.innerText = "Simpan Data"; btn.disabled = false; return; }
 
       let payload = {
         namaPeminjam: document.getElementById('nama-peminjam').value.trim(), noHp: document.getElementById('no-hp').value.trim(), kode: document.getElementById('kode-cust').value.trim(),
-        kategori: cat, nominal: nom, bunga: document.getElementById('bunga-text').dataset.val, tempoHari: tmp, jatuhTempo: date.toISOString(), catatan: document.getElementById('catatan').value
+        kategori: cat, nominal: nom, bunga: document.getElementById('bunga-text').dataset.val, tempoHari: tmp, jatuhTempo: date.toISOString(), catatan: note
       };
 
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-      if(res.success) { showToast("Sukses!"); switchView('dashboard-view'); document.getElementById('nama-peminjam').value=''; document.getElementById('no-hp').value=''; document.getElementById('kode-cust').value=''; loadDataDashboard(); } 
-      else showToast(res.message, 'error');
-      btn.innerText = "Simpan Pengajuan"; btn.disabled = false;
+      if (mode === 'NEW') {
+          let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
+          if(res.success) { showToast("Sukses!"); switchView('dashboard-view'); document.getElementById('nama-peminjam').value=''; document.getElementById('no-hp').value=''; document.getElementById('kode-cust').value=''; loadDataDashboard(); } 
+          else showToast(res.message, 'error');
+      } else {
+          let idEdit = document.getElementById('form-edit-id').value;
+          let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id:idEdit, tipe:'EDIT', alasan:note, editData: payload} }) }).then(r=>r.json());
+          if(res.success) { showToast("Edit Berhasil/Terkirim!"); switchView('tagihan-view'); loadTagihan(); } else showToast(res.message, 'error');
+      }
+      btn.innerText = "Simpan Data"; btn.disabled = false;
     }
 
     // --- DASHBOARD & TAGIHAN ---
@@ -470,10 +511,13 @@
            btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
                       <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
         } else {
-           let sisa = nomP - byrP; let cicilW = Math.ceil(nomP / 4); // Pembulatan mingguan
+           let sisa = nomP - byrP; let cicilW = Math.ceil(nomP / 4); 
            btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
                       <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
         }
+
+        // Trik menyimpan data mentah di atribut elemen agar mudah di parsing saat EDIT
+        let rawData = encodeURIComponent(JSON.stringify(i));
 
         list.innerHTML += `
           <div class="cal-card">
@@ -486,48 +530,51 @@
                    ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
                 </div>
                 <div style="display:flex; gap:6px;">${btnHtml}</div>
-                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:gray; text-decoration:underline; cursor:pointer;" onclick="bukaModalEdit('${i.id}', '${i.nama}', '${i.hp}', '${nomP}')">Edit/Hapus Data</span></div>
+                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:var(--primary); text-decoration:underline; font-weight:800; cursor:pointer;" onclick="bukaModalPilihAksi('${rawData}')">Edit / Hapus Data</span></div>
              </div>
           </div>`;
       });
     }
 
-    function bukaModalEdit(id, nama, hp, nom) {
-       document.getElementById('edit-id').value = id;
-       document.getElementById('edit-nama').value = nama;
-       document.getElementById('edit-hp').value = hp;
-       document.getElementById('edit-nom').value = nom;
-       document.getElementById('edit-alasan').value = '';
-       document.getElementById('modal-edit').classList.add('active');
+    // --- POPUP PILIH AKSI (EDIT/HAPUS) ---
+    function bukaModalPilihAksi(rawStr) {
+       document.getElementById('pilih-id').value = rawStr;
+       document.getElementById('modal-pilih-aksi').classList.add('active');
     }
-
-    function prosesEdit() {
-       let id = document.getElementById('edit-id').value;
-       let tipe = document.getElementById('edit-tipe').value;
-       let alasan = document.getElementById('edit-alasan').value.trim();
-       if(!alasan) return showToast("Alasan/Note Wajib Diisi!", "error");
-
-       let payload = { id: id, tipe: tipe, alasan: alasan };
-       if(tipe === 'EDIT') {
-           payload.editData = {
-               nama: document.getElementById('edit-nama').value,
-               noHp: document.getElementById('edit-hp').value,
-               nominal: document.getElementById('edit-nom').value
-           };
+    
+    function prosesHapus() {
+       let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+       let a = prompt("Wajib Isi Alasan Hapus:");
+       if(a) {
+         fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:a} }) }).then(r=>r.json()).then(res => {
+            showToast(res.message, res.success ? 'success' : 'error'); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan();
+         });
        }
-
-       let btn = document.getElementById('btn-proses-edit'); btn.innerText = "Memproses..."; btn.disabled = true;
-       fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r=>r.json()).then(res => {
-          showToast(res.message, res.success ? 'success' : 'error'); 
-          document.getElementById('modal-edit').classList.remove('active'); loadTagihan();
-          btn.innerText = "Kirim Permintaan"; btn.disabled = false;
-       });
     }
 
-    function bukaModalBayar(id, jenis, nomRec, title) {
+    function bukaFormEdit() {
+       let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+       document.getElementById('modal-pilih-aksi').classList.remove('active');
+       initForm('EDIT');
+       
+       document.getElementById('form-edit-id').value = i.id;
+       document.getElementById('no-hp').value = i.hp;
+       document.getElementById('nama-peminjam').value = i.nama;
+       document.getElementById('kode-cust').value = i.kode;
+       document.getElementById('kategori').value = i.cat;
+       
+       updateFormLogic();
+       if(i.cat === 'Pinjaman Uang') document.getElementById('nominal-pinjaman').value = i.nom;
+       else document.getElementById('nominal-baju').value = i.nom;
+       
+       kalkulasiBunga(); switchView('pengajuan-view');
+    }
+
+    // --- BAYAR ---
+    function bukaModalBayar(id, jenis, nominalRekomendasi, title) {
       document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
       let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar');
-      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = nomRec; } else { wrapNom.style.display = 'none'; inNom.value = nomRec; }
+      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = nominalRekomendasi; } else { wrapNom.style.display = 'none'; inNom.value = nominalRekomendasi; }
       document.getElementById('modal-bayar').classList.add('active');
     }
 
@@ -563,6 +610,7 @@
       });
     }
     function filterPelanggan() { let q = document.getElementById('search-pelanggan').value.toLowerCase(); let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q)); renderPelanggan(fData); }
+    
     async function bukaRiwayatLengkap(noHp, nama, kode) {
       document.getElementById('dr-nama').innerText = nama; document.getElementById('dr-kode').innerText = kode; document.getElementById('dr-hp').innerText = noHp;
       switchView('detail-riwayat-view'); let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
@@ -577,21 +625,24 @@
       }
     }
 
-    // --- SETORAN ---
+    // --- SETORAN STAFF ---
     async function loadSetoran() {
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
-      if(res.success) { totalUangSetor = res.data.setor; listBayarUnsetor = res.data.ids; document.getElementById('tot-komisi').innerText = formatRp(res.data.komisi); document.getElementById('tot-setoran').innerText = formatRp(totalUangSetor); }
+      if(res.success) { 
+         let data = res.data;
+         document.getElementById('tot-komisi').innerText = formatRp(data.komisi); 
+         document.getElementById('tot-setor-bunga').innerText = formatRp(data.bunga);
+         document.getElementById('tot-setor-pokok').innerText = formatRp(data.pokok);
+      }
     }
-    function bukaModalSetor() {
-      if(listBayarUnsetor.length === 0) return showToast("Tidak ada dana untuk disetor", "error");
-      document.getElementById('modal-setor').classList.add('active');
-    }
+    function bukaModalSetor() { document.getElementById('modal-setor').classList.add('active'); }
     async function prosesSetor() {
-      let tipe = document.getElementById('metode-setor').value;
+      let tipeS = document.getElementById('tipe-setoran').value;
+      let metode = document.getElementById('metode-setor').value;
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {tipe: tipe, totalSetor: totalUangSetor, ids: listBayarUnsetor} }) }).then(r => r.json());
-      if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); }
-      btn.innerText = "Kirim ke Admin"; btn.disabled = false;
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value} }) }).then(r => r.json());
+      if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else showToast(res.message, "error");
+      btn.innerText = "Kirim Permintaan Setor"; btn.disabled = false;
     }
 
     // --- ADMIN ---
@@ -604,16 +655,15 @@
       let startStr = document.getElementById('adm-start').value; let endStr = document.getElementById('adm-end').value;
       let listS = document.getElementById('adm-list-setor'); let listR = document.getElementById('adm-list-req'); let listL = document.getElementById('adm-list-log');
       listS.innerHTML = "<center style='font-size:12px;'>Loading...</center>";
-      
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getAdminData", username: currentUser.username, token: sessionToken, payload: { startDate: startStr, endDate: endStr } }) }).then(r => r.json());
       if(res.success) {
          document.getElementById('adm-out').innerText = formatRp(res.stats.out); document.getElementById('adm-ready').innerText = formatRp(res.stats.ready);
          document.getElementById('adm-bunga').innerText = formatRp(res.stats.bunga); document.getElementById('adm-komisi').innerText = formatRp(res.stats.komisi); document.getElementById('adm-laba').innerText = formatRp(res.stats.laba);
 
-         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">${formatRp(s.nom)}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Terima Setoran</button></div>`; });
+         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">Bunga: ${formatRp(s.bng)}<br>Pokok: ${formatRp(s.pok)}</div><div style="font-size:11px; color:gray;">Note/Rek: ${s.note}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Terima Setoran</button></div>`; });
          if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran tertunda.</div>";
 
-         listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br>Alasan: <b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`; });
+         listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br><b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`; });
          if(res.approvals.length===0) listR.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada request aksi.</div>";
 
          listL.innerHTML = ""; res.logs.forEach(l => {
