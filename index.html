@@ -3,380 +3,311 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>ReLoan & Collection</title>
-
-  
-  <!-- ========================================== -->
-  <!-- 🎨 BAGIAN CSS (DESAIN TAMPILAN) -->
-  <!-- ========================================== -->
+  <title>ReLoan App</title>
   <style>
-    :root {
-      --bg-color: #F2F2F7; 
-      --card-bg: rgba(255, 255, 255, 0.75); 
-      --glass-border: 1px solid rgba(255, 255, 255, 0.8);
-      --primary: #007AFF; 
-      --text-main: #1C1C1E; 
-      --text-muted: #8E8E93;
-      --danger: #FF3B30; 
-      --success: #34C759; 
-      --warning: #FF9500; 
-      --radius: 24px;
-    }
+    :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: var(--text-main); -webkit-font-smoothing: antialiased; }
     #app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
-    
-    .glass { background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: var(--glass-border); border-radius: var(--radius); box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-    .view { display: none; padding: 24px; animation: fadeSlideIn 0.4s ease; }
-    .view.active { display: block; }
-    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-    .brand-logo { font-size: 40px; font-weight: 800; text-align: center; margin: 60px 0 30px; animation: floatLogo 3s ease-in-out infinite; }
-    @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.8); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+    .view { display: none; padding: 24px; animation: fadeSlideIn 0.3s ease; } .view.active { display: block; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .brand-logo { font-size: 36px; font-weight: 800; text-align: center; margin: 50px 0 20px; }
     .input-group { margin-bottom: 16px; width: 100%; }
-    .input-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-    .custom-input { width: 100%; padding: 16px 20px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.9); font-size: 16px; outline: none; transition: 0.3s; color: var(--text-main); font-weight: 500; }
-    .custom-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); transform: translateY(-2px); }
-
-    .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,122,255,0.3); transition: 0.2s; }
+    .input-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block; text-transform: uppercase; }
+    .custom-input { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.9); font-size: 15px; outline: none; transition: 0.3s; }
+    .custom-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
+    .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,122,255,0.3); transition: 0.2s; margin-bottom: 8px;}
     .btn-primary:active { transform: scale(0.95); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; }
-    .profile-info { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.85); padding: 10px 20px; border-radius: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .profile-name { font-size: 18px; font-weight: 800; }
-    .btn-logout-icon, .btn-ios-nav { background: rgba(255,59,48,0.1); color: var(--danger); border: none; width: 48px; height: 48px; border-radius: 16px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-    .btn-ios-nav { background: rgba(0,122,255,0.1); color: var(--primary); }
-    .btn-logout-icon:active, .btn-ios-nav:active { transform: scale(0.9); }
-
+    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; }
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .menu-card { padding: 24px 16px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.02); }
-    .menu-card:active { transform: scale(0.95); background: rgba(255,255,255,0.95); }
-
-    .list-card { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-    .badge-status { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; }
-    .badge-lancar { background: rgba(52,199,89,0.15); color: #34C759; border: 1px solid rgba(52,199,89,0.3); }
-    .badge-terlambat { background: rgba(255,59,48,0.15); color: #FF3B30; border: 1px dashed rgba(255,59,48,0.4); }
-    .badge-warning { background: rgba(255,149,0,0.15); color: #FF9500; }
+    .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .list-card { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); }
+    .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; }
+    canvas { border: 1px dashed #ccc; border-radius: 12px; background: #fff; width: 100%; height: 150px; touch-action: none; }
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; padding: 20px;}
+    .modal.active { display: flex; }
   </style>
 </head>
 <body>
 
-  <!-- ========================================== -->
-  <!-- 📱 BAGIAN HTML (KERANGKA APLIKASI) -->
-  <!-- ========================================== -->
   <div id="app-container">
     
-    <!-- LAYAR 1: LOGIN VIEW -->
+    <!-- LOGIN -->
     <div id="login-view" class="view active">
       <div class="brand-logo">💰 ReLoan</div>
-      <div class="glass" style="padding: 30px 24px;">
+      <div class="glass" style="padding: 24px;">
         <div class="input-group"><input type="text" id="username" class="custom-input" placeholder="Username"></div>
         <div class="input-group"><input type="password" id="password" class="custom-input" placeholder="Password"></div>
         <button class="btn-primary" id="btn-login" onclick="doLogin()">Masuk</button>
       </div>
     </div>
 
-    <!-- LAYAR 2: DASHBOARD VIEW -->
+    <!-- DASHBOARD -->
     <div id="dashboard-view" class="view">
       <div class="dash-header">
-        <div class="profile-info"><div class="profile-name">Hi, <span id="user-name">User</span></div></div>
-        <button onclick="doLogout()" class="btn-logout-icon">👋</button>
+        <div><h2 style="font-size:20px; font-weight:800;">Hi, <span id="user-name">User</span></h2></div>
+        <button onclick="doLogout()" class="btn-primary btn-secondary" style="width: auto; padding: 8px 16px;">Logout</button>
       </div>
-
       <div class="menu-grid">
-        <div class="glass menu-card" onclick="switchView('pengajuan-view')">
-          <div style="font-size:32px;">📝</div><div style="font-weight:800;">Pengajuan</div>
+        <div class="glass menu-card" onclick="switchView('pengajuan-view'); initCanvas();">
+          <div style="font-size:32px;">📝</div><div style="font-weight:800; font-size:14px;">Pengajuan Baru</div>
         </div>
         <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
-          <div style="font-size:32px;">💳</div><div style="font-weight:800;">Tagihan Aktif</div>
+          <div style="font-size:32px;">💳</div><div style="font-weight:800; font-size:14px;">Tagihan & Bayar</div>
         </div>
-        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; flex-direction: row; gap: 16px; justify-content: flex-start;">
-          <div style="font-size:36px;">👥</div>
-          <div style="text-align: left;">
-            <div style="font-weight:800; font-size: 16px;">Data Pelanggan</div>
-            <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Cek riwayat & skor kredit</div>
-          </div>
+        <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
+          <div style="font-size:32px;">🏦</div><div style="font-weight:800; font-size:14px;">Setoran ke Admin (Komisi)</div>
         </div>
       </div>
     </div>
 
-    <!-- LAYAR 3: PENGAJUAN VIEW -->
+    <!-- PENGAJUAN VIEW -->
     <div id="pengajuan-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
-        <h2 style="font-size:20px; font-weight:800;">Form Pengajuan</h2>
+        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Form Pengajuan</h2>
         <div style="width:48px;"></div>
       </div>
 
       <div class="glass" style="padding: 24px;">
         <label class="input-label">Data Pelanggan</label>
-        <div class="input-group"><input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap Pelanggan"></div>
-        <div class="input-group">
-          <input type="tel" id="no-hp" class="custom-input" placeholder="No WhatsApp (08...)" oninput="let v = this.value.replace(/[^0-9+]/g, ''); if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v; this.value = v;">
-        </div>
+        <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap" style="margin-bottom: 12px;">
+        <input type="tel" id="no-hp" class="custom-input" placeholder="No HP" style="margin-bottom: 20px;">
 
-        <label class="input-label" style="margin-top: 16px;">Rincian Transaksi</label>
-        <select id="kategori" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
-          <option value="Pinjaman Uang">Pinjaman Uang</option>
-          <option value="Beli Baju Cash">Beli Baju Cash</option>
-          <option value="Beli Baju Cicil">Beli Baju Cicil</option>
-        </select>
-        <select id="nominal" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
+        <label class="input-label">Nominal Pinjaman</label>
+        <select id="nominal" class="custom-input" style="margin-bottom: 16px;" onchange="kalkulasiBunga()">
           <option value="100000">Rp 100.000</option>
           <option value="200000">Rp 200.000</option>
+          <option value="300000">Rp 300.000</option>
           <option value="400000">Rp 400.000</option>
+          <option value="500000">Rp 500.000</option>
+          <option value="600000">Rp 600.000</option>
+          <option value="700000">Rp 700.000</option>
+          <option value="800000">Rp 800.000</option>
+          <option value="900000">Rp 900.000</option>
+          <option value="1000000">Rp 1.000.000</option>
         </select>
-        <select id="tempo" class="custom-input" style="margin-bottom: 16px;">
-          <option value="1 Minggu">1 Minggu</option>
-        </select>
-
-        <div style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px dashed rgba(0,122,255,0.3);">
-          <span style="font-size: 11px; font-weight: 800; color: var(--primary);">KOMISI STAFF / BUNGA</span>
-          <div id="komisi-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
+        
+        <div style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px;">
+          <span style="font-size: 11px; font-weight: 800; color: var(--primary);">BUNGA DITETAPKAN</span>
+          <div id="bunga-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
         </div>
 
-        <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
+        <label class="input-label">Foto Bukti / Barang</label>
+        <input type="file" id="foto-pengajuan" class="custom-input" accept="image/*" style="margin-bottom: 16px;">
+
+        <label class="input-label">Tanda Tangan Pelanggan</label>
+        <canvas id="ttd-canvas"></canvas>
+        <div style="text-align: right; margin-bottom: 16px;"><span style="color:var(--danger); font-size:12px; cursor:pointer; font-weight:bold;" onclick="clearCanvas()">Hapus TTD</span></div>
+
+        <label class="input-label">Catatan Tambahan</label>
+        <textarea id="catatan" class="custom-input" rows="2" style="margin-bottom: 20px;"></textarea>
+
+        <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Kirim Pengajuan</button>
       </div>
     </div>
 
-    <!-- LAYAR 4: TAGIHAN AKTIF VIEW -->
+    <!-- TAGIHAN VIEW -->
     <div id="tagihan-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
-        <h2 style="font-size:20px; font-weight:800;">Tagihan Aktif</h2>
+        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Tagihan & Bayar</h2>
         <div style="width:48px;"></div>
       </div>
       <div id="list-tagihan"></div>
     </div>
 
-    <!-- LAYAR 5: PELANGGAN VIEW -->
-    <div id="pelanggan-view" class="view">
+    <!-- SETORAN VIEW -->
+    <div id="setoran-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
-        <h2 style="font-size:20px; font-weight:800;">Data Pelanggan</h2>
+        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Setoran Admin</h2>
         <div style="width:48px;"></div>
       </div>
-      <div id="list-pelanggan"></div>
+      <div class="glass" style="padding: 24px; text-align:center;">
+         <div style="font-size:12px; font-weight:bold; color:gray;">TOTAL KOMISI STAFF KAMU (10%)</div>
+         <div id="tot-komisi" style="font-size:24px; font-weight:900; color:var(--success); margin-bottom: 20px;">Rp 0</div>
+         
+         <div style="font-size:12px; font-weight:bold; color:gray;">YANG WAJIB DISETOR KE ADMIN</div>
+         <div id="tot-setoran" style="font-size:28px; font-weight:900; color:var(--danger); margin-bottom: 20px;">Rp 0</div>
+         
+         <div style="font-size:11px; color:gray;">*(Catatan: Admin akan cek mutasi bank sebelum melakukan Approve)*</div>
+      </div>
+    </div>
+
+    <!-- MODAL PEMBAYARAN -->
+    <div id="modal-bayar" class="modal">
+      <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
+         <h3 style="margin-bottom:16px;">Konfirmasi Pembayaran</h3>
+         <input type="hidden" id="modal-id-bayar">
+         <input type="hidden" id="modal-jenis-bayar">
+         
+         <label class="input-label">Foto Bukti Transfer / Cash</label>
+         <input type="file" id="foto-bayar" class="custom-input" accept="image/*" style="margin-bottom: 16px;">
+         
+         <label class="input-label">Catatan Pembayaran</label>
+         <input type="text" id="catatan-bayar" class="custom-input" placeholder="Misal: Lunas Cash" style="margin-bottom: 20px;">
+         
+         <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
+         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
+      </div>
     </div>
 
   </div>
 
-  <!-- ========================================== -->
-  <!-- ⚙️ BAGIAN JAVASCRIPT (LOGIKA APLIKASI) -->
-  <!-- ========================================== -->
   <script>
-    // ⚠️ GANTI LINK INI DENGAN LINK WEB APP GOOGLE SCRIPT KAMU:
-    const API_URL = "https://script.google.com/macros/s/AKfycbyx0xPPJOrUtwUlXEyvW4SnLtaGSIAHyuiaRJI2YHyz-rX5fi6VbWuUhxJMECwATC-atQ/exec"; 
-    
-    let currentUser = null;
-    let sessionToken = "";
+    // ⚠️ GANTI LINK WEB APP GOOGLE SCRIPT DI SINI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbzb0B2jI9qM4_rYIXIThdnT4Qh6dMYoZIkrIQhk-eHqWlZoKgGcW2WkagZWBOB11gY_jg/exec"; 
+    let currentUser = null, sessionToken = "", canvas, ctx, isDrawing = false;
 
-    // Navigasi Pindah Layar
     function switchView(viewId) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
-      window.scrollTo(0,0);
+      document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0);
+    }
+    function formatRp(angka) { return "Rp " + parseInt(angka).toLocaleString('id-ID'); }
+
+    // --- CANVAS TTD ---
+    function initCanvas() {
+      canvas = document.getElementById('ttd-canvas'); ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth; canvas.height = 150;
+      ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
+      
+      const getPos = e => e.touches ? {x: e.touches[0].clientX - canvas.getBoundingClientRect().left, y: e.touches[0].clientY - canvas.getBoundingClientRect().top} : {x: e.clientX - canvas.getBoundingClientRect().left, y: e.clientY - canvas.getBoundingClientRect().top};
+      const start = e => { e.preventDefault(); isDrawing = true; let pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); };
+      const move = e => { e.preventDefault(); if(isDrawing){ let pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }};
+      const end = () => { isDrawing = false; };
+
+      canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
+      canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); canvas.addEventListener('mouseup', end);
+    }
+    function clearCanvas() { ctx.clearRect(0,0, canvas.width, canvas.height); }
+
+    // --- BASE64 IMAGE ENCODER ---
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) return resolve("");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
     }
 
-    // Format Angka ke Rupiah
-    function formatRp(angka) {
-      return "Rp " + parseInt(angka).toLocaleString('id-ID');
-    }
-
-    // Proses Login
+    // --- AUTH ---
     async function doLogin() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      if(!user || !pass) return alert('Isi Username & Password!');
-      
-      let btn = document.getElementById('btn-login');
-      btn.innerText = "Memproses..."; btn.disabled = true;
-
+      const u = document.getElementById('username').value, p = document.getElementById('password').value;
+      if(!u || !p) return alert('Isi Data!');
+      document.getElementById('btn-login').innerText = "Memproses...";
       try {
-        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "login", username: user, password: pass }) }).then(r => r.json());
-        if(res.success) {
-          currentUser = res.data;
-          sessionToken = res.token;
-          document.getElementById('user-name').innerText = currentUser.name;
-          switchView('dashboard-view');
-        } else {
-          alert(res.message);
-        }
-      } catch(e) {
-        alert("Gagal koneksi ke server.");
-      }
-      
-      btn.innerText = "Masuk"; btn.disabled = false;
+        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "login", username: u, password: p }) }).then(r => r.json());
+        if(res.success) { currentUser = res.data; sessionToken = res.token; document.getElementById('user-name').innerText = currentUser.name; switchView('dashboard-view'); } 
+        else alert(res.message);
+      } catch(e) { alert("Error Server"); }
+      document.getElementById('btn-login').innerText = "Masuk";
+    }
+    function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); switchView('login-view'); }
+
+    // --- LOGIKA BUNGA ---
+    function kalkulasiBunga() {
+      let nom = parseInt(document.getElementById('nominal').value);
+      let bunga = 0;
+      if (nom <= 400000) bunga = (nom / 100000) * 30000;
+      else if (nom >= 500000 && nom <= 900000) bunga = 150000;
+      else if (nom === 1000000) bunga = 200000;
+
+      let bTxt = document.getElementById('bunga-text');
+      bTxt.innerText = formatRp(bunga); bTxt.dataset.val = bunga;
     }
 
-    // Proses Logout
-    function doLogout() {
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) });
-      currentUser = null; sessionToken = "";
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-      switchView('login-view');
-    }
-
-    // Ubah Form Otomatis (Komisi & Tempo)
-    function updateFormLogic() {
-      let kategori = document.getElementById('kategori').value;
-      let nominal = parseInt(document.getElementById('nominal').value);
-      let tempoSelect = document.getElementById('tempo');
-      let komisiText = document.getElementById('komisi-text');
-
-      tempoSelect.innerHTML = '<option value="1 Minggu">1 Minggu</option>';
-      if (kategori === "Pinjaman Uang" && nominal >= 400000) {
-        tempoSelect.innerHTML += '<option value="2 Minggu">2 Minggu</option>';
-      }
-
-      let komisi = 0;
-      if (kategori === "Pinjaman Uang") {
-          komisi = (nominal / 100000) * 30000; 
-      } else if (kategori === "Beli Baju Cicil") {
-          komisi = (nominal * 0.15); // Misal cicil baju bunga 15%
-      }
-
-      komisiText.innerText = formatRp(komisi);
-      komisiText.dataset.val = komisi;
-    }
-
-    // Kirim Data Pengajuan Baru
+    // --- PENGAJUAN ---
     async function submitPengajuan() {
-      let btn = document.getElementById('btn-submit');
+      let fileFoto = document.getElementById('foto-pengajuan').files[0];
+      if(!fileFoto) return alert("Wajib Upload Foto Bukti!");
+      
+      let base64Foto = await getBase64(fileFoto);
+      let base64TTD = canvas.toDataURL(); // Ambil canvas
+
+      let btn = document.getElementById('btn-submit'); btn.innerText = "Mengupload..."; btn.disabled = true;
+
+      let date = new Date(); date.setDate(date.getDate() + 7); // Default 1 minggu tempo
+      
       let payload = {
         namaPeminjam: document.getElementById('nama-peminjam').value.trim(),
         noHp: document.getElementById('no-hp').value.trim(),
-        kategori: document.getElementById('kategori').value,
         nominal: document.getElementById('nominal').value,
-        tempo: document.getElementById('tempo').value,
-        komisi: document.getElementById('komisi-text').dataset.val,
+        bunga: document.getElementById('bunga-text').dataset.val,
+        tempo: "1 Minggu", jatuhTempo: date.toISOString(),
+        catatan: document.getElementById('catatan').value,
+        fotoBukti: base64Foto, ttd: base64TTD
       };
-
-      if(!payload.namaPeminjam || !payload.noHp) return alert("Nama dan No HP Wajib diisi!");
-
-      btn.disabled = true; btn.innerText = "Menyimpan...";
-
-      // Tambah hari jatuh tempo
-      let date = new Date();
-      date.setDate(date.getDate() + (payload.tempo === "1 Minggu" ? 7 : 14));
-      payload.jatuhTempo = date.toISOString();
 
       try {
         let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-
-        if(res.success) {
-          alert("Data Tersimpan!");
-          document.getElementById('nama-peminjam').value = ''; 
-          document.getElementById('no-hp').value = '';
-          switchView('dashboard-view');
-        } else { alert("Gagal: " + res.message); }
-      } catch(e) {
-        alert("Gagal koneksi ke server.");
-      }
-      
-      btn.disabled = false; btn.innerText = "Simpan Data";
+        if(res.success) { alert("Sukses!"); switchView('dashboard-view'); clearCanvas(); } else alert(res.message);
+      } catch(e) { alert("Error"); }
+      btn.innerText = "Kirim Pengajuan"; btn.disabled = false;
     }
 
-    // Ambil Data Tagihan Belum Lunas
+    // --- TAGIHAN ---
     async function loadTagihan() {
-      let list = document.getElementById('list-tagihan');
-      list.innerHTML = "<div style='text-align:center; padding:20px; font-weight:bold;'>Memuat Data...</div>";
-
-      try {
-        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
-
-        if(res.success) {
-          list.innerHTML = "";
-          if(res.data.length === 0) return list.innerHTML = "<div style='text-align:center; padding:20px; color:gray; font-weight:bold;'>Tidak ada tagihan aktif.</div>";
-
-          res.data.forEach(item => {
-            let jt = new Date(item.jatuhTempo);
-            let diffDays = Math.ceil((jt - new Date()) / (1000 * 60 * 60 * 24));
-            
-            let badgeHtml = `<span class="badge-status badge-lancar">Aman (${diffDays} Hari)</span>`;
-            if (diffDays <= 2 && diffDays >= 0) badgeHtml = `<span class="badge-status badge-warning">⚠️ ${diffDays} Hari Lagi</span>`;
-            else if (diffDays < 0) badgeHtml = `<span class="badge-status badge-terlambat">🚨 TERLAMBAT DENDA</span>`;
-
-            list.innerHTML += `
-              <div class="list-card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                   <span style="font-size:12px; font-weight:800; color:gray;">${item.kodePelanggan}</span>
-                   ${badgeHtml}
-                </div>
-                <div style="font-weight: 800; font-size: 16px;">${item.namaPeminjam}</div>
-                <div style="font-size: 12px; color: var(--text-main); font-weight:600; margin-bottom:12px;">📞 ${item.noHp}</div>
-                
-                <div style="background: rgba(0,0,0,0.03); padding:10px; border-radius:10px; font-size:13px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                   <div><b>${item.kategori}</b><br><span style="color:var(--primary); font-weight:800;">${formatRp(item.nominal)}</span></div>
-                   <div style="text-align:right;">Tempo: ${item.tempo}<br><span style="color:var(--danger); font-weight:800;">+ ${formatRp(item.komisi)}</span></div>
-                </div>
-                
-                <button class="btn-primary" style="padding: 12px; font-size: 14px;" onclick="bayar('${item.id}')">💰 Tandai Lunas</button>
+      let list = document.getElementById('list-tagihan'); list.innerHTML = "<center>Loading...</center>";
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      if(res.success) {
+        list.innerHTML = "";
+        res.data.forEach(i => {
+          let tTotal = parseInt(i.nominal) + parseInt(i.bunga);
+          list.innerHTML += `
+            <div class="list-card">
+              <div style="display:flex; justify-content:space-between; font-weight:800; margin-bottom:8px;"><span>${i.kodePelanggan}</span><span style="color:red">Tempo: ${new Date(i.jatuhTempo).toLocaleDateString('id-ID')}</span></div>
+              <div style="font-weight: 800; font-size: 16px;">${i.namaPeminjam} <span style="font-size:12px;color:gray;">(${i.noHp})</span></div>
+              <div style="background:#f0f0f5; padding:10px; border-radius:10px; margin:10px 0; font-size:13px;">
+                 Pokok: <b>${formatRp(i.nominal)}</b><br>
+                 Bunga: <b style="color:var(--danger);">${formatRp(i.bunga)}</b><br>
+                 Total Full: <b style="font-size:16px;">${formatRp(tTotal)}</b>
               </div>
-            `;
-          });
-        }
-      } catch(e) {
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:red;'>Gagal memuat. Coba lagi.</div>";
+              <div style="display:flex; gap:10px;">
+                 <button class="btn-primary" style="background:var(--warning); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'BUNGA')">Bayar Bunga Saja (Perpanjang)</button>
+                 <button class="btn-primary" style="background:var(--success); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'LUNAS')">Bayar LUNAS Full</button>
+              </div>
+            </div>`;
+        });
       }
     }
 
-    // Bayar Lunas Tagihan
-    async function bayar(id) {
-      if(!confirm("Yakin pelanggan ini sudah membayar lunas?")) return;
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: {id: id} }) }).then(r => r.json());
-      if(res.success) { alert("Lunas!"); loadTagihan(); }
+    function bukaModalBayar(id, jenis) {
+      document.getElementById('modal-id-bayar').value = id;
+      document.getElementById('modal-jenis-bayar').value = jenis;
+      document.getElementById('modal-bayar').classList.add('active');
     }
 
-    // Ambil Data Skor Kredit Pelanggan
-    async function loadPelanggan() {
-      let list = document.getElementById('list-pelanggan');
-      list.innerHTML = "<div style='text-align:center; padding:20px; font-weight:bold;'>Menganalisis Riwayat...</div>";
+    async function prosesBayar() {
+      let fileFoto = document.getElementById('foto-bayar').files[0];
+      if(!fileFoto) return alert("Wajib lampirkan foto bukti pembayaran!");
+      let base64Foto = await getBase64(fileFoto);
 
-      try {
-        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getPelanggan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
+      
+      let payload = {
+         id: document.getElementById('modal-id-bayar').value,
+         jenisBayar: document.getElementById('modal-jenis-bayar').value,
+         catatan: document.getElementById('catatan-bayar').value,
+         fotoBukti: base64Foto
+      };
 
-        if(res.success) {
-          list.innerHTML = "";
-          if(res.data.length === 0) return list.innerHTML = "<div style='text-align:center; padding:20px; color:gray; font-weight:bold;'>Belum ada data pelanggan.</div>";
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
+      if(res.success) { alert("Pembayaran Berhasil Dicatat!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); }
+      
+      btn.innerText = "Proses Pembayaran"; btn.disabled = false;
+    }
 
-          res.data.forEach(p => {
-            let skorBadge = p.statusLancar 
-                ? `<span class="badge-status badge-lancar">🟢 Skor Kredit: BAIK</span>` 
-                : `<span class="badge-status badge-terlambat">🔴 Skor Kredit: BURUK</span>`;
-            
-            let riwayatHtml = p.riwayat.map(r => {
-               let tglFormat = new Date(r.tanggal).toLocaleDateString('id-ID');
-               return `<div style="font-size:11px; display:flex; justify-content:space-between; border-bottom:1px dashed #ccc; padding:6px 0;">
-                  <span>${tglFormat} - ${r.kategori}</span>
-                  <b style="color:${r.status === 'LUNAS' ? 'green' : 'red'}">${r.status}</b>
-               </div>`;
-            }).join('');
-
-            list.innerHTML += `
-              <div class="list-card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                   <span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span>
-                   ${skorBadge}
-                </div>
-                <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
-                <div style="font-size: 12px; color: gray; font-weight:600; margin-bottom:12px;">📞 ${p.noHp}</div>
-                
-                <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Total Putaran Pinjaman: ${formatRp(p.totalPinjaman)}</div>
-                
-                <details style="background:rgba(0,0,0,0.03); padding:8px; border-radius:8px; outline:none;">
-                   <summary style="font-size:12px; font-weight:800; cursor:pointer; outline:none;">Lihat Semua Riwayat</summary>
-                   <div style="margin-top:8px;">${riwayatHtml}</div>
-                </details>
-              </div>
-            `;
-          });
-        }
-      } catch(e) {
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:red;'>Gagal memuat riwayat.</div>";
+    // --- SETORAN ADMIN ---
+    async function loadSetoran() {
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      if(res.success) {
+         document.getElementById('tot-komisi').innerText = formatRp(res.data.totalKomisi);
+         document.getElementById('tot-setoran').innerText = formatRp(res.data.totalSetoran);
       }
     }
   </script>
