@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>ReLoan & Collection</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* Tambahan CSS Khusus Badge & List */
+    .badge-status { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; }
+    .badge-lancar { background: rgba(52,199,89,0.15); color: #34C759; border: 1px solid rgba(52,199,89,0.3); }
+    .badge-terlambat { background: rgba(255,59,48,0.15); color: #FF3B30; border: 1px dashed rgba(255,59,48,0.4); }
+    .badge-warning { background: rgba(255,149,0,0.15); color: #FF9500; }
+    .list-card { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="view active">
+      <div class="brand-logo" style="font-size: 40px; margin-bottom: 30px;">💰 ReLoan</div>
+      <div class="glass" style="padding: 30px 24px;">
+        <div class="input-group"><input type="text" id="username" class="custom-input" placeholder="Username"></div>
+        <div class="input-group"><input type="password" id="password" class="custom-input" placeholder="Password"></div>
+        <button class="btn-primary" onclick="doLogin()">Masuk</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view">
+      <div class="dash-header">
+        <div class="profile-info"><div><div class="profile-name">Hi, <span id="user-name">User</span></div></div></div>
+        <button onclick="doLogout()" class="btn-logout-icon">👋</button>
+      </div>
+
+      <div class="menu-grid">
+        <div class="glass menu-card" onclick="switchView('pengajuan-view')">
+          <div style="font-size:32px;">📝</div><div style="font-weight:800;">Pengajuan</div>
+        </div>
+        <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
+          <div style="font-size:32px;">💳</div><div style="font-weight:800;">Tagihan Aktif</div>
+        </div>
+        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px;">
+          <div style="font-size:32px;">👥</div><div style="font-weight:800; font-size: 18px; text-align: left;">Data Pelanggan<br><span style="font-size:12px; color:gray; font-weight:600;">Cek riwayat & skor kredit</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENGAJUAN VIEW -->
+    <div id="pengajuan-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
+        <h2 style="font-size:20px; font-weight:800;">Form Pengajuan</h2>
+        <div style="width:48px;"></div>
+      </div>
+
+      <div class="glass" style="padding: 24px;">
+        <label class="input-label">Data Pelanggan</label>
+        <div class="input-group"><input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap Pelanggan"></div>
+        <div class="input-group"><input type="tel" id="no-hp" class="custom-input" placeholder="No WhatsApp (08...)" oninput="let v = this.value.replace(/[^0-9+]/g, ''); if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v; this.value = v;"></div>
+
+        <label class="input-label" style="margin-top: 16px;">Rincian Transaksi</label>
+        <select id="kategori" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
+          <option value="Pinjaman Uang">Pinjaman Uang</option>
+          <option value="Beli Baju Cash">Beli Baju Cash</option>
+          <option value="Beli Baju Cicil">Beli Baju Cicil</option>
+        </select>
+        <select id="nominal" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
+          <option value="100000">Rp 100.000</option>
+          <option value="200000">Rp 200.000</option>
+          <option value="400000">Rp 400.000</option>
+        </select>
+        <select id="tempo" class="custom-input" style="margin-bottom: 16px;">
+          <option value="1 Minggu">1 Minggu</option>
+        </select>
+
+        <div style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px dashed rgba(0,122,255,0.3);">
+          <span style="font-size: 11px; font-weight: 800; color: var(--primary);">KOMISI STAFF / BUNGA</span>
+          <div id="komisi-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
+        </div>
+
+        <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
+      </div>
+    </div>
+
+    <!-- TAGIHAN AKTIF VIEW -->
+    <div id="tagihan-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
+        <h2 style="font-size:20px; font-weight:800;">Tagihan Aktif</h2>
+        <div style="width:48px;"></div>
+      </div>
+      <div id="list-tagihan"></div>
+    </div>
+
+    <!-- PELANGGAN VIEW -->
+    <div id="pelanggan-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('dashboard-view')" class="btn-ios-nav">🔙</button>
+        <h2 style="font-size:20px; font-weight:800;">Data Pelanggan</h2>
+        <div style="width:48px;"></div>
+      </div>
+      <div id="list-pelanggan"></div>
+    </div>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
