@@ -311,6 +311,7 @@
 
     // --- TAGIHAN CALENDAR ---
     const bln = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
+    
     async function loadTagihan() {
       let list = document.getElementById('list-tagihan'); 
       list.innerHTML = "<center style='font-weight:bold;'>Loading...</center>";
@@ -320,38 +321,53 @@
         
         if(res.success) {
           list.innerHTML = ""; 
-          if(res.data.length === 0) return list.innerHTML = "<center style='color:gray;'>Bersih! Tidak ada tagihan.</center>";
+          if(!res.data || res.data.length === 0) return list.innerHTML = "<center style='color:gray;'>Bersih! Tidak ada tagihan.</center>";
           
-          res.data.sort((a,b) => new Date(a.jt) - new Date(b.jt));
+          // Sortir by Tgl Jatuh Tempo terdekat (Aman dari tanggal kosong)
+          res.data.sort((a,b) => new Date(a.jt || 0) - new Date(b.jt || 0));
 
           res.data.forEach(i => {
-            let dJt = new Date(i.jt); let diffDays = Math.ceil((dJt - new Date()) / (1000 * 60 * 60 * 24));
+            let dJt = new Date(i.jt); 
+            let isValidDate = !isNaN(dJt.getTime());
+            let diffDays = isValidDate ? Math.ceil((dJt - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+            
             let bgCal = "var(--primary)", txtB = "Aman";
             if (diffDays <= 2 && diffDays >= 0) { bgCal = "var(--warning)"; txtB = `H-${diffDays}`; }
             else if (diffDays < 0) { bgCal = "var(--danger)"; txtB = `TELAT!`; }
+            
+            // Render text kalender (Aman jika data tanggal rusak)
+            let blnTeks = isValidDate ? bln[dJt.getMonth()] : "---";
+            let tglTeks = isValidDate ? dJt.getDate() : "-";
+
+            // Pastikan Angka tidak pernah NaN (Not a Number)
+            let nomP = parseInt(i.nom) || 0;
+            let bngP = parseInt(i.bng) || 0;
+            let byrP = parseInt(i.bayar) || 0;
 
             let btnHtml = '';
             if (i.cat === 'Pinjaman Uang') {
-               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', ${i.bng}, 'Bayar Bunga')">Bunga Saja (${formatRp(i.bng)})</button>
-                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', ${parseInt(i.nom)+parseInt(i.bng)}, 'Lunas Full')">Lunas Full</button>`;
+               // PERBAIKAN: Parameter nominal dibungkus tanda kutip '' agar tidak error jika angkanya 0
+               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
+                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
             } else {
-               let sisa = parseInt(i.nom) - parseInt(i.bayar || 0); let cicilW = parseInt(i.nom) / 4; 
-               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', ${cicilW}, 'Cicil Baju')">Setor Cicilan</button>
-                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', ${sisa}, 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
+               let sisa = nomP - byrP; 
+               let cicilW = nomP / 4; 
+               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
+                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
             }
 
             list.innerHTML += `
               <div class="cal-card">
                  <div class="cal-date-box" style="background:${bgCal}">
-                    <div class="cal-month">${bln[dJt.getMonth()]}</div>
-                    <div class="cal-day">${dJt.getDate()}</div>
+                    <div class="cal-month">${blnTeks}</div>
+                    <div class="cal-day">${tglTeks}</div>
                  </div>
                  <div class="cal-info">
-                    <div style="font-weight:800; font-size:15px;">${i.nama} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
-                    <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat} | ${i.kode}</div>
+                    <div style="font-weight:800; font-size:15px;">${i.nama || '-'} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
+                    <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat || '-'} | ${i.kode || '-'}</div>
                     <div style="font-size:12px; background:#f0f0f5; padding:6px; border-radius:6px; margin-bottom:8px;">
-                       Sisa Pokok: <b>${formatRp(parseInt(i.nom) - parseInt(i.bayar||0))}</b><br>
-                       ${i.cat==='Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(i.bng)}</b>` : ''}
+                       Sisa Pokok: <b>${formatRp(nomP - byrP)}</b><br>
+                       ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
                     </div>
                     <div style="display:flex; gap:6px;">${btnHtml}</div>
                     <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:gray; text-decoration:underline; cursor:pointer;" onclick="reqEdit('${i.id}')">Edit/Hapus Data</span></div>
@@ -359,15 +375,16 @@
               </div>`;
           });
         } else {
-           // Jika token tidak valid, tampilkan error dan auto-logout
            list.innerHTML = `<center style='color:var(--danger); font-weight:bold;'>Error: ${res.message}</center>`;
            if(res.message.includes('Sesi')) { setTimeout(() => { doLogout(); }, 1500); }
         }
       } catch (err) {
-        list.innerHTML = `<center style='color:var(--danger); font-weight:bold;'>Gagal terhubung ke Server.</center>`;
+        console.log("Error Detail:", err);
+        list.innerHTML = `<center style='color:var(--danger); font-weight:bold; font-size: 13px;'>Terdapat Format Data Lama di Google Sheet.<br><br>Harap Hapus Sheet "Pengajuan", lalu jalankan autoSetup() di Apps Script.</center>`;
       }
     }
 
+    
     function reqEdit(id) {
        let a = prompt("Alasan Edit / Hapus (Misal: Hapus krn batal):");
        if(a) {
