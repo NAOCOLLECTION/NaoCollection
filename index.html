@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>ReLoan App</title>
+  <title>ReLoan & Collection</title>
   <style>
     :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -23,11 +23,22 @@
     .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; }
-    .list-card { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); }
-    .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; }
+    .list-card { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); cursor:pointer; }
+    .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display:inline-block;}
     canvas { border: 1px dashed #ccc; border-radius: 12px; background: #fff; width: 100%; height: 150px; touch-action: none; }
     .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; padding: 20px;}
     .modal.active { display: flex; }
+    
+    /* CSS Timeline Riwayat */
+    .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
+    .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
+    .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
+    .tl-date { font-weight: 800; color: var(--text-muted); font-size: 11px; margin-bottom: 2px; }
+    .tl-desc { font-weight: 600; color: var(--text-main); }
+    .tl-desc b { color: var(--success); }
+    .tl-danger::before { background: var(--danger); }
+    .tl-warning::before { background: var(--warning); }
+    .tl-success::before { background: var(--success); }
   </style>
 </head>
 <body>
@@ -38,8 +49,8 @@
     <div id="login-view" class="view active">
       <div class="brand-logo">💰 ReLoan</div>
       <div class="glass" style="padding: 24px;">
-        <div class="input-group"><input type="text" id="username" class="custom-input" placeholder="Username"></div>
-        <div class="input-group"><input type="password" id="password" class="custom-input" placeholder="Password"></div>
+        <input type="text" id="username" class="custom-input" placeholder="Username" style="margin-bottom:16px;">
+        <input type="password" id="password" class="custom-input" placeholder="Password" style="margin-bottom:24px;">
         <button class="btn-primary" id="btn-login" onclick="doLogin()">Masuk</button>
       </div>
     </div>
@@ -51,14 +62,21 @@
         <button onclick="doLogout()" class="btn-primary btn-secondary" style="width: auto; padding: 8px 16px;">Logout</button>
       </div>
       <div class="menu-grid">
-        <div class="glass menu-card" onclick="switchView('pengajuan-view'); initCanvas();">
+        <div class="glass menu-card" onclick="switchView('pengajuan-view'); initCanvas(); updateFormLogic();">
           <div style="font-size:32px;">📝</div><div style="font-weight:800; font-size:14px;">Pengajuan Baru</div>
         </div>
         <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
           <div style="font-size:32px;">💳</div><div style="font-weight:800; font-size:14px;">Tagihan & Bayar</div>
         </div>
+        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px; justify-content: flex-start;">
+          <div style="font-size:36px;">👥</div>
+          <div style="text-align: left;">
+            <div style="font-weight:800; font-size: 16px;">Data Pelanggan</div>
+            <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Cari & Cek Timeline Riwayat</div>
+          </div>
+        </div>
         <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
-          <div style="font-size:32px;">🏦</div><div style="font-weight:800; font-size:14px;">Setoran ke Admin (Komisi)</div>
+          <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Admin (Komisi)</div>
         </div>
       </div>
     </div>
@@ -72,31 +90,45 @@
       </div>
 
       <div class="glass" style="padding: 24px;">
-        <label class="input-label">Data Pelanggan</label>
-        <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap" style="margin-bottom: 12px;">
-        <input type="tel" id="no-hp" class="custom-input" placeholder="No HP" style="margin-bottom: 20px;">
+        <label class="input-label">Data Pelanggan (Otomatis Terisi)</label>
+        <div style="display:flex; gap:10px; margin-bottom: 12px;">
+            <input type="tel" id="no-hp" class="custom-input" placeholder="No HP/WA (08...)" style="flex:1;" onblur="cekDataPelanggan()">
+            <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
+        </div>
+        <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap" style="margin-bottom: 20px;">
 
-        <label class="input-label">Nominal Pinjaman</label>
-        <select id="nominal" class="custom-input" style="margin-bottom: 16px;" onchange="kalkulasiBunga()">
-          <option value="100000">Rp 100.000</option>
-          <option value="200000">Rp 200.000</option>
-          <option value="300000">Rp 300.000</option>
-          <option value="400000">Rp 400.000</option>
-          <option value="500000">Rp 500.000</option>
-          <option value="600000">Rp 600.000</option>
-          <option value="700000">Rp 700.000</option>
-          <option value="800000">Rp 800.000</option>
-          <option value="900000">Rp 900.000</option>
-          <option value="1000000">Rp 1.000.000</option>
+        <label class="input-label">Pilih Kategori</label>
+        <select id="kategori" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
+          <option value="Pinjaman Uang">Pinjaman Uang</option>
+          <option value="Beli Baju Cash">Beli Baju Cash</option>
+          <option value="Beli Baju Cicil">Beli Baju Cicil</option>
         </select>
-        
-        <div style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px;">
+
+        <div id="wrap-pinjaman">
+            <label class="input-label">Nominal Pinjaman</label>
+            <select id="nominal-pinjaman" class="custom-input" style="margin-bottom: 16px;" onchange="kalkulasiBunga()">
+              <option value="100000">Rp 100.000</option><option value="200000">Rp 200.000</option><option value="300000">Rp 300.000</option>
+              <option value="400000">Rp 400.000</option><option value="500000">Rp 500.000</option><option value="600000">Rp 600.000</option>
+              <option value="700000">Rp 700.000</option><option value="800000">Rp 800.000</option><option value="900000">Rp 900.000</option>
+              <option value="1000000">Rp 1.000.000</option>
+            </select>
+        </div>
+
+        <div id="wrap-baju" style="display:none;">
+            <label class="input-label">Harga Baju Total</label>
+            <input type="number" id="nominal-baju" class="custom-input" placeholder="Misal: 250000" style="margin-bottom: 16px;" oninput="kalkulasiBunga()">
+        </div>
+
+        <label class="input-label">Tenor (Waktu)</label>
+        <select id="tempo" class="custom-input" style="margin-bottom: 16px;" onchange="kalkulasiBunga()"></select>
+
+        <div style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px dashed rgba(0,122,255,0.2);">
           <span style="font-size: 11px; font-weight: 800; color: var(--primary);">BUNGA DITETAPKAN</span>
           <div id="bunga-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
         </div>
 
         <label class="input-label">Foto Bukti / Barang</label>
-        <input type="file" id="foto-pengajuan" class="custom-input" accept="image/*" style="margin-bottom: 16px;">
+        <input type="file" id="foto-pengajuan" class="custom-input" accept="image/*" style="margin-bottom: 16px; padding: 10px;">
 
         <label class="input-label">Tanda Tangan Pelanggan</label>
         <canvas id="ttd-canvas"></canvas>
@@ -119,6 +151,32 @@
       <div id="list-tagihan"></div>
     </div>
 
+    <!-- PELANGGAN VIEW (DENGAN PENCARIAN) -->
+    <div id="pelanggan-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Data Pelanggan</h2>
+        <div style="width:48px;"></div>
+      </div>
+      <input type="text" id="search-pelanggan" class="custom-input" placeholder="🔍 Cari Nama / No WA..." onkeyup="filterPelanggan()" style="margin-bottom: 16px;">
+      <div id="list-pelanggan"></div>
+    </div>
+
+    <!-- TIMELINE RIWAYAT DETAIL (VIEW BARU) -->
+    <div id="detail-riwayat-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Timeline Riwayat</h2>
+        <div style="width:48px;"></div>
+      </div>
+      <div class="glass" style="padding:20px; margin-bottom:16px;">
+         <div style="font-size:12px; font-weight:800; color:var(--primary);" id="dr-kode"></div>
+         <div style="font-size:20px; font-weight:900; margin-bottom:4px;" id="dr-nama"></div>
+         <div style="font-size:14px; color:var(--text-muted); font-weight:600;" id="dr-hp"></div>
+      </div>
+      <div id="list-timeline"></div>
+    </div>
+
     <!-- SETORAN VIEW -->
     <div id="setoran-view" class="view">
       <div class="dash-header">
@@ -127,28 +185,29 @@
         <div style="width:48px;"></div>
       </div>
       <div class="glass" style="padding: 24px; text-align:center;">
-         <div style="font-size:12px; font-weight:bold; color:gray;">TOTAL KOMISI STAFF KAMU (10%)</div>
+         <div style="font-size:12px; font-weight:bold; color:gray;">TOTAL KOMISI KAMU (10% DARI BUNGA)</div>
          <div id="tot-komisi" style="font-size:24px; font-weight:900; color:var(--success); margin-bottom: 20px;">Rp 0</div>
          
-         <div style="font-size:12px; font-weight:bold; color:gray;">YANG WAJIB DISETOR KE ADMIN</div>
+         <div style="font-size:12px; font-weight:bold; color:gray;">UANG YANG WAJIB DISETOR KE ADMIN</div>
          <div id="tot-setoran" style="font-size:28px; font-weight:900; color:var(--danger); margin-bottom: 20px;">Rp 0</div>
-         
-         <div style="font-size:11px; color:gray;">*(Catatan: Admin akan cek mutasi bank sebelum melakukan Approve)*</div>
       </div>
     </div>
 
     <!-- MODAL PEMBAYARAN -->
     <div id="modal-bayar" class="modal">
       <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
-         <h3 style="margin-bottom:16px;">Konfirmasi Pembayaran</h3>
+         <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
          <input type="hidden" id="modal-id-bayar">
          <input type="hidden" id="modal-jenis-bayar">
          
-         <label class="input-label">Foto Bukti Transfer / Cash</label>
-         <input type="file" id="foto-bayar" class="custom-input" accept="image/*" style="margin-bottom: 16px;">
-         
-         <label class="input-label">Catatan Pembayaran</label>
-         <input type="text" id="catatan-bayar" class="custom-input" placeholder="Misal: Lunas Cash" style="margin-bottom: 20px;">
+         <div id="wrap-nominal-bayar" style="display:none;">
+            <label class="input-label">Nominal Uang yang Dibayar</label>
+            <input type="number" id="nominal-bayar" class="custom-input" placeholder="Rp..." style="margin-bottom: 16px;">
+         </div>
+
+         <label class="input-label">Foto Bukti Pembayaran / Uang</label>
+         <input type="file" id="foto-bayar" class="custom-input" accept="image/*" style="margin-bottom: 16px; padding:10px;">
+         <input type="text" id="catatan-bayar" class="custom-input" placeholder="Catatan Pembayaran (Opsional)" style="margin-bottom: 20px;">
          
          <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
          <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
@@ -158,41 +217,85 @@
   </div>
 
   <script>
-    // ⚠️ GANTI LINK WEB APP GOOGLE SCRIPT DI SINI:
-    const API_URL = "https://script.google.com/macros/s/AKfycbzb0B2jI9qM4_rYIXIThdnT4Qh6dMYoZIkrIQhk-eHqWlZoKgGcW2WkagZWBOB11gY_jg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycby7-vGPdtlGtPX5ircswCb9ZXzWHsUXAguwRub9e4F4YXQpYL_c3WXgq4BUB2FonyuIRw/exec"; 
     let currentUser = null, sessionToken = "", canvas, ctx, isDrawing = false;
+    let globalPelangganData = [];
 
-    function switchView(viewId) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0);
-    }
+    function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
     function formatRp(angka) { return "Rp " + parseInt(angka).toLocaleString('id-ID'); }
 
-    // --- CANVAS TTD ---
+    // CANVAS TTD
     function initCanvas() {
       canvas = document.getElementById('ttd-canvas'); ctx = canvas.getContext('2d');
       canvas.width = canvas.parentElement.clientWidth; canvas.height = 150;
       ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
-      
       const getPos = e => e.touches ? {x: e.touches[0].clientX - canvas.getBoundingClientRect().left, y: e.touches[0].clientY - canvas.getBoundingClientRect().top} : {x: e.clientX - canvas.getBoundingClientRect().left, y: e.clientY - canvas.getBoundingClientRect().top};
       const start = e => { e.preventDefault(); isDrawing = true; let pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); };
       const move = e => { e.preventDefault(); if(isDrawing){ let pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }};
       const end = () => { isDrawing = false; };
-
       canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
       canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); canvas.addEventListener('mouseup', end);
     }
     function clearCanvas() { ctx.clearRect(0,0, canvas.width, canvas.height); }
 
-    // --- BASE64 IMAGE ENCODER ---
     function getBase64(file) {
       return new Promise((resolve, reject) => {
         if (!file) return resolve("");
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
       });
+    }
+
+    // --- FITUR BARU: CEK PELANGGAN (AUTO-FILL) ---
+    async function cekDataPelanggan() {
+        let noHp = document.getElementById('no-hp').value;
+        let v = noHp.replace(/[^0-9+]/g, ''); if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v;
+        document.getElementById('no-hp').value = v;
+
+        if (v.length > 9) {
+            let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cekPelanggan", username: currentUser.username, token: sessionToken, payload: {noHp: v} }) }).then(r => r.json());
+            if (res.success && res.nama) {
+                document.getElementById('nama-peminjam').value = res.nama;
+                alert("Pelanggan Ditemukan: " + res.nama);
+            }
+        }
+    }
+
+    // --- FORM LOGIC ---
+    function updateFormLogic() {
+      let cat = document.getElementById('kategori').value;
+      let wPinj = document.getElementById('wrap-pinjaman'), wBaju = document.getElementById('wrap-baju'), tempo = document.getElementById('tempo');
+
+      if (cat === 'Pinjaman Uang') {
+          wPinj.style.display = 'block'; wBaju.style.display = 'none';
+          tempo.innerHTML = '<option value="1">1 Minggu</option><option value="2">2 Minggu</option><option value="3">3 Minggu</option><option value="4">4 Minggu (1 Bulan)</option>';
+          tempo.disabled = false;
+      } else if (cat === 'Beli Baju Cicil') {
+          wPinj.style.display = 'none'; wBaju.style.display = 'block';
+          tempo.innerHTML = '<option value="4">Max 4 Minggu (1 Bulan)</option>';
+          tempo.disabled = true;
+      } else if (cat === 'Beli Baju Cash') {
+          wPinj.style.display = 'none'; wBaju.style.display = 'block';
+          tempo.innerHTML = '<option value="0">Cash (Langsung Lunas)</option>';
+          tempo.disabled = true;
+      }
+      kalkulasiBunga();
+    }
+
+    function kalkulasiBunga() {
+      let cat = document.getElementById('kategori').value;
+      let bunga = 0; let bTxt = document.getElementById('bunga-text');
+
+      if (cat === 'Pinjaman Uang') {
+          let nom = parseInt(document.getElementById('nominal-pinjaman').value) || 0;
+          let tnr = parseInt(document.getElementById('tempo').value) || 1;
+          let bDasar = 0;
+          if (nom <= 400000) bDasar = (nom / 100000) * 30000;
+          else if (nom >= 500000 && nom <= 900000) bDasar = 150000;
+          else if (nom === 1000000) bDasar = 200000;
+          bunga = bDasar * tnr; 
+      }
+      bTxt.innerText = formatRp(bunga); bTxt.dataset.val = bunga;
     }
 
     // --- AUTH ---
@@ -209,97 +312,182 @@
     }
     function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); switchView('login-view'); }
 
-    // --- LOGIKA BUNGA ---
-    function kalkulasiBunga() {
-      let nom = parseInt(document.getElementById('nominal').value);
-      let bunga = 0;
-      if (nom <= 400000) bunga = (nom / 100000) * 30000;
-      else if (nom >= 500000 && nom <= 900000) bunga = 150000;
-      else if (nom === 1000000) bunga = 200000;
-
-      let bTxt = document.getElementById('bunga-text');
-      bTxt.innerText = formatRp(bunga); bTxt.dataset.val = bunga;
-    }
-
-    // --- PENGAJUAN ---
+    // --- SUBMIT PENGAJUAN ---
     async function submitPengajuan() {
       let fileFoto = document.getElementById('foto-pengajuan').files[0];
-      if(!fileFoto) return alert("Wajib Upload Foto Bukti!");
-      
-      let base64Foto = await getBase64(fileFoto);
-      let base64TTD = canvas.toDataURL(); // Ambil canvas
-
+      if(!fileFoto) return alert("Wajib Upload Foto!");
+      let base64Foto = await getBase64(fileFoto); let base64TTD = canvas.toDataURL();
       let btn = document.getElementById('btn-submit'); btn.innerText = "Mengupload..."; btn.disabled = true;
 
-      let date = new Date(); date.setDate(date.getDate() + 7); // Default 1 minggu tempo
+      let cat = document.getElementById('kategori').value;
+      let nom = cat === 'Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : document.getElementById('nominal-baju').value;
+      let tmp = parseInt(document.getElementById('tempo').value) || 0;
       
+      let date = new Date(); if (tmp > 0) { date.setDate(date.getDate() + (tmp * 7)); }
+
       let payload = {
-        namaPeminjam: document.getElementById('nama-peminjam').value.trim(),
-        noHp: document.getElementById('no-hp').value.trim(),
-        nominal: document.getElementById('nominal').value,
-        bunga: document.getElementById('bunga-text').dataset.val,
-        tempo: "1 Minggu", jatuhTempo: date.toISOString(),
-        catatan: document.getElementById('catatan').value,
+        namaPeminjam: document.getElementById('nama-peminjam').value.trim(), noHp: document.getElementById('no-hp').value.trim(),
+        kategori: cat, nominal: nom, bunga: document.getElementById('bunga-text').dataset.val,
+        tempoMinggu: tmp, jatuhTempo: date.toISOString(), catatan: document.getElementById('catatan').value,
         fotoBukti: base64Foto, ttd: base64TTD
       };
 
-      try {
-        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-        if(res.success) { alert("Sukses!"); switchView('dashboard-view'); clearCanvas(); } else alert(res.message);
-      } catch(e) { alert("Error"); }
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
+      if(res.success) { alert("Sukses!"); switchView('dashboard-view'); clearCanvas(); } else alert(res.message);
       btn.innerText = "Kirim Pengajuan"; btn.disabled = false;
     }
 
-    // --- TAGIHAN ---
+    // --- LOAD TAGIHAN ---
     async function loadTagihan() {
       let list = document.getElementById('list-tagihan'); list.innerHTML = "<center>Loading...</center>";
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
       if(res.success) {
         list.innerHTML = "";
+        if(res.data.length === 0) return list.innerHTML = "<center style='color:gray;'>Tidak ada tagihan.</center>";
+
         res.data.forEach(i => {
-          let tTotal = parseInt(i.nominal) + parseInt(i.bunga);
+          let jt = new Date(i.jatuhTempo); let diffDays = Math.ceil((jt - new Date()) / (1000 * 60 * 60 * 24));
+          let bHtml = `<span class="badge" style="background:rgba(52,199,89,0.1); color:var(--success);">Aman</span>`;
+          if (diffDays <= 2 && diffDays >= 0) bHtml = `<span class="badge" style="background:rgba(255,149,0,0.1); color:var(--warning);">H-${diffDays}</span>`;
+          else if (diffDays < 0) bHtml = `<span class="badge" style="background:rgba(255,59,48,0.1); color:var(--danger);">LEWAT TEMPO!</span>`;
+
+          let btnHtml = '';
+          if (i.kategori === 'Pinjaman Uang') {
+             btnHtml = `
+               <button class="btn-primary" style="background:var(--warning); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', ${i.bunga}, 'Bayar Bunga Saja')">Bayar Bunga (${formatRp(i.bunga)}) -> Perpanjang</button>
+               <button class="btn-primary" style="background:var(--success); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', ${parseInt(i.nominal)+parseInt(i.bunga)}, 'Pelunasan Full')">Bayar Lunas Full</button>`;
+          } else if (i.kategori === 'Beli Baju Cicil') {
+             let sisa = parseInt(i.nominal) - parseInt(i.terbayar || 0);
+             let cicilWajib = parseInt(i.nominal) / 4; 
+             btnHtml = `
+               <button class="btn-primary" style="background:var(--warning); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', ${cicilWajib}, 'Cicilan Mingguan')">Setor Cicilan</button>
+               <button class="btn-primary" style="background:var(--success); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', ${sisa}, 'Pelunasan Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
+          }
+
           list.innerHTML += `
             <div class="list-card">
-              <div style="display:flex; justify-content:space-between; font-weight:800; margin-bottom:8px;"><span>${i.kodePelanggan}</span><span style="color:red">Tempo: ${new Date(i.jatuhTempo).toLocaleDateString('id-ID')}</span></div>
-              <div style="font-weight: 800; font-size: 16px;">${i.namaPeminjam} <span style="font-size:12px;color:gray;">(${i.noHp})</span></div>
+              <div style="display:flex; justify-content:space-between; font-weight:800; margin-bottom:8px;"><span>${i.kategori} - ${i.kodePelanggan}</span> ${bHtml}</div>
+              <div style="font-weight: 800; font-size: 16px;">${i.namaPeminjam} <br><span style="font-size:12px;color:red;">Tempo: ${jt.toLocaleDateString('id-ID')}</span></div>
               <div style="background:#f0f0f5; padding:10px; border-radius:10px; margin:10px 0; font-size:13px;">
-                 Pokok: <b>${formatRp(i.nominal)}</b><br>
+                 Total Tagihan: <b>${formatRp(i.nominal)}</b><br>
                  Bunga: <b style="color:var(--danger);">${formatRp(i.bunga)}</b><br>
-                 Total Full: <b style="font-size:16px;">${formatRp(tTotal)}</b>
+                 Telah Dibayar: <b style="color:var(--success);">${formatRp(i.terbayar || 0)}</b>
               </div>
-              <div style="display:flex; gap:10px;">
-                 <button class="btn-primary" style="background:var(--warning); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'BUNGA')">Bayar Bunga Saja (Perpanjang)</button>
-                 <button class="btn-primary" style="background:var(--success); font-size:13px; padding:12px;" onclick="bukaModalBayar('${i.id}', 'LUNAS')">Bayar LUNAS Full</button>
-              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">${btnHtml}</div>
             </div>`;
         });
       }
     }
 
-    function bukaModalBayar(id, jenis) {
+    function bukaModalBayar(id, jenis, nominalRekomendasi, title) {
       document.getElementById('modal-id-bayar').value = id;
       document.getElementById('modal-jenis-bayar').value = jenis;
+      document.getElementById('modal-title').innerText = title;
+      
+      let wrapNominal = document.getElementById('wrap-nominal-bayar');
+      let inputNominal = document.getElementById('nominal-bayar');
+      
+      if (jenis === 'CICILAN') { wrapNominal.style.display = 'block'; inputNominal.value = nominalRekomendasi; } 
+      else { wrapNominal.style.display = 'none'; inputNominal.value = nominalRekomendasi; }
+      
       document.getElementById('modal-bayar').classList.add('active');
     }
 
     async function prosesBayar() {
       let fileFoto = document.getElementById('foto-bayar').files[0];
-      if(!fileFoto) return alert("Wajib lampirkan foto bukti pembayaran!");
+      if(!fileFoto) return alert("Wajib lampirkan foto bukti!");
       let base64Foto = await getBase64(fileFoto);
 
       let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
-      
-      let payload = {
-         id: document.getElementById('modal-id-bayar').value,
-         jenisBayar: document.getElementById('modal-jenis-bayar').value,
-         catatan: document.getElementById('catatan-bayar').value,
-         fotoBukti: base64Foto
-      };
+      let payload = { id: document.getElementById('modal-id-bayar').value, jenisBayar: document.getElementById('modal-jenis-bayar').value, nominalBayar: document.getElementById('nominal-bayar').value, catatan: document.getElementById('catatan-bayar').value, fotoBukti: base64Foto };
 
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-      if(res.success) { alert("Pembayaran Berhasil Dicatat!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); }
-      
+      if(res.success) { alert("Berhasil!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); }
       btn.innerText = "Proses Pembayaran"; btn.disabled = false;
+    }
+
+    // --- DATA PELANGGAN & TIMELINE RIWAYAT ---
+    async function loadPelanggan() {
+      let list = document.getElementById('list-pelanggan'); list.innerHTML = "<center>Menganalisis Data...</center>";
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getPelanggan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      if(res.success) {
+        globalPelangganData = res.data;
+        renderPelanggan(globalPelangganData);
+      }
+    }
+
+    function renderPelanggan(data) {
+      let list = document.getElementById('list-pelanggan'); list.innerHTML = "";
+      if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
+      
+      data.forEach(p => {
+        let sBadge = p.statusLancar ? `<span class="badge" style="background:rgba(52,199,89,0.1); color:var(--success);">Kredit: BAIK</span>` : `<span class="badge" style="background:rgba(255,59,48,0.1); color:var(--danger);">Pernah Telat</span>`;
+        list.innerHTML += `
+          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
+            <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
+            <div style="font-size: 12px; color: gray; font-weight:600;">📞 ${p.noHp}</div>
+            <div style="font-size: 12px; font-weight: 700; margin-top: 8px;">Total Riwayat Transaksi: ${formatRp(p.totalPinjaman)}</div>
+            <div style="margin-top:10px; font-size:11px; font-weight:800; color:var(--primary); text-align:right;">Lihat Detail Timeline ➡️</div>
+          </div>`;
+      });
+    }
+
+    function filterPelanggan() {
+      let q = document.getElementById('search-pelanggan').value.toLowerCase();
+      let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q));
+      renderPelanggan(fData);
+    }
+
+    async function bukaRiwayatLengkap(noHp, nama, kode) {
+      document.getElementById('dr-nama').innerText = nama;
+      document.getElementById('dr-kode').innerText = kode;
+      document.getElementById('dr-hp').innerText = noHp;
+      
+      switchView('detail-riwayat-view');
+      let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center>Memuat Timeline...</center>";
+
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getRiwayatLengkap", username: currentUser.username, token: sessionToken, payload: {noHp: noHp} }) }).then(r => r.json());
+      if(res.success) {
+         tl.innerHTML = "";
+         res.data.forEach(item => {
+             let htmlBayar = "";
+             item.bayar.forEach(b => {
+                 let icn = b.jenisBayar === 'LUNAS' ? '🟢' : '🟡';
+                 let cls = b.jenisBayar === 'LUNAS' ? 'tl-success' : 'tl-warning';
+                 let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID');
+                 htmlBayar += `
+                   <div class="timeline-item ${cls}">
+                      <div class="tl-date">${tglB}</div>
+                      <div class="tl-desc">${icn} Pembayaran <b>${b.jenisBayar}</b> senilai ${formatRp(b.nominal)}</div>
+                   </div>`;
+             });
+
+             let jatuhTempoStatus = "";
+             if (item.status === 'PENDING') {
+                 let jt = new Date(item.jatuhTempo);
+                 let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : "";
+                 jatuhTempoStatus = `
+                   <div class="timeline-item ${lewat ? 'tl-danger' : ''}">
+                      <div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID')}</div>
+                      <div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div>
+                   </div>`;
+             }
+
+             tl.innerHTML += `
+               <div class="glass" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);">
+                 <div style="font-weight:800; font-size:14px; margin-bottom:12px;">📄 ID: ${item.id}</div>
+                 <div class="timeline">
+                    <div class="timeline-item">
+                       <div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID')}</div>
+                       <div class="tl-desc">📥 <b>Cair/Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div>
+                    </div>
+                    ${htmlBayar}
+                    ${jatuhTempoStatus}
+                 </div>
+               </div>`;
+         });
+      }
     }
 
     // --- SETORAN ADMIN ---
