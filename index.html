@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>ReLoan ERP</title>
+  <title>NAO Collection</title>
+  <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;NAO Collection&quot;,&quot;short_name&quot;:&quot;NAO&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#F2F2F7&quot;,&quot;theme_color&quot;:&quot;#007AFF&quot;}">
   <style>
     :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -12,7 +13,7 @@
     .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.8); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
     .view { display: none; padding: 24px; animation: fadeSlideIn 0.3s ease; } .view.active { display: block; }
     @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .brand-logo { font-size: 36px; font-weight: 800; text-align: center; margin: 50px 0 20px; }
+    .brand-logo { font-size: 36px; font-weight: 900; text-align: center; margin: 50px 0 20px; color: var(--primary); letter-spacing: -1px;}
     .input-group { margin-bottom: 16px; width: 100%; }
     .input-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block; text-transform: uppercase; }
     .custom-input { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.9); font-size: 15px; outline: none; transition: 0.3s; }
@@ -22,15 +23,12 @@
     .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; }
     .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; position:relative; }
+    .badge-count { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 900; display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 2px 8px rgba(255,59,48,0.4); }
     
-    /* MODERN TOAST */
     #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(28, 28, 30, 0.9); backdrop-filter: blur(10px); color: white; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; display:flex; align-items:center; gap:10px;}
     #custom-toast.show { top: 40px; }
-    #custom-toast.success { border-left: 4px solid var(--success); }
-    #custom-toast.error { border-left: 4px solid var(--danger); }
-
-    /* CALENDAR TAGIHAN */
+    
     .cal-card, .list-card { display:flex; background:#fff; border-radius:16px; padding:12px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); gap:16px; align-items:center;}
     .list-card { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; }
     .cal-date-box { background:var(--primary); color:white; border-radius:12px; width:60px; height:65px; display:flex; flex-direction:column; text-align:center; overflow:hidden; flex-shrink:0; box-shadow:0 4px 10px rgba(0,122,255,0.2);}
@@ -38,34 +36,35 @@
     .cal-day { font-size:24px; font-weight:900; line-height:1.2; padding-top:4px;}
     .cal-info { flex:1; width: 100%;}
     .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display:inline-block;}
+    
     .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; padding: 20px;}
     .modal.active { display: flex; }
+    
+    .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+    .filter-btn.active { background: var(--primary); color: white; }
 
-    /* CSS TIMELINE RIWAYAT */
     .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
     .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
     .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
     .tl-date { font-weight: 800; color: var(--text-muted); font-size: 11px; margin-bottom: 2px; }
     .tl-desc { font-weight: 600; color: var(--text-main); line-height: 1.4;}
     .tl-danger::before { background: var(--danger); }
-    .tl-warning::before { background: var(--warning); }
-    .tl-success::before { background: var(--success); }
   </style>
 </head>
 <body>
 
-  <!-- MODAL TOAST -->
   <div id="custom-toast"><span id="t-icon"></span><span id="t-msg"></span></div>
 
   <div id="app-container">
     <!-- LOGIN -->
     <div id="login-view" class="view active">
-      <div class="brand-logo">💳 ReLoan</div>
-      <div class="glass" style="padding: 24px;">
+      <div class="brand-logo">✨ NAO Collection</div>
+      <div class="glass" style="padding: 24px; margin-bottom: 20px;">
         <input type="text" id="username" class="custom-input" placeholder="Username" style="margin-bottom:16px;">
         <input type="password" id="password" class="custom-input" placeholder="Password" style="margin-bottom:24px;">
         <button class="btn-primary" id="btn-login" onclick="doLogin()">Masuk Sistem</button>
       </div>
+      <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi NAO</button>
     </div>
 
     <!-- DASHBOARD -->
@@ -79,10 +78,9 @@
           <div style="font-size:32px;">📝</div><div style="font-weight:800; font-size:14px;">Pengajuan</div>
         </div>
         <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
+          <div id="badge-tagihan" class="badge-count" style="display:none;">0</div>
           <div style="font-size:32px;">📅</div><div style="font-weight:800; font-size:14px;">Tagihan</div>
         </div>
-        
-        <!-- KEMBALIKAN MENU PELANGGAN -->
         <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px; justify-content: flex-start;">
           <div style="font-size:36px;">👥</div>
           <div style="text-align: left;">
@@ -90,11 +88,10 @@
             <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Cari & Cek Timeline Riwayat</div>
           </div>
         </div>
-
         <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
           <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Kasir (Komisi)</div>
         </div>
-        <div class="glass menu-card admin-only" id="menu-admin" onclick="switchView('admin-view'); loadAdmin();" style="grid-column: span 2; display:none; background:rgba(0,122,255,0.05); border:1px solid rgba(0,122,255,0.2);">
+        <div class="glass menu-card admin-only" id="menu-admin" onclick="switchView('admin-view'); setDefaultDatesAdmin(); loadAdmin();" style="grid-column: span 2; display:none; background:rgba(0,122,255,0.05); border:1px solid rgba(0,122,255,0.2);">
           <div style="font-size:24px; display:inline-block; margin-right:10px;">👑</div><div style="font-weight:800; font-size:14px; display:inline-block; color:var(--primary);">Dashboard Admin</div>
         </div>
       </div>
@@ -126,17 +123,19 @@
         </select>
 
         <div id="wrap-pinjaman">
-            <label class="input-label">Nominal (Pilih)</label>
+            <label class="input-label">Nominal Pinjaman</label>
             <select id="nominal-pinjaman" class="custom-input" style="margin-bottom: 16px;" onchange="updateFormLogic()">
               <option value="100000">Rp 100.000</option><option value="200000">Rp 200.000</option>
               <option value="300000">Rp 300.000</option><option value="400000">Rp 400.000</option>
-              <option value="500000">Rp 500.000</option><option value="1000000">Rp 1.000.000</option>
+              <option value="500000">Rp 500.000</option><option value="600000">Rp 600.000</option>
+              <option value="700000">Rp 700.000</option><option value="800000">Rp 800.000</option>
+              <option value="900000">Rp 900.000</option><option value="1000000">Rp 1.000.000</option>
             </select>
         </div>
 
         <div id="wrap-baju" style="display:none;">
             <label class="input-label">Harga Barang Total</label>
-            <input type="number" id="nominal-baju" class="custom-input" placeholder="Misal: 250000" style="margin-bottom: 16px;">
+            <input type="number" id="nominal-baju" class="custom-input" placeholder="Misal: 250000" style="margin-bottom: 16px;" oninput="kalkulasiBunga()">
         </div>
 
         <label class="input-label">Tenor / Jatuh Tempo</label>
@@ -154,7 +153,7 @@
       </div>
     </div>
 
-    <!-- KEMBALIKAN: PELANGGAN VIEW -->
+    <!-- PELANGGAN VIEW -->
     <div id="pelanggan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -164,7 +163,7 @@
       <div id="list-pelanggan"></div>
     </div>
 
-    <!-- KEMBALIKAN: TIMELINE RIWAYAT VIEW -->
+    <!-- TIMELINE RIWAYAT VIEW -->
     <div id="detail-riwayat-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -178,12 +177,19 @@
       <div id="list-timeline"></div>
     </div>
 
-    <!-- TAGIHAN (CALENDAR STYLE) -->
+    <!-- TAGIHAN VIEW -->
     <div id="tagihan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
         <h2 style="font-size:18px;">Jadwal Tagihan</h2><div style="width:48px;"></div>
       </div>
+      
+      <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:8px;">
+         <button class="filter-btn active" id="f-semua" onclick="filterTagihan('SEMUA')">Semua</button>
+         <button class="filter-btn" id="f-pinjaman" onclick="filterTagihan('Pinjaman Uang')">Pinjaman</button>
+         <button class="filter-btn" id="f-baju" onclick="filterTagihan('Beli Baju')">Baju / PO</button>
+      </div>
+
       <div id="list-tagihan"></div>
     </div>
 
@@ -198,7 +204,6 @@
          <div id="tot-komisi" style="font-size:20px; font-weight:900; color:var(--success); margin-bottom: 16px;">Rp 0</div>
          <div style="font-size:12px; font-weight:bold; color:gray;">WAJIB DISETOR KE ADMIN</div>
          <div id="tot-setoran" style="font-size:28px; font-weight:900; color:var(--danger); margin-bottom: 20px;">Rp 0</div>
-         
          <button class="btn-primary" onclick="bukaModalSetor()">Setor Sekarang</button>
       </div>
     </div>
@@ -207,20 +212,75 @@
     <div id="admin-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px; color:var(--primary);">Admin Panel</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px; color:var(--primary);">Dashboard Admin</h2><div style="width:48px;"></div>
       </div>
-      <div class="glass" style="padding:20px; margin-bottom:16px; background:var(--primary); color:white;">
-         <div style="font-size:12px; font-weight:700; opacity:0.8;">Total Modal Pinjaman (Lunas)</div>
-         <div id="adm-modal" style="font-size:24px; font-weight:900; margin-bottom:12px;">Rp 0</div>
-         <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:10px; border-radius:12px;">
-            <div><span style="font-size:10px;">Laba (Bunga)</span><br><b id="adm-bunga">Rp 0</b></div>
-            <div style="text-align:right;"><span style="font-size:10px;">Komisi Staff Keluar</span><br><b id="adm-komisi">Rp 0</b></div>
+
+      <div class="glass" style="padding:16px; margin-bottom:16px; display:flex; gap:8px; align-items:center;">
+        <div style="flex:1;">
+            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">MULAI TANGGAL</div>
+            <input type="date" id="adm-start" class="custom-input" style="padding:12px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()">
+        </div>
+        <div style="flex:1;">
+            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TANGGAL</div>
+            <input type="date" id="adm-end" class="custom-input" style="padding:12px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()">
+        </div>
+      </div>
+
+      <div class="glass" style="padding:24px 20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
+         <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div>
+         <div id="adm-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
+         <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Kembali (Uang Ready)</div>
+         <div id="adm-ready" style="font-size:24px; font-weight:900; margin-bottom:16px;">Rp 0</div>
+         
+         <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.25); padding:12px; border-radius:16px; margin-bottom:16px;">
+            <div><span style="font-size:11px; opacity:0.9;">Laba Bunga Masuk</span><br><b id="adm-bunga" style="font-size:15px;">Rp 0</b></div>
+            <div style="text-align:right;"><span style="font-size:11px; opacity:0.9;">Komisi Staff Keluar</span><br><b id="adm-komisi" style="font-size:15px;">Rp 0</b></div>
+         </div>
+         <div style="text-align:center; padding-top:16px; border-top:1px dashed rgba(255,255,255,0.3);">
+            <span style="font-size:12px; font-weight:700;">LABA BERSIH TEREALISASI</span><br>
+            <b id="adm-laba" style="font-size:28px; color:#34C759; font-weight:900; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">Rp 0</b>
          </div>
       </div>
+
+      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Tambah Staff Baru</h3>
+      <div class="glass" style="padding: 16px; margin-bottom: 24px;">
+        <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="margin-bottom: 12px; padding: 12px;">
+        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="margin-bottom: 12px; padding: 12px;">
+        <input type="password" id="new-password" class="custom-input" placeholder="Password" style="margin-bottom: 12px; padding: 12px;">
+        <select id="new-role" class="custom-input" style="margin-bottom: 12px; padding: 12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
+        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()">Buat Akun Staff</button>
+      </div>
+
       <h3 style="font-size:15px; margin-bottom:12px;">Menunggu Approval Setoran</h3>
       <div id="adm-list-setor"></div>
       <h3 style="font-size:15px; margin-bottom:12px; margin-top:20px;">Request Edit/Hapus (>24 Jam)</h3>
       <div id="adm-list-req"></div>
+      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Log Aktivitas</h3>
+      <div id="adm-list-log" style="max-height: 400px; overflow-y:auto; padding-right:6px; margin-bottom:40px;"></div>
+    </div>
+
+    <!-- MODAL EDIT DATA (MODERN) -->
+    <div id="modal-edit" class="modal">
+      <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
+         <h3 style="margin-bottom:16px;">Ubah Data Tagihan</h3>
+         <input type="hidden" id="edit-id">
+         <div style="font-size:11px; color:gray; margin-bottom:16px;">Catatan: Perubahan di bawah 24 jam akan langsung di-approve sistem.</div>
+         <label class="input-label">Aksi</label>
+         <select id="edit-tipe" class="custom-input" style="margin-bottom:12px;" onchange="let d=document.getElementById('wrap-edit-data'); if(this.value==='EDIT') d.style.display='block'; else d.style.display='none';">
+            <option value="EDIT">Ubah Teks Data (Nama/HP/Nominal)</option>
+            <option value="DELETE">Hapus Tagihan Sepenuhnya</option>
+         </select>
+         <div id="wrap-edit-data">
+             <input type="text" id="edit-nama" class="custom-input" placeholder="Nama Pelanggan" style="margin-bottom: 12px; padding: 12px;">
+             <input type="tel" id="edit-hp" class="custom-input" placeholder="No HP Baru" style="margin-bottom: 12px; padding: 12px;">
+             <input type="number" id="edit-nom" class="custom-input" placeholder="Nominal Pinjaman/Baju Baru" style="margin-bottom: 12px; padding: 12px;">
+         </div>
+         <label class="input-label">Alasan / Note Wajib</label>
+         <input type="text" id="edit-alasan" class="custom-input" placeholder="Misal: Salah ketik nominal..." style="margin-bottom: 20px; padding: 12px;">
+         
+         <button class="btn-primary" id="btn-proses-edit" onclick="prosesEdit()">Kirim Permintaan</button>
+         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-edit').classList.remove('active')">Batal</button>
+      </div>
     </div>
 
     <!-- MODAL BAYAR TAGIHAN -->
@@ -242,13 +302,10 @@
       <div class="glass" style="width:100%; max-width:400px; padding: 24px;">
          <h3 style="margin-bottom:16px;">Form Setoran</h3>
          <label class="input-label">Metode Setoran</label>
-         <select id="metode-setor" class="custom-input" style="margin-bottom: 16px;" onchange="let f = document.getElementById('wrap-foto-tf'); if(this.value==='TF') f.style.display='block'; else f.style.display='none';">
+         <select id="metode-setor" class="custom-input" style="margin-bottom: 16px;">
             <option value="CASH">CASH (Tunai)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
          </select>
-         <div id="wrap-foto-tf" style="display:none;">
-            <label class="input-label">Bukti TF</label>
-            <input type="file" id="foto-tf" class="custom-input" accept="image/*" style="margin-bottom: 16px; padding:10px;">
-         </div>
+         <div style="font-size:12px; color:gray; margin-bottom: 16px;">Admin akan melakukan pengecekan mutasi manual jika TF.</div>
          <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim ke Admin</button>
          <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-setor').classList.remove('active')">Batal</button>
       </div>
@@ -257,27 +314,35 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyYkoGr8yhpcnIX6YkqFvbv8W6TFIROIBIyr6m2925r6LAGJx1dqgL3Gope8ziXjqQOKQ/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxSB7C8WiTNdGFVmQTLlLd7_sPCM7Dl3TpbucC5LFYGqzV_MC1HXy2gsa1D_18yy2pTmw/exec"; 
     let currentUser = null, sessionToken = "", listBayarUnsetor = [], totalUangSetor = 0;
-    let globalPelangganData = []; // Tambahan variabel untuk pencarian
+    let globalPelangganData = [], globalTagihanData = [];
+
+    // --- PWA INSTALL & SESSION ---
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      document.getElementById('btn-install-app').style.display = 'block';
+    });
+    document.getElementById('btn-install-app').addEventListener('click', async () => {
+      if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('btn-install-app').style.display = 'none'; deferredPrompt = null; }
+    });
+
+    window.onload = () => {
+       let sess = JSON.parse(localStorage.getItem('nao_session'));
+       if (sess && sess.expiry > new Date().getTime()) {
+           currentUser = sess.user; sessionToken = sess.token;
+           document.getElementById('user-name').innerText = currentUser.name; 
+           if(currentUser.role === 'Admin') document.getElementById('menu-admin').style.display = 'block';
+           switchView('dashboard-view'); loadDataDashboard();
+       }
+    };
 
     function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
     function formatRp(a) { return "Rp " + parseInt(a).toLocaleString('id-ID'); }
-    
-    // TOAST MODERN
-    function showToast(msg, type='success') {
-      let t = document.getElementById('custom-toast');
-      document.getElementById('t-icon').innerText = type === 'success' ? '✅' : '⚠️';
-      document.getElementById('t-msg').innerText = msg;
-      t.className = type; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
-    }
+    function showToast(msg, type='success') { let t = document.getElementById('custom-toast'); document.getElementById('t-icon').innerText = type === 'success' ? '✅' : '⚠️'; document.getElementById('t-msg').innerText = msg; t.className = type; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
-    function getBase64(file) {
-      return new Promise((res, rej) => { if (!file) return res(""); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); r.onerror = e => rej(e); });
-    }
-
-    // --- CEK PELANGGAN ---
+    // --- DATA PELANGGAN (AUTO FILL) ---
     async function cekDataPelanggan() {
         let hp = document.getElementById('no-hp'); let v = hp.value.replace(/[^0-9+]/g, ''); 
         if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v; hp.value = v;
@@ -288,7 +353,7 @@
         }
     }
 
-    // --- LOGIKA FORM & TENOR KHUSUS ---
+    // --- FORM LOGIC & TENOR ---
     function updateFormLogic() {
       let cat = document.getElementById('kategori').value;
       let wPinj = document.getElementById('wrap-pinjaman'), wBaju = document.getElementById('wrap-baju'), tempo = document.getElementById('tempo'), wBunga = document.getElementById('wrap-bunga');
@@ -327,16 +392,18 @@
       try {
         let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "login", username: u, password: p }) }).then(r => r.json());
         if(res.success) { 
-           currentUser = res.data; sessionToken = res.token; document.getElementById('user-name').innerText = currentUser.name; 
+           currentUser = res.data; sessionToken = res.token; 
+           localStorage.setItem('nao_session', JSON.stringify({user: currentUser, token: sessionToken, expiry: res.expiry}));
+           document.getElementById('user-name').innerText = currentUser.name; 
            if(currentUser.role === 'Admin') document.getElementById('menu-admin').style.display = 'block';
-           switchView('dashboard-view'); 
+           switchView('dashboard-view'); loadDataDashboard();
         } else showToast(res.message, 'error');
       } catch(e) { showToast("Error Server", 'error'); }
       document.getElementById('btn-login').innerText = "Masuk Sistem";
     }
-    function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); switchView('login-view'); }
+    function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); localStorage.removeItem('nao_session'); switchView('login-view'); }
 
-    // --- SUBMIT PENGJUAN ---
+    // --- SUBMIT ---
     async function submitPengajuan() {
       let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan..."; btn.disabled = true;
       let cat = document.getElementById('kategori').value, nom = cat==='Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : document.getElementById('nominal-baju').value;
@@ -349,35 +416,144 @@
       };
 
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-      if(res.success) { showToast("Sukses!"); switchView('dashboard-view'); document.getElementById('nama-peminjam').value=''; document.getElementById('no-hp').value=''; document.getElementById('kode-cust').value=''; } 
+      if(res.success) { showToast("Sukses!"); switchView('dashboard-view'); document.getElementById('nama-peminjam').value=''; document.getElementById('no-hp').value=''; document.getElementById('kode-cust').value=''; loadDataDashboard(); } 
       else showToast(res.message, 'error');
       btn.innerText = "Simpan Pengajuan"; btn.disabled = false;
     }
 
-    // --- MENGEMBALIKAN: FUNGSI PELANGGAN & RIWAYAT ---
+    // --- DASHBOARD & TAGIHAN ---
+    async function loadDataDashboard() {
+       fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r=>r.json()).then(res => {
+          if(res.success) {
+             let blnIni = new Date().getMonth(); let hitung = 0;
+             res.data.forEach(i => { if(new Date(i.jt).getMonth() === blnIni) hitung++; });
+             let b = document.getElementById('badge-tagihan');
+             if(hitung > 0) { b.style.display = 'flex'; b.innerText = hitung; } else b.style.display = 'none';
+          }
+       });
+    }
+
+    const blnArr = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
+    async function loadTagihan() {
+      let list = document.getElementById('list-tagihan'); list.innerHTML = "<center style='font-weight:bold;'>Loading...</center>";
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      if(res.success) { globalTagihanData = res.data; renderTagihan('SEMUA'); } 
+      else { list.innerHTML = `<center style='color:var(--danger); font-weight:bold;'>Error: ${res.message}</center>`; if(res.message.includes('Sesi')) { localStorage.removeItem('nao_session'); setTimeout(() => { doLogout(); }, 1500); } }
+    }
+
+    function filterTagihan(filterCat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if(filterCat==='SEMUA') document.getElementById('f-semua').classList.add('active');
+      else if(filterCat==='Pinjaman Uang') document.getElementById('f-pinjaman').classList.add('active');
+      else document.getElementById('f-baju').classList.add('active');
+      renderTagihan(filterCat);
+    }
+
+    function renderTagihan(filterCat) {
+      let list = document.getElementById('list-tagihan'); list.innerHTML = ""; 
+      let fData = globalTagihanData;
+      if(filterCat !== 'SEMUA') fData = globalTagihanData.filter(i => i.cat.includes(filterCat));
+
+      if(fData.length === 0) return list.innerHTML = "<center style='color:gray;'>Bersih! Tidak ada tagihan.</center>";
+      fData.sort((a,b) => new Date(a.jt || 0) - new Date(b.jt || 0));
+
+      fData.forEach(i => {
+        let dJt = new Date(i.jt); let isValidDate = !isNaN(dJt.getTime()); let diffDays = isValidDate ? Math.ceil((dJt - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+        let bgCal = "var(--primary)", txtB = "Aman";
+        if (diffDays <= 2 && diffDays >= 0) { bgCal = "var(--warning)"; txtB = `H-${diffDays}`; }
+        else if (diffDays < 0) { bgCal = "var(--danger)"; txtB = `TELAT!`; }
+        let blnTeks = isValidDate ? blnArr[dJt.getMonth()] : "---"; let tglTeks = isValidDate ? dJt.getDate() : "-";
+        let nomP = parseInt(i.nom) || 0; let bngP = parseInt(i.bng) || 0; let byrP = parseInt(i.bayar) || 0;
+
+        let btnHtml = '';
+        if (i.cat === 'Pinjaman Uang') {
+           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
+                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
+        } else {
+           let sisa = nomP - byrP; let cicilW = Math.ceil(nomP / 4); // Pembulatan mingguan
+           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
+                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
+        }
+
+        list.innerHTML += `
+          <div class="cal-card">
+             <div class="cal-date-box" style="background:${bgCal}"><div class="cal-month">${blnTeks}</div><div class="cal-day">${tglTeks}</div></div>
+             <div class="cal-info">
+                <div style="font-weight:800; font-size:15px;">${i.nama || '-'} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
+                <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat || '-'} | ${i.kode || '-'}</div>
+                <div style="font-size:12px; background:#f0f0f5; padding:6px; border-radius:6px; margin-bottom:8px;">
+                   Sisa Pokok: <b>${formatRp(nomP - byrP)}</b><br>
+                   ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
+                </div>
+                <div style="display:flex; gap:6px;">${btnHtml}</div>
+                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:gray; text-decoration:underline; cursor:pointer;" onclick="bukaModalEdit('${i.id}', '${i.nama}', '${i.hp}', '${nomP}')">Edit/Hapus Data</span></div>
+             </div>
+          </div>`;
+      });
+    }
+
+    function bukaModalEdit(id, nama, hp, nom) {
+       document.getElementById('edit-id').value = id;
+       document.getElementById('edit-nama').value = nama;
+       document.getElementById('edit-hp').value = hp;
+       document.getElementById('edit-nom').value = nom;
+       document.getElementById('edit-alasan').value = '';
+       document.getElementById('modal-edit').classList.add('active');
+    }
+
+    function prosesEdit() {
+       let id = document.getElementById('edit-id').value;
+       let tipe = document.getElementById('edit-tipe').value;
+       let alasan = document.getElementById('edit-alasan').value.trim();
+       if(!alasan) return showToast("Alasan/Note Wajib Diisi!", "error");
+
+       let payload = { id: id, tipe: tipe, alasan: alasan };
+       if(tipe === 'EDIT') {
+           payload.editData = {
+               nama: document.getElementById('edit-nama').value,
+               noHp: document.getElementById('edit-hp').value,
+               nominal: document.getElementById('edit-nom').value
+           };
+       }
+
+       let btn = document.getElementById('btn-proses-edit'); btn.innerText = "Memproses..."; btn.disabled = true;
+       fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r=>r.json()).then(res => {
+          showToast(res.message, res.success ? 'success' : 'error'); 
+          document.getElementById('modal-edit').classList.remove('active'); loadTagihan();
+          btn.innerText = "Kirim Permintaan"; btn.disabled = false;
+       });
+    }
+
+    function bukaModalBayar(id, jenis, nomRec, title) {
+      document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
+      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar');
+      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = nomRec; } else { wrapNom.style.display = 'none'; inNom.value = nomRec; }
+      document.getElementById('modal-bayar').classList.add('active');
+    }
+
+    async function prosesBayar() {
+      let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
+      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: document.getElementById('modal-jenis-bayar').value, nomBayar: document.getElementById('nominal-bayar').value };
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
+      if(res.success) { showToast("Pembayaran Sukses!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); }
+      btn.innerText = "Proses Pembayaran"; btn.disabled = false;
+    }
+
+    // --- PELANGGAN ---
     async function loadPelanggan() {
       let list = document.getElementById('list-pelanggan'); list.innerHTML = "<center style='font-weight:bold;'>Menganalisis Data...</center>";
       try {
         let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getPelanggan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
-        if(res.success) {
-          globalPelangganData = res.data;
-          renderPelanggan(globalPelangganData);
-        } else {
-          list.innerHTML = `<center style='color:red;'>${res.message}</center>`;
-        }
-      } catch(e) {
-        list.innerHTML = "<center style='color:red;'>Gagal koneksi ke server</center>";
-      }
+        if(res.success) { globalPelangganData = res.data; renderPelanggan(globalPelangganData); } else { list.innerHTML = `<center style='color:red;'>${res.message}</center>`; }
+      } catch(e) { list.innerHTML = "<center style='color:red;'>Gagal koneksi ke server</center>"; }
     }
-
     function renderPelanggan(data) {
       let list = document.getElementById('list-pelanggan'); list.innerHTML = "";
       if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
-      
       data.forEach(p => {
         let sBadge = p.statusLancar ? `<span class="badge" style="background:rgba(52,199,89,0.1); color:var(--success);">Kredit: BAIK</span>` : `<span class="badge" style="background:rgba(255,59,48,0.1); color:var(--danger);">Pernah Telat</span>`;
         list.innerHTML += `
-          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')">
+          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')" style="cursor:pointer;">
             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
             <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
             <div style="font-size: 12px; color: gray; font-weight:600;">📞 ${p.noHp}</div>
@@ -386,161 +562,25 @@
           </div>`;
       });
     }
-
-    function filterPelanggan() {
-      let q = document.getElementById('search-pelanggan').value.toLowerCase();
-      let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q));
-      renderPelanggan(fData);
-    }
-
+    function filterPelanggan() { let q = document.getElementById('search-pelanggan').value.toLowerCase(); let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q)); renderPelanggan(fData); }
     async function bukaRiwayatLengkap(noHp, nama, kode) {
-      document.getElementById('dr-nama').innerText = nama;
-      document.getElementById('dr-kode').innerText = kode;
-      document.getElementById('dr-hp').innerText = noHp;
-      
-      switchView('detail-riwayat-view');
-      let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
-
+      document.getElementById('dr-nama').innerText = nama; document.getElementById('dr-kode').innerText = kode; document.getElementById('dr-hp').innerText = noHp;
+      switchView('detail-riwayat-view'); let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getRiwayatLengkap", username: currentUser.username, token: sessionToken, payload: {noHp: noHp} }) }).then(r => r.json());
       if(res.success) {
-         tl.innerHTML = "";
-         if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
-
+         tl.innerHTML = ""; if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
          res.data.forEach(item => {
-             let htmlBayar = "";
-             item.bayar.forEach(b => {
-                 let cls = b.jenisBayar === 'LUNAS' ? 'tl-success' : 'tl-warning';
-                 let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
-                 htmlBayar += `
-                   <div class="timeline-item ${cls}">
-                      <div class="tl-date">${tglB}</div>
-                      <div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b> senilai ${formatRp(b.nominal)}</div>
-                   </div>`;
-             });
-
-             let jatuhTempoStatus = "";
-             if (item.status === 'PENDING') {
-                 let jt = new Date(item.jatuhTempo);
-                 let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : "";
-                 jatuhTempoStatus = `
-                   <div class="timeline-item ${lewat ? 'tl-danger' : ''}">
-                      <div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div>
-                      <div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div>
-                   </div>`;
-             }
-
-             tl.innerHTML += `
-               <div class="glass" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);">
-                 <div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div>
-                 <div class="timeline">
-                    <div class="timeline-item">
-                       <div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div>
-                       <div class="tl-desc">📥 <b>Cair/Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div>
-                    </div>
-                    ${htmlBayar}
-                    ${jatuhTempoStatus}
-                 </div>
-               </div>`;
+             let htmlBayar = ""; item.bayar.forEach(b => { let cls = b.jenisBayar === 'LUNAS' ? 'tl-success' : 'tl-warning'; let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'}); htmlBayar += `<div class="timeline-item ${cls}"><div class="tl-date">${tglB}</div><div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b> senilai ${formatRp(b.nominal)}</div></div>`; });
+             let jtStatus = ""; if (item.status === 'PENDING') { let jt = new Date(item.jatuhTempo); let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : ""; jtStatus = `<div class="timeline-item ${lewat ? 'tl-danger' : ''}"><div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div></div>`; }
+             tl.innerHTML += `<div class="glass" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);"><div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div><div class="timeline"><div class="timeline-item"><div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc">📥 <b>Cair/Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div></div>${htmlBayar}${jtStatus}</div></div>`;
          });
       }
-    }
-
-    // --- TAGIHAN CALENDAR ---
-    const bln = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
-    async function loadTagihan() {
-      let list = document.getElementById('list-tagihan'); 
-      list.innerHTML = "<center style='font-weight:bold;'>Loading...</center>";
-      
-      try {
-        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getTagihan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
-        
-        if(res.success) {
-          list.innerHTML = ""; 
-          if(!res.data || res.data.length === 0) return list.innerHTML = "<center style='color:gray;'>Bersih! Tidak ada tagihan.</center>";
-          
-          res.data.sort((a,b) => new Date(a.jt || 0) - new Date(b.jt || 0));
-
-          res.data.forEach(i => {
-            let dJt = new Date(i.jt); 
-            let isValidDate = !isNaN(dJt.getTime());
-            let diffDays = isValidDate ? Math.ceil((dJt - new Date()) / (1000 * 60 * 60 * 24)) : 0;
-            
-            let bgCal = "var(--primary)", txtB = "Aman";
-            if (diffDays <= 2 && diffDays >= 0) { bgCal = "var(--warning)"; txtB = `H-${diffDays}`; }
-            else if (diffDays < 0) { bgCal = "var(--danger)"; txtB = `TELAT!`; }
-            
-            let blnTeks = isValidDate ? bln[dJt.getMonth()] : "---";
-            let tglTeks = isValidDate ? dJt.getDate() : "-";
-            let nomP = parseInt(i.nom) || 0; let bngP = parseInt(i.bng) || 0; let byrP = parseInt(i.bayar) || 0;
-
-            let btnHtml = '';
-            if (i.cat === 'Pinjaman Uang') {
-               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
-                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
-            } else {
-               let sisa = nomP - byrP; let cicilW = nomP / 4; 
-               btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
-                          <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
-            }
-
-            list.innerHTML += `
-              <div class="cal-card">
-                 <div class="cal-date-box" style="background:${bgCal}">
-                    <div class="cal-month">${blnTeks}</div>
-                    <div class="cal-day">${tglTeks}</div>
-                 </div>
-                 <div class="cal-info">
-                    <div style="font-weight:800; font-size:15px;">${i.nama || '-'} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
-                    <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat || '-'} | ${i.kode || '-'}</div>
-                    <div style="font-size:12px; background:#f0f0f5; padding:6px; border-radius:6px; margin-bottom:8px;">
-                       Sisa Pokok: <b>${formatRp(nomP - byrP)}</b><br>
-                       ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
-                    </div>
-                    <div style="display:flex; gap:6px;">${btnHtml}</div>
-                    <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:gray; text-decoration:underline; cursor:pointer;" onclick="reqEdit('${i.id}')">Edit/Hapus Data</span></div>
-                 </div>
-              </div>`;
-          });
-        } else {
-           list.innerHTML = `<center style='color:var(--danger); font-weight:bold;'>Error: ${res.message}</center>`;
-           if(res.message.includes('Sesi')) { setTimeout(() => { doLogout(); }, 1500); }
-        }
-      } catch (err) {
-        list.innerHTML = `<center style='color:var(--danger); font-weight:bold; font-size: 13px;'>Terdapat Format Data Lama di Google Sheet.<br><br>Harap Hapus Sheet "Pengajuan", lalu jalankan autoSetup() di Apps Script.</center>`;
-      }
-    }
-
-    function reqEdit(id) {
-       let a = prompt("Alasan Edit / Hapus (Misal: Hapus krn batal):");
-       if(a) {
-         fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id:id, tipe:'DELETE', alasan:a} }) }).then(r=>r.json()).then(res => {
-            showToast(res.message, res.success ? 'success' : 'error'); loadTagihan();
-         });
-       }
-    }
-
-    function bukaModalBayar(id, jenis, nominalRekomendasi, title) {
-      document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
-      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar');
-      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = nominalRekomendasi; } else { wrapNom.style.display = 'none'; inNom.value = nominalRekomendasi; }
-      document.getElementById('modal-bayar').classList.add('active');
-    }
-
-    async function prosesBayar() {
-      let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
-      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: document.getElementById('modal-jenis-bayar').value, nomBayar: document.getElementById('nominal-bayar').value };
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-      if(res.success) { showToast("Pembayaran Sukses!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); }
-      btn.innerText = "Proses Pembayaran"; btn.disabled = false;
     }
 
     // --- SETORAN ---
     async function loadSetoran() {
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
-      if(res.success) {
-         totalUangSetor = res.data.setor; listBayarUnsetor = res.data.ids;
-         document.getElementById('tot-komisi').innerText = formatRp(res.data.komisi); document.getElementById('tot-setoran').innerText = formatRp(totalUangSetor);
-      }
+      if(res.success) { totalUangSetor = res.data.setor; listBayarUnsetor = res.data.ids; document.getElementById('tot-komisi').innerText = formatRp(res.data.komisi); document.getElementById('tot-setoran').innerText = formatRp(totalUangSetor); }
     }
     function bukaModalSetor() {
       if(listBayarUnsetor.length === 0) return showToast("Tidak ada dana untuk disetor", "error");
@@ -548,46 +588,53 @@
     }
     async function prosesSetor() {
       let tipe = document.getElementById('metode-setor').value;
-      let foto = document.getElementById('foto-tf').files[0];
-      if(tipe === 'TF' && !foto) return showToast("Wajib upload bukti TF!", "error");
-      
-      let base64Foto = "";
-      if(foto) base64Foto = await getBase64(foto);
-
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {tipe: tipe, totalSetor: totalUangSetor, ids: listBayarUnsetor, fotoBukti: base64Foto} }) }).then(r => r.json());
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {tipe: tipe, totalSetor: totalUangSetor, ids: listBayarUnsetor} }) }).then(r => r.json());
       if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); }
       btn.innerText = "Kirim ke Admin"; btn.disabled = false;
     }
 
     // --- ADMIN ---
+    function setDefaultDatesAdmin() {
+      let today = new Date(); let tzOffset = today.getTimezoneOffset() * 60000;
+      let localToday = new Date(today.getTime() - tzOffset); let localFirst = new Date(new Date(today.getFullYear(), today.getMonth(), 1).getTime() - tzOffset);
+      document.getElementById('adm-start').value = localFirst.toISOString().split('T')[0]; document.getElementById('adm-end').value = localToday.toISOString().split('T')[0];
+    }
     async function loadAdmin() {
-      let listS = document.getElementById('adm-list-setor'); let listR = document.getElementById('adm-list-req');
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getAdminData", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+      let startStr = document.getElementById('adm-start').value; let endStr = document.getElementById('adm-end').value;
+      let listS = document.getElementById('adm-list-setor'); let listR = document.getElementById('adm-list-req'); let listL = document.getElementById('adm-list-log');
+      listS.innerHTML = "<center style='font-size:12px;'>Loading...</center>";
+      
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getAdminData", username: currentUser.username, token: sessionToken, payload: { startDate: startStr, endDate: endStr } }) }).then(r => r.json());
       if(res.success) {
-         document.getElementById('adm-modal').innerText = formatRp(res.stats.modal);
-         document.getElementById('adm-bunga').innerText = formatRp(res.stats.laba);
-         document.getElementById('adm-komisi').innerText = formatRp(res.stats.komisi);
+         document.getElementById('adm-out').innerText = formatRp(res.stats.out); document.getElementById('adm-ready').innerText = formatRp(res.stats.ready);
+         document.getElementById('adm-bunga').innerText = formatRp(res.stats.bunga); document.getElementById('adm-komisi').innerText = formatRp(res.stats.komisi); document.getElementById('adm-laba').innerText = formatRp(res.stats.laba);
 
-         listS.innerHTML = "";
-         res.setoran.forEach(s => {
-           listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">${formatRp(s.nom)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px;">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Approve Setoran</button></div>`;
-         });
+         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">${formatRp(s.nom)}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Terima Setoran</button></div>`; });
          if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran tertunda.</div>";
 
-         listR.innerHTML = "";
-         res.approvals.forEach(r => {
-           listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0;">ID: ${r.target}<br>Alasan: ${r.detail}</div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`;
+         listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br>Alasan: <b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`; });
+         if(res.approvals.length===0) listR.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada request aksi.</div>";
+
+         listL.innerHTML = ""; res.logs.forEach(l => {
+           let tglF = new Date(l.tgl).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+           let statColor = (l.status.includes('FAIL') || l.status.includes('REJECT') || l.status.includes('PENDING')) ? 'var(--danger)' : 'var(--primary)';
+           listL.innerHTML += `<div class="list-card" style="padding:12px; margin-bottom:8px; border-left:4px solid ${statColor}; width:100%;"><div style="display:flex; justify-content:space-between; width:100%; margin-bottom:4px;"><b style="font-size:13px;">${l.staff}</b><span style="font-size:10px; color:gray;">${tglF}</span></div><div style="font-size:12px; font-weight:800; color:${statColor};">${l.aksi}</div><div style="font-size:11px; color:gray; margin-top:4px; line-height:1.4;">${l.detail}</div></div>`;
          });
-         if(res.approvals.length===0) listR.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada request.</div>";
+         if(res.logs.length===0) listL.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada aktivitas karyawan.</div>";
       }
     }
-    
     function admApprove(id, jenis) {
       if(!confirm("Approve data ini?")) return;
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => {
-         showToast(res.message); loadAdmin();
-      });
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { showToast(res.message); loadAdmin(); });
+    }
+    async function tambahStaff() {
+       let u = document.getElementById('new-username').value.trim(), n = document.getElementById('new-name').value.trim(), p = document.getElementById('new-password').value.trim(), r = document.getElementById('new-role').value;
+       if(!u || !n || !p) return showToast("Harap isi semua data staff!", "error"); if(p.length < 6) return showToast("Password minimal 6 karakter!", "error");
+       let btn = document.getElementById('btn-add-staff'); btn.innerText = "Memproses..."; btn.disabled = true;
+       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addStaff", username: currentUser.username, token: sessionToken, payload: { username: u, nama: n, password: p, role: r } }) }).then(r => r.json());
+       if(res.success) { showToast("Akun Staff Berhasil Dibuat!"); document.getElementById('new-username').value = ''; document.getElementById('new-name').value = ''; document.getElementById('new-password').value = ''; } else { showToast(res.message, "error"); }
+       btn.innerText = "Buat Akun Staff"; btn.disabled = false;
     }
   </script>
 </body>
