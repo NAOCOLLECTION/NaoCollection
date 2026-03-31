@@ -31,14 +31,25 @@
     #custom-toast.error { border-left: 4px solid var(--danger); }
 
     /* CALENDAR TAGIHAN */
-    .cal-card { display:flex; background:#fff; border-radius:16px; padding:12px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); gap:16px; align-items:center;}
+    .cal-card, .list-card { display:flex; background:#fff; border-radius:16px; padding:12px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); gap:16px; align-items:center;}
+    .list-card { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; }
     .cal-date-box { background:var(--primary); color:white; border-radius:12px; width:60px; height:65px; display:flex; flex-direction:column; text-align:center; overflow:hidden; flex-shrink:0; box-shadow:0 4px 10px rgba(0,122,255,0.2);}
     .cal-month { font-size:10px; font-weight:800; text-transform:uppercase; background:rgba(0,0,0,0.2); padding:4px 0;}
     .cal-day { font-size:24px; font-weight:900; line-height:1.2; padding-top:4px;}
-    .cal-info { flex:1; }
+    .cal-info { flex:1; width: 100%;}
     .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display:inline-block;}
     .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; padding: 20px;}
     .modal.active { display: flex; }
+
+    /* CSS TIMELINE RIWAYAT */
+    .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
+    .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
+    .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
+    .tl-date { font-weight: 800; color: var(--text-muted); font-size: 11px; margin-bottom: 2px; }
+    .tl-desc { font-weight: 600; color: var(--text-main); line-height: 1.4;}
+    .tl-danger::before { background: var(--danger); }
+    .tl-warning::before { background: var(--warning); }
+    .tl-success::before { background: var(--success); }
   </style>
 </head>
 <body>
@@ -70,6 +81,16 @@
         <div class="glass menu-card" onclick="switchView('tagihan-view'); loadTagihan();">
           <div style="font-size:32px;">📅</div><div style="font-weight:800; font-size:14px;">Tagihan</div>
         </div>
+        
+        <!-- KEMBALIKAN MENU PELANGGAN -->
+        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px; justify-content: flex-start;">
+          <div style="font-size:36px;">👥</div>
+          <div style="text-align: left;">
+            <div style="font-weight:800; font-size: 16px;">Data Pelanggan</div>
+            <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Cari & Cek Timeline Riwayat</div>
+          </div>
+        </div>
+
         <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
           <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Kasir (Komisi)</div>
         </div>
@@ -129,9 +150,32 @@
         <label class="input-label">Catatan</label>
         <textarea id="catatan" class="custom-input" rows="2" style="margin-bottom: 20px;" placeholder="Barang yang dibeli / Note tambahan..."></textarea>
 
-        <!-- FOTO & TTD DIHAPUS SESUAI PERMINTAAN -->
         <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Pengajuan</button>
       </div>
+    </div>
+
+    <!-- KEMBALIKAN: PELANGGAN VIEW -->
+    <div id="pelanggan-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Data Pelanggan</h2><div style="width:48px;"></div>
+      </div>
+      <input type="text" id="search-pelanggan" class="custom-input" placeholder="🔍 Cari Nama / No WA..." onkeyup="filterPelanggan()" style="margin-bottom: 16px;">
+      <div id="list-pelanggan"></div>
+    </div>
+
+    <!-- KEMBALIKAN: TIMELINE RIWAYAT VIEW -->
+    <div id="detail-riwayat-view" class="view">
+      <div class="dash-header">
+        <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <h2 style="font-size:18px;">Timeline Riwayat</h2><div style="width:48px;"></div>
+      </div>
+      <div class="glass" style="padding:20px; margin-bottom:16px;">
+         <div style="font-size:12px; font-weight:800; color:var(--primary);" id="dr-kode"></div>
+         <div style="font-size:20px; font-weight:900; margin-bottom:4px;" id="dr-nama"></div>
+         <div style="font-size:14px; color:var(--text-muted); font-weight:600;" id="dr-hp"></div>
+      </div>
+      <div id="list-timeline"></div>
     </div>
 
     <!-- TAGIHAN (CALENDAR STYLE) -->
@@ -213,8 +257,9 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbz44bYMJoPTMkWamFa1rYnX1J_taLvnO7RH6YUmO-u77VCY0Oqhv_JwhIDBU8n3ma8usQ/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyYkoGr8yhpcnIX6YkqFvbv8W6TFIROIBIyr6m2925r6LAGJx1dqgL3Gope8ziXjqQOKQ/exec"; 
     let currentUser = null, sessionToken = "", listBayarUnsetor = [], totalUangSetor = 0;
+    let globalPelangganData = []; // Tambahan variabel untuk pencarian
 
     function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
     function formatRp(a) { return "Rp " + parseInt(a).toLocaleString('id-ID'); }
@@ -291,7 +336,7 @@
     }
     function doLogout() { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "doLogout", username: currentUser.username, token: sessionToken }) }); switchView('login-view'); }
 
-    // --- SUBMIT ---
+    // --- SUBMIT PENGJUAN ---
     async function submitPengajuan() {
       let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan..."; btn.disabled = true;
       let cat = document.getElementById('kategori').value, nom = cat==='Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : document.getElementById('nominal-baju').value;
@@ -309,9 +354,99 @@
       btn.innerText = "Simpan Pengajuan"; btn.disabled = false;
     }
 
+    // --- MENGEMBALIKAN: FUNGSI PELANGGAN & RIWAYAT ---
+    async function loadPelanggan() {
+      let list = document.getElementById('list-pelanggan'); list.innerHTML = "<center style='font-weight:bold;'>Menganalisis Data...</center>";
+      try {
+        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getPelanggan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
+        if(res.success) {
+          globalPelangganData = res.data;
+          renderPelanggan(globalPelangganData);
+        } else {
+          list.innerHTML = `<center style='color:red;'>${res.message}</center>`;
+        }
+      } catch(e) {
+        list.innerHTML = "<center style='color:red;'>Gagal koneksi ke server</center>";
+      }
+    }
+
+    function renderPelanggan(data) {
+      let list = document.getElementById('list-pelanggan'); list.innerHTML = "";
+      if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
+      
+      data.forEach(p => {
+        let sBadge = p.statusLancar ? `<span class="badge" style="background:rgba(52,199,89,0.1); color:var(--success);">Kredit: BAIK</span>` : `<span class="badge" style="background:rgba(255,59,48,0.1); color:var(--danger);">Pernah Telat</span>`;
+        list.innerHTML += `
+          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')">
+            <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
+            <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
+            <div style="font-size: 12px; color: gray; font-weight:600;">📞 ${p.noHp}</div>
+            <div style="font-size: 12px; font-weight: 700; margin-top: 8px;">Total Riwayat Transaksi: <span style="color:var(--success)">${formatRp(p.totalPinjaman)}</span></div>
+            <div style="margin-top:10px; font-size:11px; font-weight:800; color:var(--primary); text-align:right; width:100%;">Lihat Detail Timeline ➡️</div>
+          </div>`;
+      });
+    }
+
+    function filterPelanggan() {
+      let q = document.getElementById('search-pelanggan').value.toLowerCase();
+      let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q));
+      renderPelanggan(fData);
+    }
+
+    async function bukaRiwayatLengkap(noHp, nama, kode) {
+      document.getElementById('dr-nama').innerText = nama;
+      document.getElementById('dr-kode').innerText = kode;
+      document.getElementById('dr-hp').innerText = noHp;
+      
+      switchView('detail-riwayat-view');
+      let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
+
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getRiwayatLengkap", username: currentUser.username, token: sessionToken, payload: {noHp: noHp} }) }).then(r => r.json());
+      if(res.success) {
+         tl.innerHTML = "";
+         if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
+
+         res.data.forEach(item => {
+             let htmlBayar = "";
+             item.bayar.forEach(b => {
+                 let cls = b.jenisBayar === 'LUNAS' ? 'tl-success' : 'tl-warning';
+                 let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+                 htmlBayar += `
+                   <div class="timeline-item ${cls}">
+                      <div class="tl-date">${tglB}</div>
+                      <div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b> senilai ${formatRp(b.nominal)}</div>
+                   </div>`;
+             });
+
+             let jatuhTempoStatus = "";
+             if (item.status === 'PENDING') {
+                 let jt = new Date(item.jatuhTempo);
+                 let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : "";
+                 jatuhTempoStatus = `
+                   <div class="timeline-item ${lewat ? 'tl-danger' : ''}">
+                      <div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div>
+                      <div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div>
+                   </div>`;
+             }
+
+             tl.innerHTML += `
+               <div class="glass" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);">
+                 <div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div>
+                 <div class="timeline">
+                    <div class="timeline-item">
+                       <div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div>
+                       <div class="tl-desc">📥 <b>Cair/Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div>
+                    </div>
+                    ${htmlBayar}
+                    ${jatuhTempoStatus}
+                 </div>
+               </div>`;
+         });
+      }
+    }
+
     // --- TAGIHAN CALENDAR ---
     const bln = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
-    
     async function loadTagihan() {
       let list = document.getElementById('list-tagihan'); 
       list.innerHTML = "<center style='font-weight:bold;'>Loading...</center>";
@@ -323,7 +458,6 @@
           list.innerHTML = ""; 
           if(!res.data || res.data.length === 0) return list.innerHTML = "<center style='color:gray;'>Bersih! Tidak ada tagihan.</center>";
           
-          // Sortir by Tgl Jatuh Tempo terdekat (Aman dari tanggal kosong)
           res.data.sort((a,b) => new Date(a.jt || 0) - new Date(b.jt || 0));
 
           res.data.forEach(i => {
@@ -335,23 +469,16 @@
             if (diffDays <= 2 && diffDays >= 0) { bgCal = "var(--warning)"; txtB = `H-${diffDays}`; }
             else if (diffDays < 0) { bgCal = "var(--danger)"; txtB = `TELAT!`; }
             
-            // Render text kalender (Aman jika data tanggal rusak)
             let blnTeks = isValidDate ? bln[dJt.getMonth()] : "---";
             let tglTeks = isValidDate ? dJt.getDate() : "-";
-
-            // Pastikan Angka tidak pernah NaN (Not a Number)
-            let nomP = parseInt(i.nom) || 0;
-            let bngP = parseInt(i.bng) || 0;
-            let byrP = parseInt(i.bayar) || 0;
+            let nomP = parseInt(i.nom) || 0; let bngP = parseInt(i.bng) || 0; let byrP = parseInt(i.bayar) || 0;
 
             let btnHtml = '';
             if (i.cat === 'Pinjaman Uang') {
-               // PERBAIKAN: Parameter nominal dibungkus tanda kutip '' agar tidak error jika angkanya 0
                btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
                           <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
             } else {
-               let sisa = nomP - byrP; 
-               let cicilW = nomP / 4; 
+               let sisa = nomP - byrP; let cicilW = nomP / 4; 
                btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
                           <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
             }
@@ -379,12 +506,10 @@
            if(res.message.includes('Sesi')) { setTimeout(() => { doLogout(); }, 1500); }
         }
       } catch (err) {
-        console.log("Error Detail:", err);
         list.innerHTML = `<center style='color:var(--danger); font-weight:bold; font-size: 13px;'>Terdapat Format Data Lama di Google Sheet.<br><br>Harap Hapus Sheet "Pengajuan", lalu jalankan autoSetup() di Apps Script.</center>`;
       }
     }
 
-    
     function reqEdit(id) {
        let a = prompt("Alasan Edit / Hapus (Misal: Hapus krn batal):");
        if(a) {
@@ -425,7 +550,10 @@
       let tipe = document.getElementById('metode-setor').value;
       let foto = document.getElementById('foto-tf').files[0];
       if(tipe === 'TF' && !foto) return showToast("Wajib upload bukti TF!", "error");
-      let base64Foto = await getBase64(foto);
+      
+      let base64Foto = "";
+      if(foto) base64Foto = await getBase64(foto);
+
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {tipe: tipe, totalSetor: totalUangSetor, ids: listBayarUnsetor, fotoBukti: base64Foto} }) }).then(r => r.json());
       if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); }
@@ -443,17 +571,18 @@
 
          listS.innerHTML = "";
          res.setoran.forEach(s => {
-           listS.innerHTML += `<div class="list-card"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">${formatRp(s.nom)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px;">Lihat Bukti</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Approve Setoran</button></div>`;
+           listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - ${s.tipe}</div><div style="font-size:18px; color:var(--success); font-weight:900;">${formatRp(s.nom)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px;">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="admApprove('${s.id}', 'SETORAN')">Approve Setoran</button></div>`;
          });
-         if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran.</div>";
+         if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran tertunda.</div>";
 
          listR.innerHTML = "";
          res.approvals.forEach(r => {
-           listR.innerHTML += `<div class="list-card"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0;">ID: ${r.target}<br>Alasan: ${r.detail}</div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`;
+           listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0;">ID: ${r.target}<br>Alasan: ${r.detail}</div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="admApprove('${r.row}', 'LOG')">Approve Aksi</button></div>`;
          });
          if(res.approvals.length===0) listR.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada request.</div>";
       }
     }
+    
     function admApprove(id, jenis) {
       if(!confirm("Approve data ini?")) return;
       fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => {
