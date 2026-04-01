@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>NAO Collection</title>
-  <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;NAO Collection&quot;,&quot;short_name&quot;:&quot;NAO&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#F2F2F7&quot;,&quot;theme_color&quot;:&quot;#007AFF&quot;}">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"NAO Collection","short_name":"NAO","start_url":".","display":"standalone","background_color":"#F2F2F7","theme_color":"#007AFF"}'>
   <style>
     :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { background: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; }
+    body { background: #F2F2F7; color: var(--text-main); -webkit-font-smoothing: antialiased; }
     #app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; position:relative;}
     
     .view { display: none; padding: 24px; animation: fadeSlideIn 0.3s ease; } .view.active { display: block; }
@@ -54,7 +54,7 @@
     .tl-item::before { content:''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);}
     
     /* MODALS Z-INDEX & ANIMATION */
-    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index:99999; align-items:center; justify-content:center; padding: 20px; animation: fadeIn 0.2s;}
+    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index:99990; align-items:center; justify-content:center; padding: 20px; animation: fadeIn 0.2s;}
     .modal-overlay.active { display: flex; }
     .sys-modal { background: white; width: 100%; max-width: 340px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.9); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} } 
@@ -74,13 +74,17 @@
   <div id="custom-toast"><span id="t-icon"></span><span id="t-msg"></span></div>
 
   <div id="app-container">
+    
     <div id="login-view" class="view active">
       <div class="brand-logo">✨ NAO Collection</div>
       <div class="glass" style="padding: 24px; margin-bottom: 20px;">
-        <input type="text" id="username" class="custom-input" placeholder="Username">
-        <input type="password" id="password" class="custom-input" placeholder="Password">
-        <button class="btn-primary" id="btn-login" onclick="doLogin()">Masuk Sistem</button>
+        <form onsubmit="doLogin(); return false;">
+           <input type="text" id="username" class="custom-input" placeholder="Username">
+           <input type="password" id="password" class="custom-input" placeholder="Password">
+           <button type="submit" class="btn-primary" id="btn-login">Masuk Sistem</button>
+        </form>
       </div>
+      <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi PWA</button>
     </div>
 
     <div id="dashboard-view" class="view">
@@ -280,6 +284,17 @@
         <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TGL</div><input type="date" id="adm-end" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
       </div>
       
+      <div class="glass" style="padding: 16px; margin-bottom: 16px;">
+        <h3 style="font-size:15px; margin-bottom:12px;">Tambah Staff Baru</h3>
+        <form onsubmit="tambahStaff(); return false;">
+           <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="padding:12px;">
+           <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="padding:12px;">
+           <input type="password" id="new-password" class="custom-input" placeholder="Password" style="padding:12px;">
+           <select id="new-role" class="custom-input" style="padding:12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
+           <button type="submit" class="btn-primary" id="btn-add-staff" style="margin:0;">Buat Akun Staff</button>
+        </form>
+      </div>
+
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
          <div style="font-weight:900; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">🏷️ STATISTIK PINJAMAN UANG</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div><div id="adm-p-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
@@ -300,15 +315,6 @@
          <div style="text-align:center;"><span style="font-size:11px;">PENDAPATAN BERSIH (BAJU)</span><br><b id="adm-b-laba" style="font-size:24px; color:#ffd60a; font-weight:900;">Rp 0</b></div>
       </div>
 
-      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Tambah Staff Baru</h3>
-      <div class="glass" style="padding: 16px; margin-bottom: 24px;">
-        <input type="text" id="new-username" class="custom-input" placeholder="Username Login">
-        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap">
-        <input type="password" id="new-password" class="custom-input" placeholder="Password">
-        <select id="new-role" class="custom-input"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
-        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()">Buat Akun Staff</button>
-      </div>
-
       <h3 style="font-size:15px; margin-bottom:12px; color:var(--primary);">Input Komisi Baju Khusus</h3>
       <div id="adm-list-baju-komisi"></div>
       <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Approval Setoran</h3>
@@ -320,7 +326,7 @@
     </div>
   </div>
 
-  <div id="modal-pilih-aksi" class="modal-overlay">
+  <div id="modal-pilih-aksi" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal" style="text-align:center;">
        <h3 style="margin-bottom:16px;">Pilih Aksi Tagihan</h3>
        <input type="hidden" id="pilih-id">
@@ -330,7 +336,7 @@
     </div>
   </div>
 
-  <div id="modal-bayar" class="modal-overlay">
+  <div id="modal-bayar" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
        <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
@@ -351,7 +357,7 @@
     </div>
   </div>
 
-  <div id="modal-setor" class="modal-overlay">
+  <div id="modal-setor" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
        <input type="hidden" id="setor-kategori">
@@ -374,7 +380,7 @@
     </div>
   </div>
 
-  <div id="sys-modal" class="modal-overlay">
+  <div id="sys-modal" class="modal-overlay" style="z-index:99999;">
      <div class="sys-modal" style="text-align:center;">
         <div id="sys-icon" style="font-size:40px; margin-bottom:12px;">⚠️</div>
         <h3 id="sys-title" style="margin-bottom:8px; font-size:18px;">Konfirmasi</h3>
@@ -387,7 +393,7 @@
      </div>
   </div>
 
-  <div id="success-modal" class="modal-overlay">
+  <div id="success-modal" class="modal-overlay" style="z-index:99999;">
      <div class="sys-modal" style="text-align:center; background:#fff;">
         <div style="font-size:50px; margin-bottom:12px;">✅</div>
         <h3 style="margin-bottom:8px; font-size:18px; color:var(--success);">Berhasil!</h3>
@@ -400,11 +406,11 @@
     // ⚠️ GANTI LINK API DI SINI:
     const API_URL = "https://script.google.com/macros/s/AKfycbzTlyAgNIhKr1MvxAT5BMyB47XWkN9D4-TC7jhvmVhToHNY45iOIZdGcH5YPJYgdlWBVw/exec"; 
     
-    let currentUser = null, sessionToken = "";
+    let currentUser = null, sessionToken = "", listBayarUnsetor = [];
     let globalPelangganData = [], globalTagihanData = [];
     let fileUploadData = ""; 
 
-    // --- SYSTEM MODALS (Diperbaiki) ---
+    // --- SYSTEM MODALS ---
     function closeSysModal() { document.getElementById('sys-modal').classList.remove('active'); document.getElementById('sys-input').value = ""; }
     function sysMessage(icon, title, msg) {
        document.getElementById('sys-icon').innerText = icon; document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
@@ -428,10 +434,13 @@
 
     // --- PWA & SESSION ---
     let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('btn-install-app').style.display = 'block'; });
-    document.getElementById('btn-install-app').addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('btn-install-app').style.display = 'none'; deferredPrompt = null; } });
-
     window.onload = () => {
+       let btnInstall = document.getElementById('btn-install-app');
+       window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if(btnInstall) btnInstall.style.display = 'block'; });
+       if(btnInstall) {
+           btnInstall.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') btnInstall.style.display = 'none'; deferredPrompt = null; } });
+       }
+       
        let sess = JSON.parse(localStorage.getItem('nao_session'));
        if (sess && sess.expiry > new Date().getTime()) {
            currentUser = sess.user; sessionToken = sess.token; document.getElementById('user-name').innerText = currentUser.name; 
@@ -444,7 +453,7 @@
     function refreshData(view, btnElement) {
         if(btnElement) {
            let svg = btnElement.querySelector('.svg-icon');
-           if(svg) { svg.classList.add('spin'); setTimeout(() => svg.classList.remove('spin'), 1500); }
+           if(svg) { svg.classList.add('spin'); setTimeout(() => svg.classList.remove('spin'), 1000); }
         }
         if(view==='DASHBOARD') loadDataDashboard(); else if(view==='TAGIHAN') loadTagihan(); else if(view==='PELANGGAN') loadPelanggan(); else if(view==='SETORAN') loadSetoran(); else if(view==='ADMIN') loadAdmin(); else if(view==='FORM') initForm('NEW');
     }
@@ -466,13 +475,16 @@
     async function cekDataPelanggan() {
         let hp = document.getElementById('no-hp'); 
         let v = hp.value.replace(/[^0-9]/g, ''); 
+        // STANDARISASI NOMOR (Pasti cocok kalau sudah pernah disimpan)
         if(v.startsWith('0')) v = '62' + v.substring(1); else if(v.startsWith('8')) v = '62' + v; hp.value = v;
+        
         if (v.length > 9) {
             let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cekPelanggan", username: currentUser.username, token: sessionToken, payload: {noHp: v} }) }).then(r => r.json());
             if (res.success) { 
                 document.getElementById('nama-peminjam').value = res.nama; document.getElementById('nama-peminjam').readOnly = true; 
                 document.getElementById('kode-cust').value = res.kode; 
                 document.getElementById('cust-badge').innerHTML = `<span class="badge" style="background:${res.statusKredit.color}; color:white;">${res.statusKredit.label}</span>`;
+                sysMessage('✅', 'Berhasil', "Data Pelanggan Lama Ditemukan!"); 
             } else { document.getElementById('nama-peminjam').readOnly = false; document.getElementById('kode-cust').value = ""; document.getElementById('cust-badge').innerHTML = ""; }
         }
     }
@@ -550,6 +562,7 @@
       let cat = document.getElementById('kategori').value;
       let nom = cat === 'Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : getNom(document.getElementById('nominal-baju').value);
       
+      // VALIDASI WAJIB ISI SEBELUM SIMPAN
       if(!hp) return sysMessage('⚠️', 'Perhatian', 'No HP Pelanggan wajib diisi!');
       if(!nama) return sysMessage('⚠️', 'Perhatian', 'Nama Lengkap wajib diisi!');
       if(!nom || nom <= 0) return sysMessage('⚠️', 'Perhatian', 'Total Harga / Nominal wajib diisi!');
@@ -652,7 +665,7 @@
        return function(alasan) {
           if(!alasan) return; let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
           fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => {
-             if(res.success) { popSuccess("Tagihan Berhasil Dihapus!"); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan(); } else sysAlert(res.message);
+             if(res.success) { popSuccess("Tagihan Berhasil Dihapus!"); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan(); } else sysMessage('🚫', 'Gagal', res.message);
           });
        };
     }
@@ -792,10 +805,9 @@
     }
     async function prosesSetor() {
       let tipeS = document.getElementById('tipe-setoran').value; let metode = document.getElementById('metode-setor').value; let cat = document.getElementById('setor-kategori').value;
-      if(metode === 'TF' && !fileUploadData) return sysAlert("Wajib upload bukti TF!");
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value, fotoBukti: fileUploadData} }) }).then(r => r.json());
-      if(res.success) { popSuccess("Setoran Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysAlert(res.message);
+      if(res.success) { popSuccess("Permintaan Setor Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysMessage('🚫', 'Gagal', res.message);
       btn.innerText = "Kirim Permintaan Setor"; btn.disabled = false;
     }
 
@@ -830,10 +842,10 @@
     function admApprove(id, jenis) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { popSuccess(res.message); loadAdmin(); }); }
     async function tambahStaff() {
        let u = document.getElementById('new-username').value.trim(), n = document.getElementById('new-name').value.trim(), p = document.getElementById('new-password').value.trim(), r = document.getElementById('new-role').value;
-       if(!u || !n || !p) return sysAlert("Harap isi semua data staff!"); if(p.length < 6) return sysAlert("Password minimal 6 karakter!");
+       if(!u || !n || !p) return sysMessage('⚠️', 'Perhatian', "Harap isi semua data staff!"); if(p.length < 6) return sysMessage('⚠️', 'Perhatian', "Password minimal 6 karakter!");
        let btn = document.getElementById('btn-add-staff'); btn.innerText = "Memproses..."; btn.disabled = true;
        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addStaff", username: currentUser.username, token: sessionToken, payload: { username: u, nama: n, password: p, role: r } }) }).then(r => r.json());
-       if(res.success) { popSuccess("Akun Staff Dibuat!"); document.getElementById('new-username').value=''; document.getElementById('new-name').value=''; document.getElementById('new-password').value=''; } else { sysAlert(res.message); }
+       if(res.success) { popSuccess("Akun Staff Dibuat!"); document.getElementById('new-username').value=''; document.getElementById('new-name').value=''; document.getElementById('new-password').value=''; } else { sysMessage('🚫', 'Gagal', res.message); }
        btn.innerText = "Buat Akun Staff"; btn.disabled = false;
     }
   </script>
