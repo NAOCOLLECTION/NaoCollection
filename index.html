@@ -8,25 +8,22 @@
   <style>
     :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: var(--text-main); -webkit-font-smoothing: antialiased; }
-    #app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; position:relative;}
-    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.8); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-    .view { display: none; padding: 24px; animation: fadeSlideIn 0.3s ease; } .view.active { display: block; }
+    body { background: #F2F2F7; color: var(--text-main); -webkit-font-smoothing: antialiased; }
+    #app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+    .view { display: none; padding: 20px; animation: fadeSlideIn 0.3s ease; } .view.active { display: block; }
     @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .brand-logo { font-size: 36px; font-weight: 900; text-align: center; margin: 50px 0 20px; color: var(--primary); letter-spacing: -1px;}
-    .input-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block; text-transform: uppercase; }
-    .custom-input { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.9); font-size: 15px; outline: none; transition: 0.3s; margin-bottom:16px;}
-    .custom-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
-    .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(0,122,255,0.3); transition: 0.2s; margin-bottom: 8px;}
-    .btn-primary:active { transform: scale(0.95); }
-    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; border: 1px solid rgba(0,0,0,0.05);}
+    .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 1px solid white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+    .brand-logo { font-size: 32px; font-weight: 900; text-align: center; margin: 40px 0 20px; color: var(--primary); letter-spacing: -1px;}
+    .input-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block; text-transform: uppercase; }
+    .custom-input { width: 100%; padding: 14px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); background: white; font-size: 15px; outline: none; transition: 0.3s; margin-bottom:16px;}
+    .custom-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+    .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,122,255,0.2); margin-bottom: 8px;}
+    .btn-primary:active { transform: scale(0.96); }
+    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; border: 1px solid rgba(0,0,0,0.03); width:auto; padding: 8px 16px; font-size: 13px; border-radius:12px;}
     .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; position:relative; }
-    .badge-count { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 900; display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 2px 8px rgba(255,59,48,0.4); }
-    
-    #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(28, 28, 30, 0.9); backdrop-filter: blur(10px); color: white; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; display:flex; align-items:center; gap:10px;}
-    #custom-toast.show { top: 40px; }
+    .menu-card { padding: 20px 16px; text-align: center; cursor: pointer; position:relative; }
+    .badge-count { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: 900; display: flex; justify-content: center; align-items: center; border: 2px solid white; }
     
     .cal-card, .list-card { display:flex; background:#fff; border-radius:16px; padding:12px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); gap:16px; align-items:center;}
     .list-card { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; position:relative; overflow:hidden;}
@@ -46,13 +43,17 @@
     .tag-btn { background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 8px;}
     .tag-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
-    .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
-    .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);}
-    .tl-date { font-weight: 800; color: var(--text-muted); font-size: 11px; margin-bottom: 2px; }
-    .tl-desc { font-weight: 600; color: var(--text-main); line-height: 1.4;}
-    .tl-danger::before { background: var(--danger); }
-    .tl-approval { background: rgba(52,199,89,0.1); padding: 10px; border-radius: 8px; border: 1px dashed var(--success); margin-top:4px;}
+    .crm-card { background: linear-gradient(135deg, #1c1c1e, #3a3a3c); color: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .trans-card { background: white; border-radius: 18px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); }
+    .trans-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer; }
+    .trans-body { display: none; padding-top: 10px; border-top: 1px dashed #eee; }
+    .trans-card.active .trans-body { display: block; }
+    .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; }
+    .tl-item { border-left: 2px solid #ddd; margin-left: 8px; padding-left: 15px; padding-bottom: 12px; position: relative; }
+    .tl-item::before { content:''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
+    
+    #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(28, 28, 30, 0.9); backdrop-filter: blur(10px); color: white; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; display:flex; align-items:center; gap:10px;}
+    #custom-toast.show { top: 40px; }
   </style>
 </head>
 <body>
@@ -72,23 +73,81 @@
      </div>
   </div>
 
+  <div id="modal-pilih-aksi" class="modal-overlay">
+    <div class="sys-modal" style="text-align:center;">
+       <h3 style="margin-bottom:16px;">Pilih Aksi Tagihan</h3>
+       <input type="hidden" id="pilih-id">
+       <button class="btn-primary" style="background:var(--warning);" onclick="bukaFormEdit()">✏️ Buka Form Edit Data</button>
+       <button class="btn-primary" style="background:var(--danger);" onclick="sysPrompt('Wajib Isi Alasan Hapus:', prosesHapus())">🗑️ Hapus Tagihan Ini</button>
+       <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-pilih-aksi').classList.remove('active')">Batal</button>
+    </div>
+  </div>
+
+  <div id="modal-bayar" class="modal-overlay">
+    <div class="sys-modal">
+       <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
+       <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
+       <div id="wrap-nominal-bayar" style="display:none;">
+          <label class="input-label">Nominal Uang</label>
+          <input type="text" id="nominal-bayar" class="custom-input" oninput="formatRupiahInput(this)">
+       </div>
+       
+       <div id="wrap-foto-bayar">
+          <label class="input-label">Upload Bukti Transfer</label>
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
+             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
+          </div>
+          <div id="foto-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Foto Siap Diupload</div>
+       </div>
+       
+       <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
+       <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
+    </div>
+  </div>
+
+  <div id="modal-setor" class="modal-overlay">
+    <div class="sys-modal">
+       <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
+       <input type="hidden" id="setor-kategori">
+       
+       <label class="input-label">Tipe Uang yg Disetor</label>
+       <select id="tipe-setoran" class="custom-input"></select>
+
+       <label class="input-label">Metode Setoran</label>
+       <select id="metode-setor" class="custom-input" onchange="let f = document.getElementById('wrap-catatan-setor'); if(this.value==='TF') f.style.display='block'; else f.style.display='none';">
+          <option value="CASH">CASH (Tunai langsung)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
+       </select>
+       <div id="wrap-catatan-setor" style="display:none;">
+          <div style="display:flex; gap:10px; margin-bottom:12px;">
+             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="tf-cam" style="display:none;" onchange="handleFotoTF(this)"></label>
+             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="tf-gal" style="display:none;" onchange="handleFotoTF(this)"></label>
+          </div>
+          <div id="tf-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Bukti TF Siap</div>
+          <input type="text" id="catatan-setor" class="custom-input" placeholder="Nama & Rekening Tujuan...">
+       </div>
+       <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim Permintaan Setor</button>
+       <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-setor').classList.remove('active')">Batal</button>
+    </div>
+  </div>
+
   <div id="app-container">
     <div id="login-view" class="view active">
-      <div class="brand-logo">✨ NAO Collection</div>
+      <div class="brand-logo">NAO Collection</div>
       <div class="glass" style="padding: 24px; margin-bottom: 20px;">
         <input type="text" id="username" class="custom-input" placeholder="Username">
         <input type="password" id="password" class="custom-input" placeholder="Password">
         <button class="btn-primary" id="btn-login" onclick="doLogin()">Masuk Sistem</button>
       </div>
-      <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi NAO</button>
+      <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi PWA</button>
     </div>
 
     <div id="dashboard-view" class="view">
       <div class="dash-header">
         <div><h2 style="font-size:20px; font-weight:800;">Hi, <span id="user-name">User</span></h2></div>
         <div style="display:flex; gap:8px;">
-           <button onclick="refreshData('DASHBOARD')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
-           <button onclick="sysConfirm('Yakin ingin keluar?', doLogout)" class="btn-primary btn-secondary" style="width: auto; padding: 8px 16px; color:var(--danger);">Logout</button>
+           <button onclick="refreshData('DASHBOARD')" class="btn-secondary">🔄</button>
+           <button onclick="sysConfirm('Yakin ingin keluar?', doLogout)" class="btn-secondary" style="color:var(--danger)">Logout</button>
         </div>
       </div>
       <div class="menu-grid">
@@ -99,44 +158,39 @@
           <div id="badge-tagihan" class="badge-count" style="display:none;">0</div>
           <div style="font-size:32px;">📅</div><div style="font-weight:800; font-size:14px;">Tagihan Aktif</div>
         </div>
-        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; flex-direction: row; gap: 16px; justify-content: flex-start;">
+        <div class="glass menu-card" onclick="switchView('pelanggan-view'); loadPelanggan();" style="grid-column: span 2; display: flex; align-items:center; gap:16px;">
           <div style="font-size:36px;">👥</div>
           <div style="text-align: left;">
-            <div style="font-weight:800; font-size: 16px;">Data Pelanggan</div>
-            <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Cari & Cek Timeline Riwayat</div>
+            <div style="font-weight:800; font-size: 16px;">Data Pelanggan</div><div style="font-size:12px; color:gray;">Cari & Cek Riwayat CRM</div>
           </div>
         </div>
         <div class="glass menu-card" onclick="switchView('setoran-view'); loadSetoran();" style="grid-column: span 2;">
-          <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; font-size:14px; display:inline-block;">Setoran Kasir (Admin)</div>
+          <div style="font-size:24px; display:inline-block; margin-right:10px;">🏦</div><div style="font-weight:800; display:inline-block;">Setoran Kasir</div>
         </div>
         <div class="glass menu-card admin-only" id="menu-admin" onclick="switchView('admin-view'); setDefaultDatesAdmin(); loadAdmin();" style="grid-column: span 2; display:none; background:rgba(0,122,255,0.05); border:1px solid rgba(0,122,255,0.2);">
-          <div style="font-size:24px; display:inline-block; margin-right:10px;">👑</div><div style="font-weight:800; font-size:14px; display:inline-block; color:var(--primary);">Dashboard Admin</div>
+          <div style="font-size:24px; display:inline-block; margin-right:10px;">👑</div><div style="font-weight:800; display:inline-block; color:var(--primary);">Dashboard Admin</div>
         </div>
       </div>
     </div>
 
     <div id="pengajuan-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;" id="form-title">Form Pengajuan</h2>
-        <button onclick="refreshData('FORM')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+        <button onclick="refreshData('FORM')" class="btn-secondary">🔄</button>
       </div>
-
       <div class="glass" style="padding: 24px;">
         <input type="hidden" id="form-mode" value="NEW"> <input type="hidden" id="form-edit-id" value="">
-
         <label class="input-label">Identitas Pelanggan</label>
         <div style="display:flex; gap:10px; margin-bottom: 12px;">
             <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1; margin-bottom:0;" onblur="cekDataPelanggan()">
             <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
         </div>
-        
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-           <label class="input-label" style="margin:0;">Nama Peminjam</label>
-           <div id="cust-badge"></div>
+           <label class="input-label" style="margin:0;">Nama Lengkap</label><div id="cust-badge"></div>
         </div>
         <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap">
-        <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Akan Auto-Generate)" readonly style="background:#f0f0f5; color:gray; font-size:12px;">
+        <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Auto)" readonly style="background:#f0f0f5; color:gray; font-size:12px;">
 
         <label class="input-label">Jenis Transaksi</label>
         <select id="kategori" class="custom-input" onchange="updateFormLogic()">
@@ -164,7 +218,6 @@
             </div>
             <label class="input-label">Total Harga Baju</label>
             <input type="text" id="nominal-baju" class="custom-input" placeholder="Rp..." oninput="formatRupiahInput(this)">
-            
             <div id="simulasi-cicilan" style="font-size:11px; font-weight:800; color:var(--warning); margin-bottom:16px; display:none; background:rgba(255,149,0,0.1); padding:10px; border-radius:12px;"></div>
         </div>
 
@@ -179,17 +232,16 @@
         </div>
 
         <label class="input-label">Catatan Barang / Note Khusus</label>
-        <textarea id="catatan" class="custom-input" rows="2" placeholder="Gamis kode A231 = 80rb..."></textarea>
-
+        <textarea id="catatan" class="custom-input" rows="2" placeholder="Note Khusus..."></textarea>
         <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
       </div>
     </div>
 
     <div id="pelanggan-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Data Pelanggan</h2>
-        <button onclick="refreshData('PELANGGAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+        <button onclick="refreshData('PELANGGAN')" class="btn-secondary">🔄</button>
       </div>
       <input type="text" id="search-pelanggan" class="custom-input" placeholder="🔍 Cari Nama / No WA..." onkeyup="filterPelanggan()">
       <div id="list-pelanggan"></div>
@@ -197,36 +249,22 @@
 
     <div id="detail-riwayat-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('pelanggan-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Riwayat CRM</h2><div style="width:48px;"></div>
       </div>
-      
-      <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, #1C1C1E, #3A3A3C); color:white;">
-         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:12px; font-weight:800; color:#ffd60a;" id="dr-kode"></div>
-            <div id="dr-badge-status"></div>
-         </div>
-         <div style="font-size:20px; font-weight:900; margin-bottom:4px;" id="dr-nama"></div>
-         <div style="font-size:12px; opacity:0.8; font-weight:600; margin-bottom:16px;" id="dr-hp"></div>
-         
-         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:11px;">
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Bergabung:<br><b id="dr-gabung" style="font-size:13px;">-</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Total Lunas:<br><b id="dr-lunas" style="font-size:13px; color:#34C759;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Beli Cash:<br><b id="dr-bcash" style="font-size:13px;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Beli Cicil:<br><b id="dr-bcicil" style="font-size:13px;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px; grid-column:span 2;">Sering Bayar Bunga (Perpanjang): <b id="dr-bunga" style="color:#ffd60a;">0x</b></div>
-         </div>
+      <div id="crm-summary-box"></div>
+      <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:12px; font-weight:800; color:var(--text-muted);">DAFTAR TRANSAKSI</span>
+          <span style="font-size:10px; color:gray;">Klik card untuk detail</span>
       </div>
-
-      <h3 style="font-size:14px; margin-bottom:12px;">Daftar Transaksi</h3>
       <div id="list-timeline"></div>
     </div>
 
     <div id="tagihan-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Jadwal Tagihan</h2>
-        <button onclick="refreshData('TAGIHAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+        <button onclick="refreshData('TAGIHAN')" class="btn-secondary">🔄</button>
       </div>
       <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:8px;">
          <button class="filter-btn active" id="f-semua" onclick="filterTagihan('SEMUA')">Semua</button>
@@ -238,11 +276,10 @@
 
     <div id="setoran-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Setoran Kasir</h2>
-        <button onclick="refreshData('SETORAN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+        <button onclick="refreshData('SETORAN')" class="btn-secondary">🔄</button>
       </div>
-      
       <div class="glass" style="padding: 24px; margin-bottom:16px;">
          <div style="font-weight:800; color:var(--primary); margin-bottom:16px; text-align:center;">🏷️ SETORAN PINJAMAN UANG</div>
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 16px;">
@@ -255,7 +292,6 @@
          </div>
          <button class="btn-primary" onclick="bukaModalSetor('PINJAMAN')">Setor Uang Pinjaman</button>
       </div>
-
       <div class="glass" style="padding: 24px; margin-bottom:16px;">
          <div style="font-weight:800; color:var(--primary); margin-bottom:16px; text-align:center;">👗 SETORAN PENJUALAN BAJU</div>
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 16px;">
@@ -272,25 +308,15 @@
 
     <div id="admin-view" class="view">
       <div class="dash-header">
-        <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
+        <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px; color:var(--primary);">Dashboard Admin</h2>
-        <button onclick="refreshData('ADMIN')" class="btn-primary btn-secondary" style="width: auto; padding: 8px 12px;">🔄</button>
+        <button onclick="refreshData('ADMIN')" class="btn-secondary">🔄</button>
       </div>
-
       <div class="glass" style="padding:16px; margin-bottom:16px; display:flex; gap:8px; align-items:center;">
-        <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">MULAI TANGGAL</div><input type="date" id="adm-start" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
-        <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TANGGAL</div><input type="date" id="adm-end" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
+        <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">MULAI TGL</div><input type="date" id="adm-start" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
+        <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TGL</div><input type="date" id="adm-end" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
       </div>
-
-      <div class="glass" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size:15px; margin-bottom:12px;">Tambah Staff Baru</h3>
-        <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="padding:12px;">
-        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="padding:12px;">
-        <input type="password" id="new-password" class="custom-input" placeholder="Password" style="padding:12px;">
-        <select id="new-role" class="custom-input" style="padding:12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
-        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()" style="margin:0;">Buat Akun Staff</button>
-      </div>
-
+      
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
          <div style="font-weight:900; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">🏷️ STATISTIK PINJAMAN UANG</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div><div id="adm-p-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
@@ -311,73 +337,29 @@
          <div style="text-align:center;"><span style="font-size:11px;">PENDAPATAN BERSIH (BAJU)</span><br><b id="adm-b-laba" style="font-size:24px; color:#ffd60a; font-weight:900;">Rp 0</b></div>
       </div>
 
-      <h3 style="font-size:15px; margin-bottom:12px; color:var(--primary);">Input Komisi Baju Khusus</h3>
-      <div style="font-size:11px; color:gray; margin-bottom:12px;">Daftar Baju Lunas yang belum diset komisinya.</div>
-      <div id="adm-list-baju-komisi"></div>
+      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Tambah Staff Baru</h3>
+      <div class="glass" style="padding: 16px; margin-bottom: 24px;">
+        <input type="text" id="new-username" class="custom-input" placeholder="Username Login">
+        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap">
+        <input type="password" id="new-password" class="custom-input" placeholder="Password">
+        <select id="new-role" class="custom-input"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
+        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()">Buat Akun Staff</button>
+      </div>
 
+      <h3 style="font-size:15px; margin-bottom:12px; color:var(--primary);">Input Komisi Baju Khusus</h3>
+      <div id="adm-list-baju-komisi"></div>
       <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Approval Setoran</h3>
       <div id="adm-list-setor"></div>
-      
-      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Request Edit/Hapus (>24 Jam)</h3>
+      <h3 style="font-size:15px; margin-bottom:12px; margin-top:20px;">Request Edit/Hapus (>24 Jam)</h3>
       <div id="adm-list-req"></div>
-      
       <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Log Aktivitas</h3>
       <div id="adm-list-log" style="max-height: 400px; overflow-y:auto; padding-right:6px; margin-bottom:40px;"></div>
     </div>
-
-    <div id="modal-bayar" class="modal-overlay">
-      <div class="sys-modal">
-         <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
-         <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
-         <div id="wrap-nominal-bayar" style="display:none;">
-            <label class="input-label">Nominal Uang</label>
-            <input type="text" id="nominal-bayar" class="custom-input" oninput="formatRupiahInput(this)">
-         </div>
-         
-         <div id="wrap-foto-bayar">
-            <label class="input-label">Upload Bukti Transfer</label>
-            <div style="display:flex; gap:10px; margin-bottom:16px;">
-               <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
-               <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
-            </div>
-            <div id="foto-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Foto Siap Diupload</div>
-         </div>
-         
-         <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
-         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
-      </div>
-    </div>
-
-    <div id="modal-setor" class="modal-overlay">
-      <div class="sys-modal">
-         <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
-         <input type="hidden" id="setor-kategori">
-         
-         <label class="input-label">Tipe Uang yg Disetor</label>
-         <select id="tipe-setoran" class="custom-input"></select>
-
-         <label class="input-label">Metode Setoran</label>
-         <select id="metode-setor" class="custom-input" onchange="let f = document.getElementById('wrap-catatan-setor'); if(this.value==='TF') f.style.display='block'; else f.style.display='none';">
-            <option value="CASH">CASH (Tunai langsung)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
-         </select>
-         <div id="wrap-catatan-setor" style="display:none;">
-            <div style="display:flex; gap:10px; margin-bottom:12px;">
-               <label class="btn-secondary" style="flex:1; padding:10px; border-radius:12px; text-align:center; font-weight:800; font-size:11px; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="tf-cam" style="display:none;" onchange="handleFotoTF(this)"></label>
-               <label class="btn-secondary" style="flex:1; padding:10px; border-radius:12px; text-align:center; font-weight:800; font-size:11px; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="tf-gal" style="display:none;" onchange="handleFotoTF(this)"></label>
-            </div>
-            <div id="tf-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Bukti TF Siap</div>
-            <input type="text" id="catatan-setor" class="custom-input" placeholder="Nama & Rekening Tujuan...">
-         </div>
-         
-         <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim Permintaan Setor</button>
-         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-setor').classList.remove('active')">Batal</button>
-      </div>
-    </div>
-
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycby76RsUwdu5-c22QGwrkpWkyaD7Hdc82_3JkKVMD12b-ykH3P0pWAjtj23K66IOfx9xJQ/exec"; 
+    // ⚠️ GANTI LINK API DISINI
+    const API_URL = "https://script.google.com/macros/s/AKfycbxrWlwhEB-by2ktIBIOIThxfh_z92Ova-VJFBk7BjeSJ-j4t6EyFOd3nWtZgWG8KKxayQ/exec"; 
     
     let currentUser = null, sessionToken = "", listBayarUnsetor = [];
     let globalPelangganData = [], globalTagihanData = [];
@@ -424,14 +406,14 @@
     function getNom(val) { return parseInt(String(val).replace(/[^0-9]/g, '')) || 0; }
     
     function formatRupiahInput(el) {
-       let v = el.value.replace(/[^0-9]/g, '');
-       el.value = v ? parseInt(v).toLocaleString('id-ID') : '';
+       let v = el.value.replace(/[^0-9]/g, ''); el.value = v ? parseInt(v).toLocaleString('id-ID') : '';
        if(el.id === 'nominal-baju') kalkulasiBunga();
     }
 
     function getBase64(file) { return new Promise((res, rej) => { if (!file) return res(""); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); r.onerror = e => rej(e); }); }
     async function handleFoto(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('foto-preview').style.display='block'; }
     async function handleFotoTF(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('tf-preview').style.display='block'; }
+    function showToast(msg, type='success') { let t = document.getElementById('custom-toast'); t.innerText = msg; t.style.background = type==='success'?'#34C759':'#FF3B30'; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
 
     // --- CEK PELANGGAN ---
     async function cekDataPelanggan() {
@@ -442,12 +424,9 @@
             if (res.success) { 
                 document.getElementById('nama-peminjam').value = res.nama; document.getElementById('nama-peminjam').readOnly = true; 
                 document.getElementById('kode-cust').value = res.kode; 
-                let b = document.getElementById('cust-badge');
-                b.innerHTML = `<span class="badge" style="background:${res.statusKredit.color}; color:white;">${res.statusKredit.label}</span>`;
-                showToast("Pelanggan lama ditemukan!"); 
-            } else { 
-                document.getElementById('nama-peminjam').readOnly = false; document.getElementById('kode-cust').value = ""; document.getElementById('cust-badge').innerHTML = ""; 
-            }
+                document.getElementById('cust-badge').innerHTML = `<span class="badge" style="background:${res.statusKredit.color}; color:white;">${res.statusKredit.label}</span>`;
+                showToast("Data ditemukan!"); 
+            } else { document.getElementById('nama-peminjam').readOnly = false; document.getElementById('kode-cust').value = ""; document.getElementById('cust-badge').innerHTML = ""; }
         }
     }
 
@@ -494,14 +473,8 @@
           let bunga = bDasar * tMinggu; bTxt.innerText = formatRp(bunga); bTxt.dataset.val = bunga;
       } else if (cat === 'Pembelian Baju (Cicilan)') {
           bTxt.innerText = "Rp 0"; bTxt.dataset.val = 0;
-          let nom = getNom(document.getElementById('nominal-baju').value);
-          let sim = document.getElementById('simulasi-cicilan');
-          if(nom > 0) {
-             let base = Math.floor((nom / 4) / 500) * 500;
-             let w1 = nom - (base * 3);
-             sim.style.display = 'block';
-             sim.innerHTML = `Simulasi Mingguan:<br>Mg-1: ${formatRp(w1)}<br>Mg-2,3,4: ${formatRp(base)}/mg`;
-          } else { sim.style.display = 'none'; }
+          let nom = getNom(document.getElementById('nominal-baju').value); let sim = document.getElementById('simulasi-cicilan');
+          if(nom > 0) { let base = Math.floor((nom / 4) / 500) * 500; let w1 = nom - (base * 3); sim.style.display = 'block'; sim.innerHTML = `Simulasi Mingguan:<br>Mg-1: ${formatRp(w1)}<br>Mg-2,3,4: ${formatRp(base)}/mg`; } else { sim.style.display = 'none'; }
       } else { bTxt.innerText = "Rp 0"; bTxt.dataset.val = 0; document.getElementById('simulasi-cicilan').style.display='none'; }
     }
 
@@ -591,14 +564,15 @@
 
         let btnHtml = '';
         if (i.cat === 'Pinjaman Uang') {
-           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
-                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
+           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
+                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
         } else {
            let sisa = nomP - byrP; let base = Math.floor((nomP / 4) / 500) * 500; let cicilW = (byrP === 0) ? (nomP - (base * 3)) : base; 
-           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
-                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
+           btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
+                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
         }
 
+        let rawData = encodeURIComponent(JSON.stringify(i));
         list.innerHTML += `
           <div class="cal-card">
              <div class="cal-date-box" style="background:${bgCal}"><div class="cal-month">${blnTeks}</div><div class="cal-day">${tglTeks}</div></div>
@@ -610,58 +584,50 @@
                    ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
                 </div>
                 <div style="display:flex; gap:6px;">${btnHtml}</div>
-                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:var(--primary); text-decoration:underline; font-weight:800; cursor:pointer;" onclick="sysPrompt('Wajib isi alasan Edit/Hapus:', (a) => reqAksiEdit(a, '${encodeURIComponent(JSON.stringify(i))}'))">Edit / Hapus Data</span></div>
+                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:var(--primary); text-decoration:underline; font-weight:800; cursor:pointer;" onclick="bukaModalPilihAksi('${rawData}')">Edit / Hapus Data</span></div>
              </div>
           </div>`;
       });
     }
     
-    function reqAksiEdit(alasan, rawStr) {
-       if(!alasan) return;
-       let i = JSON.parse(decodeURIComponent(rawStr));
-       sysConfirm(`Data Edit (OK) atau Hapus (Batal)?`, () => {
-          // YES -> Buka Form Edit
-          initForm('EDIT');
-          document.getElementById('form-edit-id').value = i.id; document.getElementById('no-hp').value = i.hp; document.getElementById('nama-peminjam').value = i.nama; document.getElementById('kode-cust').value = i.kode; document.getElementById('kategori').value = i.cat;
-          updateFormLogic();
-          if(i.cat === 'Pinjaman Uang') document.getElementById('nominal-pinjaman').value = i.nom; else document.getElementById('nominal-baju').value = formatRp(i.nom).replace('Rp ','');
-          document.getElementById('catatan').value = alasan; // Masukkan alasan otomatis ke catatan
-          kalkulasiBunga(); switchView('pengajuan-view');
-       }, () => {
-          // NO/BATAL -> Hapus Data
-          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => { showToast(res.message, res.success ? 'success' : 'error'); loadTagihan(); });
-       });
-       // Ubah teks tombol sysConfirm untuk trik opsi ganda
-       document.getElementById('sys-btn-yes').innerText = "Buka Edit Form";
-       document.getElementById('sys-btn-no').innerText = "Hapus Tagihan";
+    function bukaModalPilihAksi(rawStr) { document.getElementById('pilih-id').value = rawStr; document.getElementById('modal-pilih-aksi').classList.add('active'); }
+    function prosesHapus() {
+       return function(alasan) {
+          if(!alasan) return; let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => {
+             showToast(res.message); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan();
+          });
+       };
+    }
+    function bukaFormEdit() {
+       let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+       document.getElementById('modal-pilih-aksi').classList.remove('active'); initForm('EDIT');
+       document.getElementById('form-edit-id').value = i.id; document.getElementById('no-hp').value = i.hp; document.getElementById('nama-peminjam').value = i.nama; document.getElementById('kode-cust').value = i.kode; document.getElementById('kategori').value = i.cat;
+       updateFormLogic(); if(i.cat === 'Pinjaman Uang') document.getElementById('nominal-pinjaman').value = i.nom; else document.getElementById('nominal-baju').value = formatRp(i.nom).replace('Rp ','');
+       kalkulasiBunga(); switchView('pengajuan-view');
     }
 
     // --- BAYAR ---
     function bukaModalBayar(id, jenis, nomRec, title) {
       document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
       let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar'), wrapFoto = document.getElementById('wrap-foto-bayar');
-      
       if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = formatRp(nomRec).replace('Rp ',''); wrapFoto.style.display = 'none'; } 
       else { wrapNom.style.display = 'none'; inNom.value = nomRec; wrapFoto.style.display = 'block'; }
-      
       fileUploadData = ""; document.getElementById('foto-cam').value = ""; document.getElementById('foto-gal').value = ""; document.getElementById('foto-preview').style.display='none';
       document.getElementById('modal-bayar').classList.add('active');
     }
-
     async function prosesBayar() {
-      let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
-      let jenis = document.getElementById('modal-jenis-bayar').value;
-      if (jenis !== 'CICILAN' && !fileUploadData) { showToast("Wajib upload foto bukti!", "error"); btn.innerText = "Proses Pembayaran"; btn.disabled = false; return; }
-
+      let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true; let jenis = document.getElementById('modal-jenis-bayar').value;
+      if (jenis !== 'CICILAN' && !fileUploadData) { sysAlert("Wajib upload foto bukti!"); btn.innerText = "Proses Pembayaran"; btn.disabled = false; return; }
       let payload = { id: document.getElementById('modal-id-bayar').value, jenis: jenis, nomBayar: getNom(document.getElementById('nominal-bayar').value), fotoBukti: fileUploadData };
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
       if(res.success) { showToast("Pembayaran Sukses!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); } else showToast(res.message, 'error');
       btn.innerText = "Proses Pembayaran"; btn.disabled = false;
     }
 
-    // --- PELANGGAN ---
+    // --- PELANGGAN & CRM ---
     async function loadPelanggan() {
-      let list = document.getElementById('list-pelanggan'); list.innerHTML = "<center style='font-weight:bold;'>Menganalisis Data...</center>";
+      let list = document.getElementById('list-pelanggan'); list.innerHTML = "<center style='font-weight:bold;'>Menganalisis CRM...</center>";
       try {
         let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getPelanggan", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
         if(res.success) { globalPelangganData = res.data; renderPelanggan(globalPelangganData); } else { list.innerHTML = `<center style='color:red;'>${res.message}</center>`; }
@@ -676,8 +642,7 @@
             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
             <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
             <div style="font-size: 12px; color: gray; font-weight:600;">📞 ${p.noHp}</div>
-            <div style="font-size: 12px; font-weight: 700; margin-top: 8px;">Total Riwayat Transaksi: <span style="color:var(--success)">${formatRp(p.totalPinjaman)}</span></div>
-            <div style="margin-top:10px; font-size:11px; font-weight:800; color:var(--primary); text-align:right; width:100%;">Lihat Detail Timeline ➡️</div>
+            <div style="margin-top:10px; font-size:11px; font-weight:800; color:var(--primary); text-align:right; width:100%;">Lihat Detail Timeline CRM ➡️</div>
           </div>`;
       });
     }
@@ -685,30 +650,46 @@
     
     async function bukaRiwayatLengkap(noHp, nama, kode) {
       document.getElementById('dr-nama').innerText = nama; document.getElementById('dr-kode').innerText = kode; document.getElementById('dr-hp').innerText = noHp;
-      switchView('detail-riwayat-view'); let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
+      switchView('detail-riwayat-view'); let box = document.getElementById('crm-summary-box'); let tl = document.getElementById('list-timeline');
+      box.innerHTML = "<center>Menganalisis CRM...</center>"; tl.innerHTML = "";
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getRiwayatLengkap", username: currentUser.username, token: sessionToken, payload: {noHp: noHp} }) }).then(r => r.json());
       if(res.success) {
          let c = res.crm;
-         document.getElementById('dr-gabung').innerText = c.tglDaftar ? new Date(c.tglDaftar).toLocaleDateString('id-ID', {month:'short', year:'numeric'}) : '-';
-         document.getElementById('dr-lunas').innerText = c.tLunas + 'x'; document.getElementById('dr-bcash').innerText = c.tBajuCash + 'x'; document.getElementById('dr-bcicil').innerText = c.tBajuCicil + 'x'; document.getElementById('dr-bunga').innerText = c.tBungaSaja + 'x';
-         document.getElementById('dr-badge-status').innerHTML = `<span class="badge" style="background:${c.statusKredit.color}; color:white;">${c.statusKredit.label}</span>`;
+         box.innerHTML = `
+           <div class="crm-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                 <span class="status-pill" style="background:${c.statusKredit.color}; border:1px solid white;">${c.statusKredit.label}</span>
+              </div>
+              <div style="font-size:10px; opacity:0.7; margin-bottom:4px;">NOMINAL TERHUTANG (SISA BAYAR)</div>
+              <div style="font-size:26px; font-weight:900; color:#34C759; margin-bottom:20px;">${formatRp(c.totalHutang)}</div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:11px;">
+                 <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:12px;">Bergabung: <b>${c.tglDaftar ? new Date(c.tglDaftar).toLocaleDateString('id-ID', {month:'short', year:'numeric'}) : '-'}</b></div>
+                 <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:12px;">Pinjam: <b>${c.tPinjam}x</b></div>
+                 <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:12px;">Baju: <b>${c.tBajuCash + c.tBajuCicil}x</b></div>
+                 <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:12px;">Lunas: <b style="color:#34C759">${c.tLunas}x</b></div>
+                 <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:12px; grid-column:span 2;">Perpanjang (Bunga): <b style="color:#ffd60a">${c.tBungaSaja}x</b></div>
+              </div>
+           </div>`;
 
-         tl.innerHTML = ""; if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
+         if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
          res.data.forEach(item => {
-             let htmlBayar = ""; 
-             // Kelompokkan bayar bunga agar tidak panjang
-             let countBunga = 0; let bngTotal = 0;
-             item.bayar.forEach(b => { 
-                 if(b.jenisBayar === 'BUNGA') { countBunga++; bngTotal+=parseInt(b.nominal); } 
-                 else { let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short'}); htmlBayar += `<div class="timeline-item tl-success"><div class="tl-date">${tglB}</div><div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b>: ${formatRp(b.nominal)}</div></div>`; }
-             });
-             if(countBunga > 0) htmlBayar = `<div class="timeline-item tl-warning"><div class="tl-desc">🔄 Perpanjang (Bayar Bunga) sebanyak <b>${countBunga}x</b> (Total: ${formatRp(bngTotal)})</div></div>` + htmlBayar;
-
-             let jtStatus = ""; if (item.status === 'PENDING') { let jt = new Date(item.jatuhTempo); let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : ""; jtStatus = `<div class="timeline-item ${lewat ? 'tl-danger' : ''}"><div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</div><div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div></div>`; }
-             else jtStatus = `<div class="timeline-item tl-success"><div class="tl-desc" style="color:var(--success)">✅ Status LUNAS</div></div>`;
-
-             let appCard = item.status === 'DELETED' ? 'tl-danger' : '';
-             tl.innerHTML += `<div class="glass ${appCard}" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);"><div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div><div class="timeline"><div class="timeline-item"><div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc">📥 <b>Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div></div>${htmlBayar}${jtStatus}</div></div>`;
+             let isLunas = item.status === 'LUNAS' || item.status.includes('DELETE');
+             let htmlBayar = ""; item.bayar.forEach(b => { htmlBayar += `<div class="tl-item"><div style="font-size:10px; color:gray;">${new Date(b.tgl).toLocaleDateString('id-ID')}</div><div style="font-weight:700;">${b.jenis}: ${formatRp(b.nom)}</div></div>`; });
+             tl.innerHTML += `
+               <div class="glass trans-card ${isLunas ? '' : 'active'}" id="card-${item.id}">
+                  <div class="trans-header" onclick="document.getElementById('card-${item.id}').classList.toggle('active')">
+                     <div style="flex:1">
+                        <div style="font-size:10px; color:gray;">${item.id} • ${new Date(item.tglCair).toLocaleDateString('id-ID')}</div>
+                        <div style="font-weight:800;">${item.kategori}</div>
+                        <div style="font-size:13px; font-weight:900; color:var(--primary)">${formatRp(item.nominal)}</div>
+                     </div>
+                     <span class="status-pill" style="background:${isLunas?'#34C759':'#FF9500'}; color:white">${item.status}</span><div style="margin-left:10px; font-size:12px; color:#ccc">▼</div>
+                  </div>
+                  <div class="trans-body">
+                     <div style="font-size:11px; color:gray; margin-bottom:10px;">Riwayat Pembayaran:</div>
+                     ${htmlBayar || '<div style="font-size:11px; color:gray; padding-left:10px;">Belum ada pembayaran.</div>'}
+                  </div>
+               </div>`;
          });
       }
     }
@@ -731,8 +712,7 @@
     }
     async function prosesSetor() {
       let tipeS = document.getElementById('tipe-setoran').value; let metode = document.getElementById('metode-setor').value; let cat = document.getElementById('setor-kategori').value;
-      if(metode === 'TF' && !fileUploadData) return showToast("Wajib upload bukti TF!", "error");
-      
+      if(metode === 'TF' && !fileUploadData) return sysAlert("Wajib upload bukti TF!");
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value, fotoBukti: fileUploadData} }) }).then(r => r.json());
       if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else showToast(res.message, "error");
@@ -741,8 +721,7 @@
 
     // --- ADMIN ---
     function setDefaultDatesAdmin() {
-      let today = new Date(); let tzOffset = today.getTimezoneOffset() * 60000;
-      let localToday = new Date(today.getTime() - tzOffset); let localFirst = new Date(new Date(today.getFullYear(), today.getMonth(), 1).getTime() - tzOffset);
+      let today = new Date(); let tzOffset = today.getTimezoneOffset() * 60000; let localToday = new Date(today.getTime() - tzOffset); let localFirst = new Date(new Date(today.getFullYear(), today.getMonth(), 1).getTime() - tzOffset);
       document.getElementById('adm-start').value = localFirst.toISOString().split('T')[0]; document.getElementById('adm-end').value = localToday.toISOString().split('T')[0];
     }
     async function loadAdmin() {
@@ -754,7 +733,7 @@
          document.getElementById('adm-p-out').innerText = formatRp(res.stats.pOut); document.getElementById('adm-p-ready').innerText = formatRp(res.stats.pReady); document.getElementById('adm-p-bunga').innerText = formatRp(res.stats.pBunga); document.getElementById('adm-p-komisi').innerText = formatRp(res.stats.pKomisi); document.getElementById('adm-p-laba').innerText = formatRp(res.stats.pLaba);
          document.getElementById('adm-b-out').innerText = formatRp(res.stats.bOut); document.getElementById('adm-b-ready').innerText = formatRp(res.stats.bReady); document.getElementById('adm-b-komisi').innerText = formatRp(res.stats.bKomisi); document.getElementById('adm-b-laba').innerText = formatRp(res.stats.bLaba);
 
-         listBk.innerHTML = ""; res.bajuNoKomisi.forEach(b => { listBk.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${b.staff} - Lunas Baju</div><div style="font-size:11px; color:gray;">ID: ${b.id}<br>Note: ${b.note}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px; background:var(--warning);" onclick="sysPrompt('Masukkan Nominal Komisi utk Staff ini (Misal: 15000):', setKomBaju('${b.id}'))">Set Komisi Baju</button></div>`; });
+         listBk.innerHTML = ""; res.bajuNoKomisi.forEach(b => { listBk.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${b.staff} - Lunas Baju</div><div style="font-size:11px; color:gray;">ID: ${b.id}<br>Note: ${b.note}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px; background:var(--warning);" onclick="sysPrompt('Nominal Komisi utk Staff ini (Misal: 15000):', setKomBaju('${b.id}'))">Set Komisi Baju</button></div>`; });
          if(res.bajuNoKomisi.length===0) listBk.innerHTML = "<div style='font-size:12px; color:gray;'>Semua baju lunas sudah diset komisinya.</div>";
 
          listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - Setor ${s.cat}</div><div style="font-size:12px; margin:4px 0;">Pinj Pokok: ${formatRp(s.sPokPinj)}<br>Pinj Bunga: ${formatRp(s.sBngPinj)}<br>Baju Pokok: ${formatRp(s.sPokBaju)}<br>Baju Klaim Komisi: ${formatRp(s.sKomBaju)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px; color:var(--primary);">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="sysConfirm('Approve Setoran ini?', () => admApprove('${s.id}', 'SETORAN'))">Terima Setoran</button></div>`; });
@@ -763,31 +742,18 @@
          listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br><b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="sysConfirm('Approve Aksi ini?', () => admApprove('${r.row}', 'LOG'))">Approve Aksi</button></div>`; });
          if(res.approvals.length===0) listR.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada request aksi.</div>";
 
-         listL.innerHTML = ""; res.logs.forEach(l => {
-           let tglF = new Date(l.tgl).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-           let statColor = (l.status.includes('FAIL') || l.status.includes('REJECT') || l.status.includes('PENDING')) ? 'var(--danger)' : 'var(--primary)';
-           listL.innerHTML += `<div class="list-card" style="padding:12px; margin-bottom:8px; border-left:4px solid ${statColor}; width:100%;"><div style="display:flex; justify-content:space-between; width:100%; margin-bottom:4px;"><b style="font-size:13px;">${l.staff}</b><span style="font-size:10px; color:gray;">${tglF}</span></div><div style="font-size:12px; font-weight:800; color:${statColor};">${l.aksi}</div><div style="font-size:11px; color:gray; margin-top:4px; line-height:1.4;">${l.detail}</div></div>`;
-         });
+         listL.innerHTML = ""; res.logs.forEach(l => { let tglF = new Date(l.tgl).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}); let statColor = (l.status.includes('FAIL') || l.status.includes('REJECT') || l.status.includes('PENDING')) ? 'var(--danger)' : 'var(--primary)'; listL.innerHTML += `<div class="list-card" style="padding:12px; margin-bottom:8px; border-left:4px solid ${statColor}; width:100%;"><div style="display:flex; justify-content:space-between; width:100%; margin-bottom:4px;"><b style="font-size:13px;">${l.staff}</b><span style="font-size:10px; color:gray;">${tglF}</span></div><div style="font-size:12px; font-weight:800; color:${statColor};">${l.aksi}</div><div style="font-size:11px; color:gray; margin-top:4px; line-height:1.4;">${l.detail}</div></div>`; });
          if(res.logs.length===0) listL.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada aktivitas karyawan.</div>";
       }
     }
-    
-    function setKomBaju(id) {
-       return function(val) {
-          if(!val) return;
-          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminSetKomisiBaju", username: currentUser.username, token: sessionToken, payload: {id:id, nominal:val} }) }).then(r=>r.json()).then(res => { showToast(res.message, res.success ? 'success' : 'error'); loadAdmin(); });
-       };
-    }
-    
-    function admApprove(id, jenis) {
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { showToast(res.message); loadAdmin(); });
-    }
+    function setKomBaju(id) { return function(val) { if(!val) return; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminSetKomisiBaju", username: currentUser.username, token: sessionToken, payload: {id:id, nominal:getNom(val)} }) }).then(r=>r.json()).then(res => { showToast(res.message); loadAdmin(); }); }; }
+    function admApprove(id, jenis) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { showToast(res.message); loadAdmin(); }); }
     async function tambahStaff() {
        let u = document.getElementById('new-username').value.trim(), n = document.getElementById('new-name').value.trim(), p = document.getElementById('new-password').value.trim(), r = document.getElementById('new-role').value;
-       if(!u || !n || !p) return showToast("Harap isi semua data staff!", "error"); if(p.length < 6) return showToast("Password minimal 6 karakter!", "error");
+       if(!u || !n || !p) return sysAlert("Harap isi semua data staff!"); if(p.length < 6) return sysAlert("Password minimal 6 karakter!");
        let btn = document.getElementById('btn-add-staff'); btn.innerText = "Memproses..."; btn.disabled = true;
        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addStaff", username: currentUser.username, token: sessionToken, payload: { username: u, nama: n, password: p, role: r } }) }).then(r => r.json());
-       if(res.success) { showToast("Akun Staff Berhasil Dibuat!"); document.getElementById('new-username').value = ''; document.getElementById('new-name').value = ''; document.getElementById('new-password').value = ''; } else { showToast(res.message, "error"); }
+       if(res.success) { showToast("Akun Staff Dibuat!"); document.getElementById('new-username').value=''; document.getElementById('new-name').value=''; document.getElementById('new-password').value=''; } else { sysAlert(res.message); }
        btn.innerText = "Buat Akun Staff"; btn.disabled = false;
     }
   </script>
