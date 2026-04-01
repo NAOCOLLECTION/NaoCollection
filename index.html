@@ -15,13 +15,11 @@
       --card-bg: rgba(255, 255, 255, 0.75); 
       --glass-border: 1px solid rgba(255, 255, 255, 0.8);
       --primary: #007AFF; 
-      --primary-dark: #0056b3;
       --text-main: #1C1C1E; 
       --text-muted: #8E8E93;
       --danger: #FF3B30; 
       --success: #34C759; 
       --warning: #FF9500;
-      --purple: #AF52DE;
       --radius: 24px;
       --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.05);
     }
@@ -39,7 +37,6 @@
 
     #app-container { width: 100%; max-width: 550px; margin: 0 auto; min-height: 100vh; position: relative; padding-bottom: 40px; }
 
-    /* --- CLASS UTAMA --- */
     .glass { 
       background: var(--card-bg); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); 
       border: var(--glass-border); border-radius: var(--radius); box-shadow: var(--shadow-soft); 
@@ -47,30 +44,26 @@
 
     .view { display: none; padding: 24px; animation: fadeSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .view.active { display: block; }
-
     @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- INPUT & TOMBOL --- */
     .input-group { margin-bottom: 16px; width: 100%; position: relative;}
     .input-label { width: 100%; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display:block; text-transform: uppercase; letter-spacing: 0.5px;}
     .custom-input { 
       width: 100%; padding: 18px 20px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); 
-      background: rgba(255,255,255,0.9); font-size: 16px; outline: none; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+      background: rgba(255,255,255,0.9); font-size: 15px; outline: none; transition: all 0.3s ease; 
       color: var(--text-main); font-weight: 600; appearance: none;
     }
     .custom-input:focus { background: #ffffff; box-shadow: 0 0 0 3px rgba(0,122,255,0.15); border-color: var(--primary); transform: translateY(-2px);}
+    .custom-input:read-only { background: rgba(0,0,0,0.04); color: var(--text-muted); cursor: not-allowed; }
+
     .search-btn { position: absolute; right: 8px; top: 38px; background: rgba(0,122,255,0.1); color: var(--primary); border: none; width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
     .search-btn:active { transform: scale(0.9); }
 
     .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,122,255,0.3); transition: all 0.2s; }
     .btn-primary:active { transform: scale(0.95); opacity: 0.9; box-shadow: 0 4px 10px rgba(0,122,255,0.2); }
     
-    .btn-secondary { width: 100%; padding: 18px; background: rgba(0,0,0,0.05); color: var(--text-main); border: none; border-radius: 18px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-    .btn-secondary:active { transform: scale(0.95); background: rgba(0,0,0,0.1);}
-
-    /* --- MENU GRID MODERN --- */
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;}
-    .menu-card { padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.03); position: relative; overflow: hidden;}
+    .menu-card { padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.03); }
     .menu-card:active { transform: scale(0.94); background: rgba(255,255,255,0.95);}
     .menu-icon { font-size: 38px; margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); animation: subtleFloat 3.5s ease-in-out infinite; }
     .menu-title { font-weight: 800; font-size: 15px; color: var(--text-main); }
@@ -78,14 +71,6 @@
 
     @keyframes subtleFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
 
-    /* --- TIMELINE HISTORY --- */
-    .timeline { border-left: 2px solid var(--primary); padding-left: 15px; margin-top: 20px; }
-    .timeline-item { position: relative; margin-bottom: 20px; }
-    .timeline-item::before { content: ''; position: absolute; left: -22px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: white; border: 3px solid var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.2); }
-    .timeline-date { font-size: 11px; color: var(--text-muted); font-weight: bold; margin-bottom: 4px;}
-    .timeline-content { background: rgba(255,255,255,0.8); padding: 12px; border-radius: 12px; font-size: 13px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-
-    /* --- HEADER & NAVIGATION --- */
     .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px;}
     .nav-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
     .btn-back { background: rgba(255,255,255,0.9); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 16px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; font-size: 20px; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
@@ -95,11 +80,15 @@
     .btn-logout { background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: var(--danger); width: 44px; height: 44px; border-radius: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: 0.3s;}
     .btn-logout:active { transform: scale(0.85); }
 
-    /* --- TOAST & MODAL --- */
-    #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(25, 25, 27, 0.85); backdrop-filter: blur(20px); color: white; padding: 16px 24px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); font-weight: 600; z-index: 9999; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); text-align: center; font-size: 14px;}
+    #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(25, 25, 27, 0.85); backdrop-filter: blur(20px); color: white; padding: 16px 24px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); font-weight: 600; z-index: 9999; transition: all 0.5s ease; text-align: center; font-size: 14px;}
     #toast.show { top: 40px; } 
     #toast.error { background: rgba(255, 59, 48, 0.9); } 
     #toast.success { background: rgba(52, 199, 89, 0.9); }
+
+    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; margin-top: 8px; text-transform: uppercase;}
+    .badge-lancar { background: rgba(52, 199, 89, 0.15); color: var(--success); border: 1px solid rgba(52, 199, 89, 0.3); }
+    .badge-kurang { background: rgba(255, 149, 0, 0.15); color: var(--warning); border: 1px solid rgba(255, 149, 0, 0.3); }
+    .badge-buruk { background: rgba(255, 59, 48, 0.15); color: var(--danger); border: 1px solid rgba(255, 59, 48, 0.3); }
   </style>
 </head>
 <body>
@@ -114,20 +103,15 @@
         <h1 style="font-size: 32px; font-weight: 800; color: var(--text-main); margin-top: 10px;">PinjamCash</h1>
         <p style="color: var(--text-muted); font-weight: 600;">Sistem Manajemen Finansial Modern</p>
       </div>
-
       <div class="glass" style="padding: 30px 24px;">
         <div class="input-group">
-            <input type="text" id="log-user" class="custom-input" placeholder="Username">
-        </div>
-        <div class="input-group" style="margin-bottom: 12px;">
-            <input type="password" id="log-pass" class="custom-input" placeholder="Password">
+            <input type="text" id="log-user" class="custom-input" placeholder="Username (Contoh: admin / staff)">
         </div>
         <button class="btn-primary" onclick="prosesLogin()" style="margin-top: 16px;">Masuk Sistem</button>
       </div>
     </div>
 
     <div id="dashboard-view" class="view">
-      
       <div class="dash-header">
         <div class="profile-info">
           <div style="font-size:32px; margin-right:4px;">👨‍💻</div>
@@ -142,18 +126,15 @@
       <div id="admin-panel" style="display: none; margin-bottom: 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
             <h3 style="font-size: 17px; font-weight:800; margin:0;">🛡️ Pusat Admin</h3>
-            <span style="font-size:12px; font-weight:800; color:var(--danger); background:rgba(255,59,48,0.1); padding:4px 10px; border-radius:10px;">3 Pending ACC</span>
         </div>
         <div class="menu-grid" style="margin-bottom:0;">
-            <div class="glass menu-card" onclick="switchView('admin-approval-view')" style="background: linear-gradient(135deg, rgba(255,59,48,0.05) 0%, rgba(255,149,0,0.05) 100%); border-color:rgba(255,59,48,0.2);">
+            <div class="glass menu-card" onclick="showToast('Fitur Approval Sedang Dikembangkan', 'warning')" style="background: linear-gradient(135deg, rgba(255,59,48,0.05) 0%, rgba(255,149,0,0.05) 100%);">
                 <div class="menu-icon">🔐</div>
                 <div class="menu-title" style="color:var(--danger);">Approval</div>
-                <div class="menu-sub">Persetujuan Edit/Hapus</div>
             </div>
-            <div class="glass menu-card" onclick="switchView('admin-report-view')" style="background: linear-gradient(135deg, rgba(52,199,89,0.05) 0%, rgba(0,122,255,0.05) 100%); border-color:rgba(52,199,89,0.2);">
+            <div class="glass menu-card" onclick="showToast('Fitur Laporan Sedang Dikembangkan', 'warning')" style="background: linear-gradient(135deg, rgba(52,199,89,0.05) 0%, rgba(0,122,255,0.05) 100%);">
                 <div class="menu-icon">📊</div>
                 <div class="menu-title" style="color:var(--success);">Penghasilan</div>
-                <div class="menu-sub">Cek Bunga & Komisi</div>
             </div>
         </div>
       </div>
@@ -161,24 +142,10 @@
       <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Aktivitas Transaksi</h3>
       <div class="menu-grid">
         <div class="glass menu-card" onclick="switchView('pinjaman-view')">
-            <div class="menu-icon">💳</div>
-            <div class="menu-title">Pinjaman Baru</div>
-            <div class="menu-sub">Input debitur baru</div>
+            <div class="menu-icon">💳</div><div class="menu-title">Pinjaman Baru</div><div class="menu-sub">Input debitur baru</div>
         </div>
         <div class="glass menu-card" onclick="switchView('pembayaran-view')">
-            <div class="menu-icon">🧾</div>
-            <div class="menu-title">Pembayaran</div>
-            <div class="menu-sub">Bayar bunga/lunas</div>
-        </div>
-        <div class="glass menu-card" onclick="switchView('setoran-view')">
-            <div class="menu-icon">🏦</div>
-            <div class="menu-title">Setoran Kas</div>
-            <div class="menu-sub">Serahkan uang tunai</div>
-        </div>
-        <div class="glass menu-card" onclick="switchView('history-view')">
-            <div class="menu-icon">🔍</div>
-            <div class="menu-title">History Data</div>
-            <div class="menu-sub">Cari riwayat debitur</div>
+            <div class="menu-icon">🧾</div><div class="menu-title">Pembayaran</div><div class="menu-sub">Bayar bunga/lunas</div>
         </div>
       </div>
     </div>
@@ -191,39 +158,60 @@
 
       <div class="glass" style="padding: 24px;">
         <div class="input-group">
-          <label class="input-label">No Handphone (Wajib)</label>
-          <input type="tel" id="input-hp" class="custom-input" placeholder="08123456789">
+          <label class="input-label">No Handphone (Ketik mendeteksi riwayat)</label>
+          <input type="tel" id="input-hp" class="custom-input" placeholder="Contoh: 08123456789" oninput="cekDatabasePelanggan()">
+          <div id="badge-status-pelanggan" style="display:none;"></div>
         </div>
+        
         <div class="input-group">
-          <label class="input-label">Nama Lengkap (Wajib)</label>
-          <input type="text" id="input-nama" class="custom-input" placeholder="Nama Pelanggan">
+          <label class="input-label">Nama Lengkap</label>
+          <input type="text" id="input-nama" class="custom-input" placeholder="Masukkan Nama Pelanggan" oninput="hitungPinjaman()">
         </div>
+
         <div class="input-group">
-          <label class="input-label">Nominal Pinjaman</label>
+          <label class="input-label">Pilih Nominal & Bunga</label>
           <select id="input-nominal" class="custom-input" onchange="hitungPinjaman()">
             <option value="" disabled selected>-- Pilih Nominal --</option>
-            <option value="100000">Rp 100.000</option>
-            <option value="200000">Rp 200.000</option>
-            <option value="300000">Rp 300.000</option>
-            <option value="400000">Rp 400.000</option>
-            <option value="500000">Rp 500.000</option>
-            <option value="1000000">Rp 1.000.000</option>
+            <option value="100000">Rp 100.000 (Bunga: 30rb / 1 Minggu)</option>
+            <option value="200000">Rp 200.000 (Bunga: 60rb / 1 Minggu)</option>
+            <option value="300000">Rp 300.000 (Bunga: 90rb / 1 Minggu)</option>
+            <option value="400000">Rp 400.000 (Bunga: 120rb / 2 Minggu)</option>
+            <option value="500000">Rp 500.000 (Bunga: 150rb / 2 Minggu)</option>
+            <option value="600000">Rp 600.000 (Bunga: 150rb / 2 Minggu)</option>
+            <option value="700000">Rp 700.000 (Bunga: 150rb / 2 Minggu)</option>
+            <option value="800000">Rp 800.000 (Bunga: 200rb / 2 Minggu)</option>
+            <option value="900000">Rp 900.000 (Bunga: 200rb / 2 Minggu)</option>
+            <option value="1000000">Rp 1.000.000 (Bunga: 200rb / 2 Minggu)</option>
           </select>
         </div>
 
         <div id="prev-pinjam" style="display:none; margin-top:16px; padding:16px; background:rgba(0,0,0,0.02); border-radius:16px; border: 1px dashed rgba(0,0,0,0.1);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Tenor (Lama):</span> <b id="out-tenor"></b>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:12px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Auto ID Pinjaman:</span> 
+                <b id="out-id" style="font-size:16px; color:var(--primary);"></b>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Tenor / Jatuh Tempo:</span> 
+                <div style="text-align:right;">
+                    <b id="out-tenor"></b><br>
+                    <span id="out-tanggal" style="font-size:11.5px; color:var(--danger); font-weight:800;"></span>
+                </div>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Bunga:</span> <b id="out-bunga" style="color:var(--warning);"></b>
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Total Bunga:</span> 
+                <b id="out-bunga" style="color:var(--warning);"></b>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Komisi Staff (10% dr Bunga):</span> 
+                <b id="out-komisi" style="color:var(--success);"></b>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(0,0,0,0.05); padding-top:12px; margin-top:4px;">
-                <span style="font-size:16px; font-weight:800; color:var(--text-main);">Total Tagihan:</span> <b id="out-total" style="font-size:20px; color:var(--danger);"></b>
+                <span style="font-size:16px; font-weight:800; color:var(--text-main);">Total Tagihan:</span> 
+                <b id="out-total" style="font-size:22px; color:var(--danger);"></b>
             </div>
         </div>
 
-        <button class="btn-primary" onclick="simpanData('Pinjaman berhasil disimpan!')" style="margin-top: 24px;">Simpan Pinjaman</button>
+        <button class="btn-primary" onclick="simpanDataPinjamanAPI()" style="margin-top: 24px;">Simpan Pinjaman</button>
       </div>
     </div>
 
@@ -235,145 +223,33 @@
 
       <div class="glass" style="padding: 24px;">
         <div class="input-group">
-          <label class="input-label">Cari Data Pelanggan</label>
-          <input type="tel" id="search-hp-bayar" class="custom-input" placeholder="Masukkan No. HP..." style="padding-right: 60px;">
-          <button class="search-btn" onclick="cariTagihan()">🔍</button>
+          <label class="input-label">Cari Data Tagihan (No HP / ID)</label>
+          <input type="text" id="search-hp-bayar" class="custom-input" placeholder="Masukkan Nomor..." style="padding-right: 60px;">
+          <button class="search-btn" onclick="cariTagihanDummy()">🔍</button>
         </div>
 
         <div id="hasil-tagihan" style="display:none; animation: fadeSlideIn 0.3s;">
             <div style="background:var(--primary); color:white; padding:16px; border-radius:16px; margin-bottom:16px; box-shadow: 0 4px 15px rgba(0,122,255,0.3);">
-                <div style="font-size:12px; font-weight:800; text-transform:uppercase; margin-bottom:4px; opacity:0.8;">Status: AKTIF</div>
-                <div style="font-size:20px; font-weight:800; margin-bottom:4px;">Budi Santoso</div>
-                <div style="font-size:14px; font-weight:600;">Tagihan: Rp 390.000 (Sisa 2 Hari)</div>
+                <div style="display:flex; justify-content:space-between;">
+                    <div style="font-size:12px; font-weight:800; text-transform:uppercase; margin-bottom:4px; opacity:0.8;">ID: BUDI-6789</div>
+                    <div style="font-size:12px; font-weight:800; color:var(--warning);">Jatuh Tempo HARI INI</div>
+                </div>
+                <div style="font-size:22px; font-weight:900; margin-bottom:8px;">Budi Santoso</div>
+                <div style="font-size:14px; font-weight:600; background:rgba(0,0,0,0.15); padding:8px 12px; border-radius:10px;">Hutang Pokok: Rp 300.000<br>Bunga: Rp 90.000<br>Total Tagihan: Rp 390.000</div>
             </div>
 
             <div class="input-group">
-              <label class="input-label">Jenis Pembayaran</label>
-              <select id="jenis-bayar" class="custom-input">
-                <option value="bunga">Hanya Bayar Bunga (Rp 90.000) - Perpanjang Tenor</option>
-                <option value="lunas">Pelunasan Full (Rp 390.000)</option>
+              <label class="input-label">Opsi Pembayaran</label>
+              <select id="jenis-bayar" class="custom-input" style="font-weight:800; color:var(--primary);">
+                <option value="bunga">BAYAR BUNGA SAJA (Rp 90.000)</option>
+                <option value="lunas">LUNAS FULL (Rp 390.000)</option>
               </select>
+              <div style="font-size:12px; color:var(--text-muted); font-weight:600; margin-top:8px; line-height:1.4;">
+                *Jika hanya bayar bunga, <b>Hutang Pokok tidak berkurang</b> dan Jatuh Tempo otomatis diperpanjang sesuai tenor awal.
+              </div>
             </div>
             
-            <button class="btn-primary" style="background:var(--success); box-shadow: 0 8px 20px rgba(52,199,89,0.3);" onclick="simpanData('Pembayaran berhasil dicatat!')">Proses Pembayaran</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="setoran-view" class="view">
-      <div class="nav-header">
-        <button class="btn-back" onclick="switchView('dashboard-view')">❮</button>
-        <h2 style="margin:0; font-size: 20px; font-weight:800;">Setoran Tunai</h2>
-      </div>
-      
-      <div class="glass" style="padding: 24px; text-align:center;">
-          <div style="font-size:48px; margin-bottom:12px;">🏦</div>
-          <p style="font-size:14px; color:var(--text-muted); font-weight:600; margin-bottom:24px;">Menu penyerahan uang fisik dari staff ke Admin/SuperAdmin.</p>
-          
-          <div class="input-group" style="text-align:left;">
-            <label class="input-label">Nominal Disetorkan</label>
-            <input type="number" class="custom-input" placeholder="Rp ...">
-          </div>
-          <div class="input-group" style="text-align:left;">
-            <label class="input-label">Catatan</label>
-            <input type="text" class="custom-input" placeholder="Cth: Setoran shift pagi">
-          </div>
-          <button class="btn-primary" onclick="simpanData('Setoran diajukan ke Admin!')">Kirim Setoran</button>
-      </div>
-    </div>
-
-    <div id="history-view" class="view">
-      <div class="nav-header">
-        <button class="btn-back" onclick="switchView('dashboard-view')">❮</button>
-        <h2 style="margin:0; font-size: 20px; font-weight:800;">History Pelanggan</h2>
-      </div>
-
-      <div class="glass" style="padding: 24px;">
-        <div class="input-group">
-          <input type="tel" id="search-hist" class="custom-input" placeholder="Ketik No HP Pelanggan..." style="padding-right: 60px;">
-          <button class="search-btn" onclick="tampilHistory()">🔍</button>
-        </div>
-
-        <div id="timeline-hist" style="display:none; animation: fadeSlideIn 0.3s;">
-            <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px dashed rgba(0,0,0,0.1);">
-                <h3 style="font-size:18px; font-weight:800;">Andi Wijaya</h3>
-                <span style="font-size:12px; font-weight:700; color:var(--success);">Credit Score: Lancar</span>
-            </div>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-date">12 Okt 2026 - 14:30</div>
-                    <div class="timeline-content">
-                        <strong style="color:var(--success);">Pembayaran Bunga (Rp 90.000)</strong><br>
-                        Jatuh tempo diperpanjang hingga 19 Okt. Staff: AdminA.
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-date">05 Okt 2026 - 10:00</div>
-                    <div class="timeline-content">
-                        <strong style="color:var(--primary);">Pinjaman Cair (Rp 300.000)</strong><br>
-                        Tenor 1 Minggu. Tagihan Rp 390.000.
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="admin-report-view" class="view">
-      <div class="nav-header">
-        <button class="btn-back" onclick="switchView('dashboard-view')">❮</button>
-        <h2 style="margin:0; font-size: 20px; font-weight:800;">Laporan Penghasilan</h2>
-      </div>
-
-      <div class="glass" style="padding: 24px; margin-bottom:20px; display:flex; gap:12px; align-items:center;">
-        <div style="flex:1;">
-            <label class="input-label">Mulai</label>
-            <input type="date" class="custom-input" style="padding:12px 14px; font-size:14px;">
-        </div>
-        <div style="flex:1;">
-            <label class="input-label">Akhir</label>
-            <input type="date" class="custom-input" style="padding:12px 14px; font-size:14px;">
-        </div>
-      </div>
-
-      <div class="glass" style="padding: 24px; display:flex; flex-direction:column; gap:16px;">
-        <div style="background:rgba(0,122,255,0.05); border:1px solid rgba(0,122,255,0.2); padding:16px; border-radius:16px;">
-            <div style="font-size:12px; font-weight:800; color:var(--primary); text-transform:uppercase;">Uang Modal Beredar</div>
-            <div style="font-size:24px; font-weight:900;">Rp 45.000.000</div>
-        </div>
-        <div style="background:rgba(52,199,89,0.05); border:1px solid rgba(52,199,89,0.2); padding:16px; border-radius:16px;">
-            <div style="font-size:12px; font-weight:800; color:var(--success); text-transform:uppercase;">Pemasukan (Bunga Lunas)</div>
-            <div style="font-size:24px; font-weight:900;">Rp 12.500.000</div>
-        </div>
-        <div style="background:rgba(175,82,222,0.05); border:1px solid rgba(175,82,222,0.2); padding:16px; border-radius:16px;">
-            <div style="font-size:12px; font-weight:800; color:var(--purple); text-transform:uppercase;">Hutang Komisi Staff (10%)</div>
-            <div style="font-size:24px; font-weight:900;">Rp 1.250.000</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="admin-approval-view" class="view">
-      <div class="nav-header">
-        <button class="btn-back" onclick="switchView('dashboard-view')">❮</button>
-        <h2 style="margin:0; font-size: 20px; font-weight:800;">Antrian Approval</h2>
-      </div>
-
-      <div class="glass" style="padding: 24px;">
-        <p style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:20px;">Permintaan Edit/Hapus data yang melewati batas 1 jam.</p>
-
-        <div style="border:1px solid rgba(0,0,0,0.05); padding:16px; border-radius:16px; margin-bottom:16px; background:rgba(255,255,255,0.8);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="font-size:14px; font-weight:800;">LN-20260402-0812</span>
-                <span style="font-size:12px; font-weight:800; color:var(--warning);">PENDING</span>
-            </div>
-            <div style="font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:12px;">
-                Staff <b>AdminA</b> meminta ubah status <b>Aktif -> Lunas</b>. (Terlambat 2 Jam).
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-secondary" style="margin:0; padding:10px; font-size:14px; color:var(--danger);" onclick="simpanData('Ditolak!')">Tolak</button>
-                <button class="btn-primary" style="margin:0; padding:10px; font-size:14px; background:var(--success);" onclick="simpanData('Disetujui!')">Setujui</button>
-            </div>
+            <button class="btn-primary" style="background:var(--success); box-shadow: 0 8px 20px rgba(52,199,89,0.3);" onclick="prosesPembayaranAPI()">Proses Pembayaran</button>
         </div>
       </div>
     </div>
@@ -381,17 +257,30 @@
   </div>
 
   <script>
-    // --- API & VARIABLES ---
-    const API_URL = "https://script.google.com/macros/s/AKfycbyjDAdWZU3vOC7OYeATq3w_UGe30nGp5K7f00HiN6cWzAQCgZD90lSIie7joKdTymB49A/exec";
-    let currentUser = null;
+    // =========================================================
+    // JAVASCRIPT & API FETCH LOGIC
+    // =========================================================
 
-    // --- UI FUNCTIONS ---
+    // 1. URL GOOGLE APPS SCRIPT ANDA
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjDAdWZU3vOC7OYeATq3w_UGe30nGp5K7f00HiN6cWzAQCgZD90lSIie7joKdTymB49A/exec";
+    
+    // 2. DATABASE DUMMY UNTUK AUTO-DETECT PELANGGAN
+    const DB_PELANGGAN = {
+        "08123456789": { nama: "Budi Santoso", status: "LANCAR" },
+        "08111111111": { nama: "Siti Aminah", status: "KURANG LANCAR" },
+        "08999999999": { nama: "Joko Anwar", status: "BURUK" }
+    };
+
+    let currentUser = null;
+    let hitungCache = null; // Menyimpan data hitungan sementara
+
+    // --- UTILITIES ---
     function showToast(msg, type = 'success') {
       const t = document.getElementById('toast');
       t.innerText = msg;
       t.className = type === 'error' ? 'error' : 'success';
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
+      setTimeout(() => t.classList.remove('show'), 3500);
     }
 
     function switchView(viewId) {
@@ -400,26 +289,17 @@
       window.scrollTo(0,0);
     }
 
-    setInterval(() => {
-        let now = new Date();
-        document.getElementById('live-clock').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    }, 1000);
-
-    // --- LOGIN LOGIC ---
+    // --- LOGIN / LOGOUT LOGIC ---
     function prosesLogin() {
-        let u = document.getElementById('log-user').value;
+        let u = document.getElementById('log-user').value.toLowerCase();
         if(!u) return showToast("Isi username!", "error");
         
-        currentUser = { username: u, role: (u.toLowerCase() === 'admin' ? 'Admin' : 'Staff') };
-        document.getElementById('user-name').innerText = currentUser.username.toUpperCase();
+        let role = (u === 'admin' || u === 'superadmin') ? 'Admin' : 'Staff';
+        currentUser = { username: u, role: role };
         
-        if(currentUser.role === 'Admin') {
-            document.getElementById('admin-panel').style.display = 'block';
-            document.getElementById('user-role-text').innerText = "Super Admin Aktif";
-        } else {
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('user-role-text').innerText = "Staff Aktif";
-        }
+        document.getElementById('user-name').innerText = u.toUpperCase();
+        document.getElementById('user-role-text').innerText = role + " Aktif";
+        document.getElementById('admin-panel').style.display = (role === 'Admin') ? 'block' : 'none';
 
         showToast("Login Berhasil!");
         switchView('dashboard-view');
@@ -428,19 +308,47 @@
     function prosesLogout() {
         currentUser = null;
         document.getElementById('log-user').value = '';
-        document.getElementById('log-pass').value = '';
         switchView('login-view');
         showToast("Berhasil Logout");
     }
 
-    // --- KALKULASI PINJAMAN ---
+    // --- DETEKSI PELANGGAN (CREDIT SCORE) ---
+    function cekDatabasePelanggan() {
+        let hp = document.getElementById('input-hp').value.trim();
+        let elNama = document.getElementById('input-nama');
+        let elBadge = document.getElementById('badge-status-pelanggan');
+
+        if (DB_PELANGGAN[hp]) {
+            let data = DB_PELANGGAN[hp];
+            elNama.value = data.nama;
+            elNama.readOnly = true; // Kunci nama agar tidak diubah sembarangan
+            elBadge.style.display = "block";
+            
+            if(data.status === "LANCAR") elBadge.innerHTML = `<div class="status-badge badge-lancar">✅ Track Record: LANCAR</div>`;
+            else if (data.status === "KURANG LANCAR") elBadge.innerHTML = `<div class="status-badge badge-kurang">⚠️ Track Record: KURANG LANCAR</div>`;
+            else elBadge.innerHTML = `<div class="status-badge badge-buruk">❌ Track Record: BURUK</div>`;
+        } else {
+            if (elNama.readOnly) elNama.value = ""; 
+            elNama.readOnly = false;
+            elBadge.style.display = "none";
+        }
+        hitungPinjaman(); // Panggil ulang hitungan untuk update Auto-ID
+    }
+
+    // --- KALKULASI BUNGA, TENOR, DAN AUTO ID ---
     function hitungPinjaman() {
         let nominal = parseInt(document.getElementById('input-nominal').value);
+        let hp = document.getElementById('input-hp').value.trim();
+        let nama = document.getElementById('input-nama').value.trim();
+        
         if(!nominal) return;
 
         let bunga = 0;
+        // Tenor Logic: 1 Minggu (100k-300k), 2 Minggu (400k - 1Jt)
         let tenorMinggu = (nominal <= 300000) ? 1 : 2; 
+        let tenorHari = tenorMinggu * 7;
         
+        // Aturan Bunga
         if (nominal === 100000) bunga = 30000;
         else if (nominal === 200000) bunga = 60000;
         else if (nominal === 300000) bunga = 90000;
@@ -448,38 +356,120 @@
         else if (nominal >= 500000 && nominal <= 700000) bunga = 150000;
         else if (nominal >= 800000 && nominal <= 1000000) bunga = 200000;
 
-        let komisi = bunga * 0.10;
+        let komisi = bunga * 0.10; // Komisi staff 10% dari bunga
         let total = nominal + bunga;
 
+        // Auto ID (Nama Depan + 4 Digit Terakhir No HP)
+        let autoId = "DRAFT-ID";
+        if (nama && hp && hp.length >= 4) {
+            let namaDepan = nama.split(' ')[0].toUpperCase();
+            let empatDigit = hp.slice(-4);
+            autoId = `${namaDepan}-${empatDigit}`;
+        }
+
+        // Generate Tanggal (Hari ini -> Jatuh Tempo)
+        let tglSkrg = new Date();
+        let tglJatuhTempo = new Date(tglSkrg);
+        tglJatuhTempo.setDate(tglJatuhTempo.getDate() + tenorHari);
+        
+        let formatPengajuan = tglSkrg.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+        let formatJatuhTempo = tglJatuhTempo.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+
+        // Simpan ke Variabel Cache (untuk disiapkan sebelum Fetch API)
+        hitungCache = { nominal, bunga, total, tenorHari, komisi, autoId, tglSkrg, tglJatuhTempo };
+
+        // Cetak ke layar HTML
+        document.getElementById('out-id').innerText = autoId;
         document.getElementById('out-tenor').innerText = `${tenorMinggu} Minggu`;
+        document.getElementById('out-tanggal').innerText = `Mulai: ${formatPengajuan} ➔ Bayar: ${formatJatuhTempo}`;
         document.getElementById('out-bunga').innerText = `Rp ${bunga.toLocaleString('id-ID')}`;
         document.getElementById('out-komisi').innerText = `Rp ${komisi.toLocaleString('id-ID')}`;
         document.getElementById('out-total').innerText = `Rp ${total.toLocaleString('id-ID')}`;
         document.getElementById('prev-pinjam').style.display = 'block';
     }
 
-    // --- FUNGSI DUMMY INTERAKTIF ---
-    function cariTagihan() {
+    // --- FETCH API : MENGIRIM DATA KE GOOGLE SCRIPT ---
+    async function simpanDataPinjamanAPI() {
+        let hp = document.getElementById('input-hp').value.trim();
+        let nama = document.getElementById('input-nama').value.trim();
+
+        if(!hp || !nama || !hitungCache) {
+            return showToast("Lengkapi semua data dan pilih nominal terlebih dahulu!", "error");
+        }
+
+        // Struktur Payload yang akan diterima Google Script
+        let payload = {
+            ID_Pinjaman: hitungCache.autoId,
+            Tgl: hitungCache.tglSkrg.toISOString(),
+            Customer: nama,
+            No_HP: hp,
+            Nominal: hitungCache.nominal,
+            Bunga: hitungCache.bunga,
+            Total_Tagihan: hitungCache.total,
+            Tenor_Hari: hitungCache.tenorHari,
+            Jatuh_Tempo: hitungCache.tglJatuhTempo.toISOString(),
+            Status: "AKTIF",
+            Staff: currentUser ? currentUser.username : "System",
+            Komisi_Staff: hitungCache.komisi
+        };
+
+        showToast("⏳ Menyimpan ke Database Server...", "success");
+
+        try {
+            // Proses Fetch (POST)
+            let response = await fetch(API_URL, {
+                method: 'POST',
+                // Pastikan Web App Script kamu mengizinkan CORS jika menggunakan body JSON
+                body: JSON.stringify({ action: 'savePinjaman', payload: payload })
+            });
+            
+            let res = await response.json();
+
+            if(res.success) {
+                showToast("✅ Pinjaman berhasil disimpan ke Spreadsheet!", "success");
+                
+                // Reset Form jika sukses
+                document.getElementById('input-hp').value = "";
+                document.getElementById('input-nama').value = "";
+                document.getElementById('input-nama').readOnly = false;
+                document.getElementById('input-nominal').value = "";
+                document.getElementById('badge-status-pelanggan').style.display = 'none';
+                document.getElementById('prev-pinjam').style.display = 'none';
+                hitungCache = null;
+
+                switchView('dashboard-view');
+            } else {
+                showToast("❌ Gagal: " + res.msg, "error");
+            }
+        } catch (error) {
+            // Jika Google script belum di-deploy dengan setting "Anyone" / ada masalah CORS
+            showToast("⚠️ Error API Server. Pastikan Web App Script berjalan.", "error");
+            console.error("Fetch error: ", error);
+        }
+    }
+
+    // --- LOGIKA PEMBAYARAN (Contoh) ---
+    function cariTagihanDummy() {
         let hp = document.getElementById('search-hp-bayar').value;
-        if(!hp) return showToast('Masukkan No HP!', 'error');
+        if(!hp) return showToast('Masukkan Nomor HP / ID!', 'error');
         document.getElementById('hasil-tagihan').style.display = 'block';
     }
 
-    function tampilHistory() {
-        let hp = document.getElementById('search-hist').value;
-        if(!hp) return showToast('Masukkan No HP!', 'error');
-        document.getElementById('timeline-hist').style.display = 'block';
-    }
-
-    function simpanData(msg) {
-        showToast("⏳ Memproses data...");
+    async function prosesPembayaranAPI() {
+        let jenis = document.getElementById('jenis-bayar').value;
+        showToast("⏳ Memproses Pembayaran ke Server...", "success");
+        
+        // Simulasi fetch response dari server
         setTimeout(() => {
-            showToast(msg, "success");
+            if (jenis === 'bunga') {
+                showToast("✅ Berhasil! Tenor diperpanjang otomatis.", "success");
+            } else {
+                showToast("✅ Berhasil! Hutang LUNAS.", "success");
+            }
             switchView('dashboard-view');
-            // Reset input (opsional)
             document.getElementById('hasil-tagihan').style.display = 'none';
-            document.getElementById('timeline-hist').style.display = 'none';
-        }, 800);
+            document.getElementById('search-hp-bayar').value = '';
+        }, 1500);
     }
   </script>
 </body>
