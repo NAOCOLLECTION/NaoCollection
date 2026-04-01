@@ -33,8 +33,8 @@
     .cal-info { flex:1; width: 100%;}
     .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display:inline-block;}
     
-    /* MODALS */
-    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index:999; align-items:center; justify-content:center; padding: 20px; animation: fadeIn 0.2s;}
+    /* MODALS - PERBAIKAN Z-INDEX DI SINI */
+    .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index:9990; align-items:center; justify-content:center; padding: 20px; animation: fadeIn 0.2s;}
     .modal-overlay.active { display: flex; }
     .sys-modal { background: white; width: 100%; max-width: 340px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.9); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} } @keyframes popUp { to{transform:scale(1);} }
@@ -51,7 +51,7 @@
     .trans-card.active .trans-body { display: block; }
     .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; }
     .tl-item { border-left: 2px solid #ddd; margin-left: 8px; padding-left: 15px; padding-bottom: 12px; position: relative; }
-    .tl-item::before { content:''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; }
+    .tl-item::before { content:''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);}
   </style>
 </head>
 <body>
@@ -59,7 +59,7 @@
   <div id="app-container">
     
     <div id="login-view" class="view active">
-      <div class="brand-logo">NAO Collection</div>
+      <div class="brand-logo">✨ NAO Collection</div>
       <div class="glass" style="padding: 24px; margin-bottom: 20px;">
         <input type="text" id="username" class="custom-input" placeholder="Username">
         <input type="password" id="password" class="custom-input" placeholder="Password">
@@ -107,13 +107,13 @@
       </div>
       <div class="glass" style="padding: 24px;">
         <input type="hidden" id="form-mode" value="NEW"> <input type="hidden" id="form-edit-id" value="">
-        <label class="input-label">Identitas Pelanggan</label>
+        <label class="input-label">Identitas Pelanggan (Wajib)</label>
         <div style="display:flex; gap:10px; margin-bottom: 12px;">
             <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1; margin-bottom:0;" onblur="cekDataPelanggan()">
             <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-           <label class="input-label" style="margin:0;">Nama Lengkap</label><div id="cust-badge"></div>
+           <label class="input-label" style="margin:0;">Nama Lengkap (Wajib)</label><div id="cust-badge"></div>
         </div>
         <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap">
         <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Auto)" readonly style="background:#f0f0f5; color:gray; font-size:12px;">
@@ -135,14 +135,14 @@
         </div>
 
         <div id="wrap-baju" style="display:none;">
-            <label class="input-label">Kategori Baju (Pilih Multi)</label>
+            <label class="input-label">Kategori Baju (Wajib Pilih Minimal 1)</label>
             <div id="tag-baju-container" style="margin-bottom:12px;">
                <span class="tag-btn" onclick="toggleTag(this)">Daster</span> <span class="tag-btn" onclick="toggleTag(this)">Kaos</span>
                <span class="tag-btn" onclick="toggleTag(this)">Cardigan</span> <span class="tag-btn" onclick="toggleTag(this)">Bra</span>
                <span class="tag-btn" onclick="toggleTag(this)">Celana Dalam</span> <span class="tag-btn" onclick="toggleTag(this)">Baju Wanita</span>
                <span class="tag-btn" onclick="toggleTag(this)">Sendal</span> <span class="tag-btn" onclick="toggleTag(this)">Baju Anak</span>
             </div>
-            <label class="input-label">Total Harga Baju</label>
+            <label class="input-label">Total Harga Baju (Wajib)</label>
             <input type="text" id="nominal-baju" class="custom-input" placeholder="Rp..." oninput="formatRupiahInput(this)">
             <div id="simulasi-cicilan" style="font-size:11px; font-weight:800; color:var(--warning); margin-bottom:16px; display:none; background:rgba(255,149,0,0.1); padding:10px; border-radius:12px;"></div>
         </div>
@@ -158,7 +158,7 @@
         </div>
 
         <label class="input-label">Catatan Barang / Note Khusus</label>
-        <textarea id="catatan" class="custom-input" rows="2" placeholder="Note Khusus..."></textarea>
+        <textarea id="catatan" class="custom-input" rows="2" placeholder="Tulis rincian kode dll..."></textarea>
         <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
       </div>
     </div>
@@ -206,6 +206,13 @@
         <h2 style="font-size:18px;">Setoran Kasir</h2>
         <button onclick="refreshData('SETORAN')" class="btn-secondary">🔄</button>
       </div>
+
+      <div style="background:linear-gradient(135deg, var(--primary), #0056b3); padding:20px; border-radius:24px; color:white; text-align:center; margin-bottom:20px; box-shadow: 0 8px 20px rgba(0,122,255,0.3);">
+         <div style="font-size:11px; font-weight:700; opacity:0.8; letter-spacing:1px; margin-bottom:4px;">TOTAL KOMISI KESELURUHAN (A-Z)</div>
+         <div id="tot-all-komisi" style="font-size:32px; font-weight:900;">Rp 0</div>
+         <div style="font-size:10px; opacity:0.8; margin-top:4px;">Riwayat hak staff dari seluruh transaksi.</div>
+      </div>
+
       <div class="glass" style="padding: 24px; margin-bottom:16px;">
          <div style="font-weight:800; color:var(--primary); margin-bottom:16px; text-align:center;">🏷️ SETORAN PINJAMAN UANG</div>
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 16px;">
@@ -290,7 +297,7 @@
     </div>
   </div>
 
-  <div id="modal-pilih-aksi" class="modal-overlay" style="z-index:9990;">
+  <div id="modal-pilih-aksi" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal" style="text-align:center;">
        <h3 style="margin-bottom:16px;">Pilih Aksi Tagihan</h3>
        <input type="hidden" id="pilih-id">
@@ -300,16 +307,16 @@
     </div>
   </div>
 
-  <div id="modal-bayar" class="modal-overlay" style="z-index:9990;">
+  <div id="modal-bayar" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
        <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
        <div id="wrap-nominal-bayar" style="display:none;">
-          <label class="input-label">Nominal Uang</label>
+          <label class="input-label">Nominal Uang (Bisa Diubah)</label>
           <input type="text" id="nominal-bayar" class="custom-input" oninput="formatRupiahInput(this)">
        </div>
        <div id="wrap-foto-bayar">
-          <label class="input-label">Upload Bukti Transfer (Opsional)</label>
+          <label class="input-label">Upload Bukti / Barang (TIDAK WAJIB)</label>
           <div style="display:flex; gap:10px; margin-bottom:16px;">
              <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
              <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
@@ -321,7 +328,7 @@
     </div>
   </div>
 
-  <div id="modal-setor" class="modal-overlay" style="z-index:9990;">
+  <div id="modal-setor" class="modal-overlay" style="z-index:99990;">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
        <input type="hidden" id="setor-kategori">
@@ -357,8 +364,17 @@
      </div>
   </div>
 
+  <div id="success-modal" class="modal-overlay" style="z-index:99999;">
+     <div class="sys-modal" style="text-align:center; background:#fff;">
+        <div style="font-size:50px; margin-bottom:12px;">✅</div>
+        <h3 style="margin-bottom:8px; font-size:18px; color:var(--success);">Berhasil!</h3>
+        <p id="success-msg" style="font-size:14px; color:gray; margin-bottom:20px;">Data sukses diproses.</p>
+        <button class="btn-primary" onclick="document.getElementById('success-modal').classList.remove('active')">Tutup</button>
+     </div>
+  </div>
+
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwIMc_7u_K81MEhggryxSfaGC9LqorrK54IB36ofd5XJ10FYAFFubebduCZ5D8QvSev/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzM-Igo0OfhQr71TlK0_n5O7s5l72LJJGMgS_iJpnLLTO6bWnLCutoOsekQ2-s5E9sixA/exec"; 
     
     let currentUser = null, sessionToken = "", listBayarUnsetor = [];
     let globalPelangganData = [], globalTagihanData = [];
@@ -381,6 +397,10 @@
        document.getElementById('sys-input').style.display = 'block'; document.getElementById('sys-btn-no').style.display = 'block';
        document.getElementById('sys-btn-yes').onclick = () => { let v = document.getElementById('sys-input').value; closeSysModal(); callback(v); }; document.getElementById('sys-modal').classList.add('active');
     }
+    function popSuccess(msg) {
+       document.getElementById('success-msg').innerText = msg;
+       document.getElementById('success-modal').classList.add('active');
+    }
 
     // --- PWA INSTALL & SESSION ---
     let deferredPrompt;
@@ -397,7 +417,8 @@
     };
 
     function refreshData(view) {
-        if(view==='DASHBOARD') loadDataDashboard(); else if(view==='TAGIHAN') loadTagihan(); else if(view==='PELANGGAN') loadPelanggan(); else if(view==='SETORAN') loadSetoran(); else if(view==='ADMIN') loadAdmin();
+        if(view==='DASHBOARD') loadDataDashboard(); else if(view==='TAGIHAN') loadTagihan(); else if(view==='PELANGGAN') loadPelanggan(); else if(view==='SETORAN') loadSetoran(); else if(view==='ADMIN') loadAdmin(); else if(view==='FORM') initForm('NEW');
+        showToast("Data diperbarui!", "success");
     }
 
     function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
@@ -412,19 +433,22 @@
     function getBase64(file) { return new Promise((res, rej) => { if (!file) return res(""); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); r.onerror = e => rej(e); }); }
     async function handleFoto(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('foto-preview').style.display='block'; }
     async function handleFotoTF(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('tf-preview').style.display='block'; }
+    function showToast(msg, type='success') { let t = document.getElementById('custom-toast'); t.innerText = msg; t.style.background = type==='success'?'#34C759':'#FF3B30'; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
 
     // --- CEK PELANGGAN ---
     async function cekDataPelanggan() {
         let hp = document.getElementById('no-hp'); 
         let v = hp.value.replace(/[^0-9]/g, ''); 
+        // STANDARISASI NOMOR (Pasti cocok kalau sudah pernah disimpan)
         if(v.startsWith('0')) v = '62' + v.substring(1); else if(v.startsWith('8')) v = '62' + v; hp.value = v;
+        
         if (v.length > 9) {
             let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cekPelanggan", username: currentUser.username, token: sessionToken, payload: {noHp: v} }) }).then(r => r.json());
             if (res.success) { 
                 document.getElementById('nama-peminjam').value = res.nama; document.getElementById('nama-peminjam').readOnly = true; 
                 document.getElementById('kode-cust').value = res.kode; 
                 document.getElementById('cust-badge').innerHTML = `<span class="badge" style="background:${res.statusKredit.color}; color:white;">${res.statusKredit.label}</span>`;
-                sysMessage('✅', 'Berhasil', "Data Pelanggan Lama Ditemukan!"); 
+                showToast("Data Pelanggan Lama Ditemukan!"); 
             } else { document.getElementById('nama-peminjam').readOnly = false; document.getElementById('kode-cust').value = ""; document.getElementById('cust-badge').innerHTML = ""; }
         }
     }
@@ -502,17 +526,17 @@
       let cat = document.getElementById('kategori').value;
       let nom = cat === 'Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : getNom(document.getElementById('nominal-baju').value);
       
-      // VALIDASI WAJIB ISI
-      if(!hp) return sysMessage('⚠️', 'Perhatian', 'Identitas Pelanggan (No HP) wajib diisi!');
+      // VALIDASI WAJIB ISI SEBELUM SIMPAN
+      if(!hp) return sysMessage('⚠️', 'Perhatian', 'No HP Pelanggan wajib diisi!');
       if(!nama) return sysMessage('⚠️', 'Perhatian', 'Nama Lengkap wajib diisi!');
       if(!nom || nom <= 0) return sysMessage('⚠️', 'Perhatian', 'Total Harga / Nominal wajib diisi!');
-      if(cat.includes('Baju') && arrBaju.length === 0) return sysMessage('⚠️', 'Perhatian', 'Wajib pilih Kategori Baju (Pilih Multi)!');
+      if(cat.includes('Baju') && arrBaju.length === 0 && document.getElementById('form-mode').value === 'NEW') return sysMessage('⚠️', 'Perhatian', 'Wajib pilih Kategori Baju (Klik salah satu tombol kategori di atas)!');
 
       let tmp = parseInt(document.getElementById('tempo').value) || 0; let date = new Date(); if (tmp > 0) date.setDate(date.getDate() + tmp);
       let note = document.getElementById('catatan').value; let mode = document.getElementById('form-mode').value;
-      if (mode === 'EDIT' && !note) { return sysMessage('⚠️', 'Perhatian', "Alasan edit wajib diisi di catatan!"); }
+      if (mode === 'EDIT' && !note) { return sysMessage('⚠️', 'Perhatian', "Alasan edit wajib diisi di catatan khusus!"); }
 
-      let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan..."; btn.disabled = true;
+      let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan (Harap Tunggu)..."; btn.disabled = true;
 
       let payload = {
         namaPeminjam: nama, noHp: hp, kode: document.getElementById('kode-cust').value.trim(),
@@ -521,11 +545,11 @@
 
       if (mode === 'NEW') {
           let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitPengajuan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-          if(res.success) { sysMessage('✅', 'Berhasil', "Pengajuan Berhasil Dibuat!"); switchView('dashboard-view'); initForm('NEW'); loadDataDashboard(); } else sysMessage('🚫', 'Gagal', res.message);
+          if(res.success) { popSuccess("Pengajuan Berhasil Dibuat!"); switchView('dashboard-view'); initForm('NEW'); loadDataDashboard(); } else sysMessage('🚫', 'Gagal', res.message);
       } else {
           let idEdit = document.getElementById('form-edit-id').value;
           let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id:idEdit, tipe:'EDIT', alasan:note, editData: payload} }) }).then(r=>r.json());
-          if(res.success) { sysMessage('✅', 'Berhasil', "Permintaan Update Terkirim!"); switchView('tagihan-view'); loadTagihan(); } else sysMessage('🚫', 'Gagal', res.message);
+          if(res.success) { popSuccess("Data Berhasil Diupdate!"); switchView('tagihan-view'); loadTagihan(); } else sysMessage('🚫', 'Gagal', res.message);
       }
       btn.innerText = "Simpan Data"; btn.disabled = false;
     }
@@ -577,15 +601,18 @@
         } else {
            let sisa = nomP - byrP; let base = Math.floor((nomP / 4) / 500) * 500; let cicilW = (byrP === 0) ? (nomP - (base * 3)) : base; 
            btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
-                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Full (Baju)')">Lunas Full</button>`;
+                      <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Full (Baju)')">Lunas Sisa (${formatRp(sisa)})</button>`;
         }
 
+        // Hindari error quotes di JS dengan cara replace single quote nama
+        let sNama = (i.nama || '-').replace(/'/g, "\\'");
         let rawData = encodeURIComponent(JSON.stringify(i));
+        
         list.innerHTML += `
           <div class="cal-card">
              <div class="cal-date-box" style="background:${bgCal}"><div class="cal-month">${blnTeks}</div><div class="cal-day">${tglTeks}</div></div>
              <div class="cal-info">
-                <div style="font-weight:800; font-size:15px;">${i.nama || '-'} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
+                <div style="font-weight:800; font-size:15px;">${sNama} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
                 <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat || '-'} | ${i.kode || '-'}</div>
                 <div style="font-size:12px; background:#f0f0f5; padding:6px; border-radius:6px; margin-bottom:8px;">
                    Sisa Pokok: <b>${formatRp(nomP - byrP)}</b><br>
@@ -603,7 +630,7 @@
        return function(alasan) {
           if(!alasan) return; let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
           fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => {
-             if(res.success) { sysMessage('✅', 'Berhasil', "Tagihan Dihapus!"); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan(); }
+             if(res.success) { popSuccess("Tagihan Berhasil Dihapus!"); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan(); } else sysAlert(res.message);
           });
        };
     }
@@ -618,9 +645,12 @@
     // --- BAYAR ---
     function bukaModalBayar(id, jenis, nomRec, title) {
       document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
-      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar');
-      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = formatRp(nomRec).replace('Rp ',''); } 
-      else { wrapNom.style.display = 'none'; inNom.value = nomRec; }
+      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar'), wrapFoto = document.getElementById('wrap-foto-bayar');
+      
+      // Khusus Cicilan, foto disembunyikan
+      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = formatRp(nomRec).replace('Rp ',''); wrapFoto.style.display = 'none'; } 
+      else { wrapNom.style.display = 'none'; inNom.value = nomRec; wrapFoto.style.display = 'block'; }
+      
       fileUploadData = ""; document.getElementById('foto-cam').value = ""; document.getElementById('foto-gal').value = ""; document.getElementById('foto-preview').style.display='none';
       document.getElementById('modal-bayar').classList.add('active');
     }
@@ -629,7 +659,7 @@
       let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true; let jenis = document.getElementById('modal-jenis-bayar').value;
       let payload = { id: document.getElementById('modal-id-bayar').value, jenis: jenis, nomBayar: getNom(document.getElementById('nominal-bayar').value), fotoBukti: fileUploadData };
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
-      if(res.success) { sysMessage('✅', 'Berhasil', "Pembayaran Sukses Masuk Kasir!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); } else sysMessage('🚫', 'Gagal', res.message);
+      if(res.success) { popSuccess("Pembayaran Sukses Masuk Kasir!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); } else sysMessage('🚫', 'Gagal', res.message);
       btn.innerText = "Proses Pembayaran"; btn.disabled = false;
     }
 
@@ -645,8 +675,9 @@
       let list = document.getElementById('list-pelanggan'); list.innerHTML = ""; if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
       data.forEach(p => {
         let sBadge = `<span class="badge" style="background:${p.statusKredit.color}; color:white;">${p.statusKredit.label}</span>`;
+        let sNama = (p.nama || '-').replace(/'/g, "\\'"); // Amanin single quote
         list.innerHTML += `
-          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')" style="cursor:pointer;">
+          <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${sNama}', '${p.kode}')" style="cursor:pointer;">
             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
             <div style="font-weight: 800; font-size: 16px;">${p.nama}</div>
             <div style="font-size: 12px; color: gray; font-weight:600;">📞 ${p.noHp}</div>
@@ -682,10 +713,34 @@
          if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
          res.data.forEach(item => {
              let isLunas = item.status === 'LUNAS' || item.status.includes('DELETE');
-             let htmlBayar = ""; item.bayar.forEach(b => { htmlBayar += `<div class="tl-item"><div style="font-size:10px; color:gray;">${new Date(b.tgl).toLocaleDateString('id-ID')}</div><div style="font-weight:700;">${b.jenis}: ${formatRp(b.nom)}</div></div>`; });
+             let htmlBayar = ""; 
+             // Group bunga jika banyak
+             let cBng = 0; let nBng = 0;
+             item.bayar.forEach(b => { 
+                 if(b.jenis==='BUNGA') { cBng++; nBng+=parseInt(b.nom); }
+                 else { htmlBayar += `<div class="tl-item"><div style="font-size:10px; color:gray;">${new Date(b.tgl).toLocaleDateString('id-ID')}</div><div style="font-weight:700;">${b.jenis}: ${formatRp(b.nom)}</div></div>`; }
+             });
+             if(cBng > 0) htmlBayar = `<div class="tl-item"><div style="font-weight:700; color:var(--warning);">🔄 Perpanjang (Bunga) ${cBng}x: ${formatRp(nBng)}</div></div>` + htmlBayar;
+
              let jtStatus = ""; if (item.status === 'PENDING') { let jt = new Date(item.jatuhTempo); let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : ""; jtStatus = `<div class="timeline-item ${lewat ? 'tl-danger' : ''}"><div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div></div>`; }
              let appCard = item.status === 'DELETED' ? 'tl-danger' : '';
-             tl.innerHTML += `<div class="glass ${appCard}" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);"><div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div><div class="timeline"><div class="timeline-item"><div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc">📥 <b>Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div></div>${htmlBayar}${jtStatus}</div></div>`;
+             
+             tl.innerHTML += `
+               <div class="glass trans-card ${isLunas ? '' : 'active'} ${appCard}" id="card-${item.id}">
+                  <div class="trans-header" onclick="document.getElementById('card-${item.id}').classList.toggle('active')">
+                     <div style="flex:1">
+                        <div style="font-size:10px; color:gray;">${item.id} • ${new Date(item.tglCair).toLocaleDateString('id-ID')}</div>
+                        <div style="font-weight:800;">${item.kategori}</div>
+                        <div style="font-size:13px; font-weight:900; color:var(--primary)">${formatRp(item.nominal)}</div>
+                     </div>
+                     <span class="status-pill" style="background:${isLunas?'#34C759':'#FF9500'}; color:white">${item.status}</span><div style="margin-left:10px; font-size:12px; color:#ccc">▼</div>
+                  </div>
+                  <div class="trans-body">
+                     <div style="font-size:11px; color:gray; margin-bottom:10px;">Riwayat Pembayaran:</div>
+                     ${htmlBayar || '<div style="font-size:11px; color:gray; padding-left:10px;">Belum ada pembayaran.</div>'}
+                     ${jtStatus}
+                  </div>
+               </div>`;
          });
       }
     }
@@ -695,18 +750,18 @@
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
       if(res.success) { 
          let d = res.data; 
-         // Kalkulasi 10% Komisi Otomatis
-         let komisiBungaStaff = Math.floor(d.pb * 0.10);
-         let setoranBungaAdmin = d.pb - komisiBungaStaff;
+         // Kalkulasi 10% Komisi Otomatis untuk Pinjaman Uang
+         let komisiBungaStaff = Math.floor(d.data.pb * 0.10);
+         let setoranBungaAdmin = d.data.pb - komisiBungaStaff;
          
-         document.getElementById('tot-komisi').innerText = formatRp(komisiBungaStaff + d.bk); 
-         document.getElementById('tot-pinj-bunga-kotor').innerText = formatRp(d.pb);
+         document.getElementById('tot-all-komisi').innerText = formatRp(res.allTimeKomisi + komisiBungaStaff + d.data.bk); 
+         document.getElementById('tot-pinj-bunga-kotor').innerText = formatRp(d.data.pb);
          document.getElementById('tot-pinj-komisi').innerText = formatRp(komisiBungaStaff);
          document.getElementById('tot-pinj-bunga').innerText = formatRp(setoranBungaAdmin); 
-         document.getElementById('tot-pinj-pokok').innerText = formatRp(d.pp);
+         document.getElementById('tot-pinj-pokok').innerText = formatRp(d.data.pp);
          
-         document.getElementById('tot-baju-pokok').innerText = formatRp(d.bp); 
-         document.getElementById('tot-baju-komisi').innerText = formatRp(d.bk);
+         document.getElementById('tot-baju-pokok').innerText = formatRp(d.data.bp); 
+         document.getElementById('tot-baju-komisi').innerText = formatRp(d.data.bk);
       }
     }
     function bukaModalSetor(cat) { 
@@ -720,7 +775,7 @@
       let tipeS = document.getElementById('tipe-setoran').value; let metode = document.getElementById('metode-setor').value; let cat = document.getElementById('setor-kategori').value;
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value, fotoBukti: fileUploadData} }) }).then(r => r.json());
-      if(res.success) { sysMessage('✅', 'Berhasil', "Permintaan Setor Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysMessage('🚫', 'Gagal', res.message);
+      if(res.success) { popSuccess("Permintaan Setor Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysAlert(res.message);
       btn.innerText = "Kirim Permintaan Setor"; btn.disabled = false;
     }
 
@@ -741,7 +796,7 @@
          listBk.innerHTML = ""; res.bajuNoKomisi.forEach(b => { listBk.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${b.staff} - Lunas Baju</div><div style="font-size:11px; color:gray;">ID: ${b.id}<br>Note: ${b.note}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px; background:var(--warning);" onclick="sysPrompt('Nominal Komisi utk Staff ini (Misal: 15000):', setKomBaju('${b.id}'))">Set Komisi Baju</button></div>`; });
          if(res.bajuNoKomisi.length===0) listBk.innerHTML = "<div style='font-size:12px; color:gray;'>Semua baju lunas sudah diset komisinya.</div>";
 
-         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - Setor ${s.cat}</div><div style="font-size:12px; margin:4px 0;">Pinj Pokok: ${formatRp(s.sPokPinj)}<br>Pinj Bunga: ${formatRp(s.sBngPinj)}<br>Baju Pokok: ${formatRp(s.sPokBaju)}<br>Baju Klaim Komisi: ${formatRp(s.sKomBaju)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px; color:var(--primary);">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="sysConfirm('Approve Setoran ini?', () => admApprove('${s.id}', 'SETORAN'))">Terima Setoran</button></div>`; });
+         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - Setor ${s.cat}</div><div style="font-size:12px; margin:4px 0;">Pinj Pokok: ${formatRp(s.sPokPinj)}<br>Pinj Bunga (10% dipotong): ${formatRp(s.sBngPinj)}<br>Baju Pokok: ${formatRp(s.sPokBaju)}<br>Baju Klaim Komisi: ${formatRp(s.sKomBaju)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px; color:var(--primary);">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="sysConfirm('Approve Setoran ini?', () => admApprove('${s.id}', 'SETORAN'))">Terima Setoran</button></div>`; });
          if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran tertunda.</div>";
 
          listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br><b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="sysConfirm('Approve Aksi ini?', () => admApprove('${r.row}', 'LOG'))">Approve Aksi</button></div>`; });
@@ -751,14 +806,14 @@
          if(res.logs.length===0) listL.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada aktivitas karyawan.</div>";
       }
     }
-    function setKomBaju(id) { return function(val) { if(!val) return; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminSetKomisiBaju", username: currentUser.username, token: sessionToken, payload: {id:id, nominal:getNom(val)} }) }).then(r=>r.json()).then(res => { showToast(res.message); loadAdmin(); }); }; }
-    function admApprove(id, jenis) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { sysMessage('✅', 'Berhasil', res.message); loadAdmin(); }); }
+    function setKomBaju(id) { return function(val) { if(!val) return; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminSetKomisiBaju", username: currentUser.username, token: sessionToken, payload: {id:id, nominal:getNom(val)} }) }).then(r=>r.json()).then(res => { popSuccess(res.message); loadAdmin(); }); }; }
+    function admApprove(id, jenis) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "adminApprove", username: currentUser.username, token: sessionToken, payload: {id:id, row:id, jenis:jenis} }) }).then(r=>r.json()).then(res => { popSuccess(res.message); loadAdmin(); }); }
     async function tambahStaff() {
        let u = document.getElementById('new-username').value.trim(), n = document.getElementById('new-name').value.trim(), p = document.getElementById('new-password').value.trim(), r = document.getElementById('new-role').value;
        if(!u || !n || !p) return sysAlert("Harap isi semua data staff!"); if(p.length < 6) return sysAlert("Password minimal 6 karakter!");
        let btn = document.getElementById('btn-add-staff'); btn.innerText = "Memproses..."; btn.disabled = true;
        let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addStaff", username: currentUser.username, token: sessionToken, payload: { username: u, nama: n, password: p, role: r } }) }).then(r => r.json());
-       if(res.success) { sysMessage('✅', 'Sukses', "Akun Staff Dibuat!"); document.getElementById('new-username').value=''; document.getElementById('new-name').value=''; document.getElementById('new-password').value=''; } else { sysAlert(res.message); }
+       if(res.success) { popSuccess("Akun Staff Dibuat!"); document.getElementById('new-username').value=''; document.getElementById('new-name').value=''; document.getElementById('new-password').value=''; } else { sysAlert(res.message); }
        btn.innerText = "Buat Akun Staff"; btn.disabled = false;
     }
   </script>
