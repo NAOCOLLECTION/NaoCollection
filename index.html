@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>NAO Collection</title>
-  <link rel="manifest" href='data:application/manifest+json,{"name":"NAO Collection","short_name":"NAO","start_url":".","display":"standalone","background_color":"#F2F2F7","theme_color":"#007AFF"}'>
   <style>
     :root { --bg-color: #F2F2F7; --primary: #007AFF; --text-main: #1C1C1E; --text-muted: #8E8E93; --danger: #FF3B30; --success: #34C759; --warning: #FF9500; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -22,7 +21,7 @@
     
     .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,122,255,0.2); margin-bottom: 8px; display:flex; justify-content:center; align-items:center; gap:8px;}
     .btn-primary:active { transform: scale(0.96); }
-    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; border: 1px solid rgba(0,0,0,0.05); width:auto; padding: 8px 16px; font-size: 13px; border-radius:12px;}
+    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none; border: 1px solid rgba(0,0,0,0.05); width:auto; padding: 8px 16px; font-size: 13px; border-radius:12px; display:flex; align-items:center;}
     
     .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
@@ -60,18 +59,13 @@
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} } 
     @keyframes popUp { to{transform:scale(1);} }
     
-    /* SPIN ANIMATION UNTUK REFRESH */
+    /* SPIN ANIMATION UNTUK REFRESH SVG */
     .spin { animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    /* TOAST */
-    #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px); color: white; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 999999; display:flex; align-items:center; gap:10px;}
-    #custom-toast.show { top: 40px; }
   </style>
 </head>
 <body>
-
-  <div id="custom-toast"><span id="t-icon"></span><span id="t-msg"></span></div>
 
   <div id="app-container">
     
@@ -84,7 +78,6 @@
            <button type="submit" class="btn-primary" id="btn-login">Masuk Sistem</button>
         </form>
       </div>
-      <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi PWA</button>
     </div>
 
     <div id="dashboard-view" class="view">
@@ -130,15 +123,19 @@
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;" id="form-title">Form Pengajuan</h2>
-        <button onclick="refreshData('FORM', this)" class="btn-secondary"><svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+        <button onclick="refreshData('FORM', this)" class="btn-secondary">
+           <svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
       </div>
       <div class="glass" style="padding: 24px;">
         <input type="hidden" id="form-mode" value="NEW"> <input type="hidden" id="form-edit-id" value="">
+        
         <label class="input-label">Identitas Pelanggan <span style="color:var(--danger)">*</span></label>
         <div style="display:flex; gap:10px; margin-bottom: 12px;">
             <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1; margin-bottom:0;" onblur="cekDataPelanggan()">
             <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
         </div>
+        
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
            <label class="input-label" style="margin:0;">Nama Lengkap <span style="color:var(--danger)">*</span></label><div id="cust-badge"></div>
         </div>
@@ -194,7 +191,9 @@
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Data Pelanggan</h2>
-        <button onclick="refreshData('PELANGGAN', this)" class="btn-secondary"><svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+        <button onclick="refreshData('PELANGGAN', this)" class="btn-secondary">
+           <svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
       </div>
       <input type="text" id="search-pelanggan" class="custom-input" placeholder="🔍 Cari Nama / No WA..." onkeyup="filterPelanggan()">
       <div id="list-pelanggan"></div>
@@ -217,7 +216,9 @@
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Jadwal Tagihan</h2>
-        <button onclick="refreshData('TAGIHAN', this)" class="btn-secondary"><svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+        <button onclick="refreshData('TAGIHAN', this)" class="btn-secondary">
+           <svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
       </div>
       <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:8px; scrollbar-width: none;">
          <button class="filter-btn active" id="f-semua" onclick="filterTagihan('SEMUA')">Semua</button>
@@ -231,7 +232,9 @@
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px;">Setoran Kasir</h2>
-        <button onclick="refreshData('SETORAN', this)" class="btn-secondary"><svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+        <button onclick="refreshData('SETORAN', this)" class="btn-secondary">
+           <svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
       </div>
 
       <div style="background:linear-gradient(135deg, var(--primary), #0056b3); padding:20px; border-radius:24px; color:white; text-align:center; margin-bottom:20px; box-shadow: 0 8px 20px rgba(0,122,255,0.3);">
@@ -241,13 +244,13 @@
       </div>
 
       <div class="glass" style="padding: 24px; margin-bottom:16px;">
-         <div style="font-weight:800; color:var(--primary); margin-bottom:16px; text-align:center;">🏷️ SETORAN PINJAMAN UANG</div>
+         <div style="font-weight:900; color:var(--primary); margin-bottom:16px; text-align:center;">🏷️ SETORAN PINJAMAN UANG</div>
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 16px;">
             <div style="background:rgba(255,149,0,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(255,149,0,0.3);">
-               <div style="font-size:10px; font-weight:800; color:var(--warning);">TOTAL BUNGA (KOTOR)</div><div id="tot-pinj-bunga-kotor" style="font-size:16px; font-weight:900;">Rp 0</div>
+               <div style="font-size:10px; font-weight:800; color:var(--warning);">TOTAL BUNGA MASUK</div><div id="tot-pinj-bunga-kotor" style="font-size:16px; font-weight:900;">Rp 0</div>
             </div>
             <div style="background:rgba(0,122,255,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(0,122,255,0.3);">
-               <div style="font-size:10px; font-weight:800; color:var(--primary);">HAK KOMISI (10%)</div><div id="tot-pinj-komisi" style="font-size:16px; font-weight:900;">Rp 0</div>
+               <div style="font-size:10px; font-weight:800; color:var(--primary);">HAK KOMISI STAFF (10%)</div><div id="tot-pinj-komisi" style="font-size:16px; font-weight:900;">Rp 0</div>
             </div>
             <div style="background:rgba(52,199,89,0.1); padding:10px; border-radius:12px; grid-column:span 2; border:1px solid rgba(52,199,89,0.3); text-align:center;">
                <div style="font-size:10px; font-weight:800; color:var(--success);">BUNGA BERSIH (WAJIB SETOR KE ADMIN)</div><div id="tot-pinj-bunga" style="font-size:20px; font-weight:900;">Rp 0</div>
@@ -260,13 +263,19 @@
       </div>
 
       <div class="glass" style="padding: 24px; margin-bottom:16px;">
-         <div style="font-weight:800; color:var(--primary); margin-bottom:16px; text-align:center;">👗 SETORAN PENJUALAN BAJU</div>
+         <div style="font-weight:900; color:var(--primary); margin-bottom:16px; text-align:center;">👗 SETORAN PENJUALAN BAJU</div>
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 16px;">
-            <div style="background:rgba(52,199,89,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(52,199,89,0.3);">
-               <div style="font-size:10px; font-weight:800; color:var(--success);">UANG BAJU TERKUMPUL</div><div id="tot-baju-pokok" style="font-size:16px; font-weight:900;">Rp 0</div>
+            <div style="background:rgba(255,149,0,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(255,149,0,0.3); grid-column:span 2; text-align:center;">
+               <div style="font-size:10px; font-weight:800; color:var(--warning);">TOTAL BAJU TERHUTANG (CUST. BLM BAYAR)</div><div id="tot-baju-hutang" style="font-size:18px; font-weight:900;">Rp 0</div>
+            </div>
+            <div style="background:rgba(52,199,89,0.1); padding:10px; border-radius:12px; border:1px solid rgba(52,199,89,0.3); grid-column:span 2; text-align:center;">
+               <div style="font-size:10px; font-weight:800; color:var(--success);">UANG BAJU TERKUMPUL (WAJIB SETOR)</div><div id="tot-baju-pokok" style="font-size:20px; font-weight:900;">Rp 0</div>
+            </div>
+            <div style="background:rgba(0,122,255,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(0,122,255,0.3);">
+               <div style="font-size:10px; font-weight:800; color:var(--primary);">SUDAH DISETOR ADMIN</div><div id="tot-baju-disetor" style="font-size:14px; font-weight:900;">Rp 0</div>
             </div>
             <div style="background:rgba(142,142,147,0.1); padding:10px; border-radius:12px; border:1px dashed rgba(142,142,147,0.3);">
-               <div style="font-size:10px; font-weight:800; color:gray;">KOMISI DARI ADMIN</div><div id="tot-baju-komisi" style="font-size:16px; font-weight:900;">Rp 0</div>
+               <div style="font-size:10px; font-weight:800; color:gray;">KOMISI DIBERIKAN ADMIN</div><div id="tot-baju-komisi" style="font-size:14px; font-weight:900;">Rp 0</div>
             </div>
          </div>
          <button class="btn-primary" style="background:var(--success);" onclick="bukaModalSetor('BAJU')">Setor Uang Baju</button>
@@ -277,32 +286,24 @@
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-secondary">🔙</button>
         <h2 style="font-size:18px; color:var(--primary);">Dashboard Admin</h2>
-        <button onclick="refreshData('ADMIN', this)" class="btn-secondary"><svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+        <button onclick="refreshData('ADMIN', this)" class="btn-secondary">
+           <svg class="svg-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
       </div>
       <div class="glass" style="padding:16px; margin-bottom:16px; display:flex; gap:8px; align-items:center;">
         <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">MULAI TGL</div><input type="date" id="adm-start" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
         <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TGL</div><input type="date" id="adm-end" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
       </div>
       
-      <div class="glass" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size:15px; margin-bottom:12px;">Tambah Staff Baru</h3>
-        <form onsubmit="tambahStaff(); return false;">
-           <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="padding:12px;">
-           <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="padding:12px;">
-           <input type="password" id="new-password" class="custom-input" placeholder="Password" style="padding:12px;">
-           <select id="new-role" class="custom-input" style="padding:12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
-           <button type="submit" class="btn-primary" id="btn-add-staff" style="margin:0;">Buat Akun Staff</button>
-        </form>
-      </div>
-
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
          <div style="font-weight:900; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">🏷️ STATISTIK PINJAMAN UANG</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div><div id="adm-p-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Kembali (Di Kasir & Lunas)</div><div id="adm-p-ready" style="font-size:20px; font-weight:900; margin-bottom:16px;">Rp 0</div>
          <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.25); padding:10px; border-radius:12px; margin-bottom:12px;">
-            <div><span style="font-size:10px;">Laba Bunga Masuk</span><br><b id="adm-p-bunga">Rp 0</b></div><div style="text-align:right;"><span style="font-size:10px;">Komisi 10% Keluar</span><br><b id="adm-p-komisi">Rp 0</b></div>
+            <div><span style="font-size:10px;">Laba Bunga Realisasi (Masuk)</span><br><b id="adm-p-bunga">Rp 0</b></div>
+            <div style="text-align:right;"><span style="font-size:10px;">Laba Bunga di Kasir Staff</span><br><b id="adm-p-bunga-kasir" style="color:#ffd60a;">Rp 0</b></div>
          </div>
-         <div style="text-align:center;"><span style="font-size:11px;">LABA BERSIH (PINJAMAN)</span><br><b id="adm-p-laba" style="font-size:24px; color:#34C759; font-weight:900;">Rp 0</b></div>
+         <div style="text-align:center;"><span style="font-size:11px;">LABA BERSIH (PINJAMAN REALISASI)</span><br><b id="adm-p-laba" style="font-size:24px; color:#34C759; font-weight:900;">Rp 0</b></div>
       </div>
 
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--success), #248A3D); color:white;">
@@ -313,6 +314,17 @@
             <div style="text-align:center; width:100%;"><span style="font-size:10px;">Komisi Khusus Staff (Keluar)</span><br><b id="adm-b-komisi">Rp 0</b></div>
          </div>
          <div style="text-align:center;"><span style="font-size:11px;">PENDAPATAN BERSIH (BAJU)</span><br><b id="adm-b-laba" style="font-size:24px; color:#ffd60a; font-weight:900;">Rp 0</b></div>
+      </div>
+
+      <div class="glass" style="padding: 16px; margin-bottom: 16px;">
+        <h3 style="font-size:15px; margin-bottom:12px;">Tambah Staff Baru</h3>
+        <form onsubmit="tambahStaff(); return false;">
+           <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="padding:12px;">
+           <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="padding:12px;">
+           <input type="password" id="new-password" class="custom-input" placeholder="Password" style="padding:12px;">
+           <select id="new-role" class="custom-input" style="padding:12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
+           <button type="submit" class="btn-primary" id="btn-add-staff" style="margin:0;">Buat Akun Staff</button>
+        </form>
       </div>
 
       <h3 style="font-size:15px; margin-bottom:12px; color:var(--primary);">Input Komisi Baju Khusus</h3>
@@ -326,17 +338,17 @@
     </div>
   </div>
 
-  <div id="modal-pilih-aksi" class="modal-overlay" style="z-index:99990;">
+  <div id="modal-pilih-aksi" class="modal-overlay">
     <div class="sys-modal" style="text-align:center;">
        <h3 style="margin-bottom:16px;">Pilih Aksi Tagihan</h3>
        <input type="hidden" id="pilih-id">
        <button class="btn-primary" style="background:var(--warning);" onclick="bukaFormEdit()">✏️ Buka Form Edit Data</button>
-       <button class="btn-primary" style="background:var(--danger);" onclick="sysPrompt('Wajib Isi Alasan Hapus:', prosesHapus())">🗑️ Hapus Tagihan Ini</button>
+       <button class="btn-primary" style="background:var(--danger);" onclick="document.getElementById('modal-pilih-aksi').classList.remove('active'); sysPrompt('Wajib Isi Alasan Hapus Tagihan ini:', prosesHapus())">🗑️ Hapus Tagihan Ini</button>
        <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-pilih-aksi').classList.remove('active')">Batal</button>
     </div>
   </div>
 
-  <div id="modal-bayar" class="modal-overlay" style="z-index:99990;">
+  <div id="modal-bayar" class="modal-overlay">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
        <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
@@ -344,20 +356,12 @@
           <label class="input-label">Nominal Uang (Bisa Diubah)</label>
           <input type="text" id="nominal-bayar" class="custom-input" oninput="formatRupiahInput(this)">
        </div>
-       <div id="wrap-foto-bayar">
-          <label class="input-label">Upload Bukti / Barang (TIDAK WAJIB)</label>
-          <div style="display:flex; gap:10px; margin-bottom:16px;">
-             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
-             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
-          </div>
-          <div id="foto-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Foto Siap Diupload</div>
-       </div>
        <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
        <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
     </div>
   </div>
 
-  <div id="modal-setor" class="modal-overlay" style="z-index:99990;">
+  <div id="modal-setor" class="modal-overlay">
     <div class="sys-modal">
        <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
        <input type="hidden" id="setor-kategori">
@@ -368,12 +372,7 @@
           <option value="CASH">CASH (Tunai langsung)</option><option value="TF">TRANSFER (BCA/Mandiri)</option>
        </select>
        <div id="wrap-catatan-setor" style="display:none;">
-          <div style="display:flex; gap:10px; margin-bottom:12px;">
-             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="tf-cam" style="display:none;" onchange="handleFotoTF(this)"></label>
-             <label class="btn-secondary" style="flex:1; text-align:center; font-weight:800; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="tf-gal" style="display:none;" onchange="handleFotoTF(this)"></label>
-          </div>
-          <div id="tf-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Bukti TF Siap</div>
-          <input type="text" id="catatan-setor" class="custom-input" placeholder="Wajib: Nama & Rekening Tujuan...">
+          <input type="text" id="catatan-setor" class="custom-input" placeholder="Wajib isi Nama Bank & Rekening Tujuan...">
        </div>
        <button class="btn-primary" id="btn-proses-setor" onclick="prosesSetor()">Kirim Permintaan Setor</button>
        <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-setor').classList.remove('active')">Batal</button>
@@ -404,11 +403,10 @@
 
   <script>
     // ⚠️ GANTI LINK API DI SINI:
-    const API_URL = "https://script.google.com/macros/s/AKfycbzTlyAgNIhKr1MvxAT5BMyB47XWkN9D4-TC7jhvmVhToHNY45iOIZdGcH5YPJYgdlWBVw/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyd7EDQzubPhmDNhGdRRik6jcXVvJ3ylf7R3KAKBtn3QbrbfKEAhYaCVUPTaCWIOnF5cQ/exec"; 
     
-    let currentUser = null, sessionToken = "", listBayarUnsetor = [];
+    let currentUser = null, sessionToken = "";
     let globalPelangganData = [], globalTagihanData = [];
-    let fileUploadData = ""; 
 
     // --- SYSTEM MODALS ---
     function closeSysModal() { document.getElementById('sys-modal').classList.remove('active'); document.getElementById('sys-input').value = ""; }
@@ -451,10 +449,7 @@
 
     // ANIMASI REFRESH
     function refreshData(view, btnElement) {
-        if(btnElement) {
-           let svg = btnElement.querySelector('.svg-icon');
-           if(svg) { svg.classList.add('spin'); setTimeout(() => svg.classList.remove('spin'), 1000); }
-        }
+        if(btnElement) { let svg = btnElement.querySelector('.svg-icon'); if(svg) { svg.classList.add('spin'); setTimeout(() => svg.classList.remove('spin'), 1000); } }
         if(view==='DASHBOARD') loadDataDashboard(); else if(view==='TAGIHAN') loadTagihan(); else if(view==='PELANGGAN') loadPelanggan(); else if(view==='SETORAN') loadSetoran(); else if(view==='ADMIN') loadAdmin(); else if(view==='FORM') initForm('NEW');
     }
 
@@ -467,15 +462,11 @@
        if(el.id === 'nominal-baju') kalkulasiBunga();
     }
 
-    function getBase64(file) { return new Promise((res, rej) => { if (!file) return res(""); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); r.onerror = e => rej(e); }); }
-    async function handleFoto(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('foto-preview').style.display='block'; }
-    async function handleFotoTF(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('tf-preview').style.display='block'; }
-
     // --- CEK PELANGGAN ---
     async function cekDataPelanggan() {
         let hp = document.getElementById('no-hp'); 
         let v = hp.value.replace(/[^0-9]/g, ''); 
-        // STANDARISASI NOMOR (Pasti cocok kalau sudah pernah disimpan)
+        // STANDARISASI NOMOR 
         if(v.startsWith('0')) v = '62' + v.substring(1); else if(v.startsWith('8')) v = '62' + v; hp.value = v;
         
         if (v.length > 9) {
@@ -562,7 +553,7 @@
       let cat = document.getElementById('kategori').value;
       let nom = cat === 'Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : getNom(document.getElementById('nominal-baju').value);
       
-      // VALIDASI WAJIB ISI SEBELUM SIMPAN
+      // VALIDASI WAJIB ISI
       if(!hp) return sysMessage('⚠️', 'Perhatian', 'No HP Pelanggan wajib diisi!');
       if(!nama) return sysMessage('⚠️', 'Perhatian', 'Nama Lengkap wajib diisi!');
       if(!nom || nom <= 0) return sysMessage('⚠️', 'Perhatian', 'Total Harga / Nominal wajib diisi!');
@@ -640,14 +631,14 @@
                       <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px; margin:0;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Full (Baju)')">Lunas Sisa (${formatRp(sisa)})</button>`;
         }
 
-        let sNama = (i.nama || '-').replace(/'/g, "\\'");
+        let sNama = encodeURIComponent(i.nama || '-');
         let rawData = encodeURIComponent(JSON.stringify(i));
         
         list.innerHTML += `
           <div class="cal-card">
              <div class="cal-date-box" style="background:${bgCal}"><div class="cal-month">${blnTeks}</div><div class="cal-day">${tglTeks}</div></div>
              <div class="cal-info">
-                <div style="font-weight:800; font-size:15px;">${sNama} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
+                <div style="font-weight:800; font-size:15px;">${decodeURIComponent(sNama)} <span style="font-size:10px; color:var(--danger);">${txtB}</span></div>
                 <div style="font-size:11px; color:gray; font-weight:600; margin-bottom:6px;">${i.cat || '-'} | ${i.kode || '-'}</div>
                 <div style="font-size:12px; background:#f0f0f5; padding:6px; border-radius:6px; margin-bottom:8px;">
                    Sisa Pokok: <b>${formatRp(nomP - byrP)}</b><br>
@@ -665,7 +656,7 @@
        return function(alasan) {
           if(!alasan) return; let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
           fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => {
-             if(res.success) { popSuccess("Tagihan Berhasil Dihapus!"); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan(); } else sysMessage('🚫', 'Gagal', res.message);
+             if(res.success) { popSuccess("Tagihan Berhasil Dihapus!"); loadTagihan(); } else sysMessage('🚫', 'Gagal', res.message);
           });
        };
     }
@@ -684,13 +675,12 @@
       if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = formatRp(nomRec).replace('Rp ',''); } 
       else { wrapNom.style.display = 'none'; inNom.value = nomRec; }
       
-      fileUploadData = ""; document.getElementById('foto-cam').value = ""; document.getElementById('foto-gal').value = ""; document.getElementById('foto-preview').style.display='none';
       document.getElementById('modal-bayar').classList.add('active');
     }
 
     async function prosesBayar() {
       let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true; let jenis = document.getElementById('modal-jenis-bayar').value;
-      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: jenis, nomBayar: getNom(document.getElementById('nominal-bayar').value), fotoBukti: fileUploadData };
+      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: jenis, nomBayar: getNom(document.getElementById('nominal-bayar').value) };
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
       if(res.success) { popSuccess("Pembayaran Masuk Kasir!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); } else sysMessage('🚫', 'Gagal', res.message);
       btn.innerText = "Proses Pembayaran"; btn.disabled = false;
@@ -708,7 +698,7 @@
       let list = document.getElementById('list-pelanggan'); list.innerHTML = ""; if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
       data.forEach(p => {
         let sBadge = `<span class="badge" style="background:${p.statusKredit.color}; color:white;">${p.statusKredit.label}</span>`;
-        let sNama = (p.nama || '-').replace(/'/g, "\\'"); // Amanin single quote
+        let sNama = encodeURIComponent(p.nama || '-');
         list.innerHTML += `
           <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${sNama}', '${p.kode}')" style="cursor:pointer;">
             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
@@ -720,7 +710,8 @@
     }
     function filterPelanggan() { let q = document.getElementById('search-pelanggan').value.toLowerCase(); let fData = globalPelangganData.filter(p => p.nama.toLowerCase().includes(q) || p.noHp.includes(q)); renderPelanggan(fData); }
     
-    async function bukaRiwayatLengkap(noHp, nama, kode) {
+    async function bukaRiwayatLengkap(noHp, namaEncoded, kode) {
+      let nama = decodeURIComponent(namaEncoded);
       document.getElementById('dr-nama').innerText = nama; document.getElementById('dr-kode').innerText = kode; document.getElementById('dr-hp').innerText = noHp;
       switchView('detail-riwayat-view'); let box = document.getElementById('crm-summary-box'); let tl = document.getElementById('list-timeline');
       box.innerHTML = "<center>Menganalisis CRM...</center>"; tl.innerHTML = "";
@@ -782,17 +773,21 @@
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
       if(res.success) { 
          let d = res.data; 
-         // Kalkulasi 10% Komisi Otomatis
          let komisiBungaStaff = Math.floor(d.data.pb * 0.10);
          let setoranBungaAdmin = d.data.pb - komisiBungaStaff;
          
          document.getElementById('tot-all-komisi').innerText = formatRp(res.allTimeKomisi + komisiBungaStaff + d.data.bk); 
+         
+         // Pinjaman
          document.getElementById('tot-pinj-bunga-kotor').innerText = formatRp(d.data.pb);
          document.getElementById('tot-pinj-komisi').innerText = formatRp(komisiBungaStaff);
          document.getElementById('tot-pinj-bunga').innerText = formatRp(setoranBungaAdmin); 
          document.getElementById('tot-pinj-pokok').innerText = formatRp(d.data.pp);
          
+         // Baju
+         document.getElementById('tot-baju-hutang').innerText = formatRp(res.bajuHutang);
          document.getElementById('tot-baju-pokok').innerText = formatRp(d.data.bp); 
+         document.getElementById('tot-baju-disetor').innerText = formatRp(res.bajuDisetor); 
          document.getElementById('tot-baju-komisi').innerText = formatRp(d.data.bk);
       }
     }
@@ -800,14 +795,14 @@
        document.getElementById('setor-kategori').value = cat; let sel = document.getElementById('tipe-setoran');
        if(cat === 'PINJAMAN') { sel.innerHTML = '<option value="BUNGA_SAJA">Setor Bunga Saja (Modal Diputar)</option><option value="FULL">Setor Bunga & Modal Semua</option>'; document.getElementById('modal-setor-title').innerText = "Setor Pinjaman Uang"; }
        else { sel.innerHTML = '<option value="FULL">Setor Uang Baju Semua</option>'; document.getElementById('modal-setor-title').innerText = "Setor Uang Baju"; }
-       fileUploadData = ""; document.getElementById('tf-cam').value = ""; document.getElementById('tf-gal').value = ""; document.getElementById('tf-preview').style.display='none';
        document.getElementById('modal-setor').classList.add('active'); 
     }
     async function prosesSetor() {
       let tipeS = document.getElementById('tipe-setoran').value; let metode = document.getElementById('metode-setor').value; let cat = document.getElementById('setor-kategori').value;
+      if(metode === 'TF' && !document.getElementById('catatan-setor').value) return sysMessage('⚠️', 'Perhatian', "Wajib isi Nama Bank & Rekening Tujuan di catatan!");
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
-      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value, fotoBukti: fileUploadData} }) }).then(r => r.json());
-      if(res.success) { popSuccess("Permintaan Setor Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysMessage('🚫', 'Gagal', res.message);
+      let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value} }) }).then(r => r.json());
+      if(res.success) { popSuccess("Setoran Terkirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else sysMessage('🚫', 'Gagal', res.message);
       btn.innerText = "Kirim Permintaan Setor"; btn.disabled = false;
     }
 
@@ -822,13 +817,13 @@
       listS.innerHTML = "<center style='font-size:12px;'>Loading...</center>";
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getAdminData", username: currentUser.username, token: sessionToken, payload: { startDate: startStr, endDate: endStr } }) }).then(r => r.json());
       if(res.success) {
-         document.getElementById('adm-p-out').innerText = formatRp(res.stats.pOut); document.getElementById('adm-p-ready').innerText = formatRp(res.stats.pReady); document.getElementById('adm-p-bunga').innerText = formatRp(res.stats.pBunga); document.getElementById('adm-p-komisi').innerText = formatRp(res.stats.pKomisi); document.getElementById('adm-p-laba').innerText = formatRp(res.stats.pLaba);
+         document.getElementById('adm-p-out').innerText = formatRp(res.stats.pOut); document.getElementById('adm-p-ready').innerText = formatRp(res.stats.pReady); document.getElementById('adm-p-bunga').innerText = formatRp(res.stats.pBunga); document.getElementById('adm-p-komisi').innerText = formatRp(res.stats.pKomisi); document.getElementById('adm-p-laba').innerText = formatRp(res.stats.pLaba); document.getElementById('adm-p-bunga-kasir').innerText = formatRp(res.stats.pendingKasir);
          document.getElementById('adm-b-out').innerText = formatRp(res.stats.bOut); document.getElementById('adm-b-ready').innerText = formatRp(res.stats.bReady); document.getElementById('adm-b-komisi').innerText = formatRp(res.stats.bKomisi); document.getElementById('adm-b-laba').innerText = formatRp(res.stats.bLaba);
 
          listBk.innerHTML = ""; res.bajuNoKomisi.forEach(b => { listBk.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${b.staff} - Lunas Baju</div><div style="font-size:11px; color:gray;">ID: ${b.id}<br>Note: ${b.note}</div><button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px; background:var(--warning);" onclick="sysPrompt('Nominal Komisi utk Staff ini (Misal: 15000):', setKomBaju('${b.id}'))">Set Komisi Baju</button></div>`; });
          if(res.bajuNoKomisi.length===0) listBk.innerHTML = "<div style='font-size:12px; color:gray;'>Semua baju lunas sudah diset komisinya.</div>";
 
-         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - Setor ${s.cat}</div><div style="font-size:12px; margin:4px 0;">Pinj Pokok: ${formatRp(s.sPokPinj)}<br>Pinj Bunga: ${formatRp(s.sBngPinj)}<br>Baju Pokok: ${formatRp(s.sPokBaju)}<br>Baju Klaim Komisi: ${formatRp(s.sKomBaju)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px; color:var(--primary);">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="sysConfirm('Approve Setoran ini?', () => admApprove('${s.id}', 'SETORAN'))">Terima Setoran</button></div>`; });
+         listS.innerHTML = ""; res.setoran.forEach(s => { listS.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800;">${s.staff} - Setor ${s.cat}</div><div style="font-size:12px; margin:4px 0;">Pinj Pokok: ${formatRp(s.sPokPinj)}<br>Pinj Bunga (10% dipotong): ${formatRp(s.sBngPinj)}<br>Baju Pokok: ${formatRp(s.sPokBaju)}<br>Baju Klaim Komisi: ${formatRp(s.sKomBaju)}</div>${s.bukti ? `<a href="${s.bukti}" target="_blank" style="font-size:12px; color:var(--primary);">Lihat Bukti TF</a><br>` : ''}<button class="btn-primary" style="padding:10px; font-size:12px; margin-top:8px;" onclick="sysConfirm('Approve Setoran ini?', () => admApprove('${s.id}', 'SETORAN'))">Terima Setoran</button></div>`; });
          if(res.setoran.length===0) listS.innerHTML = "<div style='font-size:12px; color:gray;'>Tidak ada setoran tertunda.</div>";
 
          listR.innerHTML = ""; res.approvals.forEach(r => { listR.innerHTML += `<div class="list-card" style="width:100%;"><div style="font-weight:800; color:var(--danger);">${r.aksi} (${r.staff})</div><div style="font-size:12px; margin:4px 0; background:#f0f0f5; padding:8px; border-radius:8px;">ID: ${r.target}<br><b>${r.detail}</b></div><button class="btn-primary" style="padding:10px; font-size:12px;" onclick="sysConfirm('Approve Aksi ini?', () => admApprove('${r.row}', 'LOG'))">Approve Aksi</button></div>`; });
