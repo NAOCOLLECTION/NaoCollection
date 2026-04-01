@@ -2,67 +2,135 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PinjamCash - System</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  
+  <link rel="stylesheet" href="./style.css">
+  
+  <meta name="theme-color" content="#F2F2F7">
 </head>
 <body>
 
-  <div id="login-layer" class="glass active-layer" style="height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-    <h2>🔐 Login Sistem</h2>
-    <input type="text" id="log-user" placeholder="Username" style="margin-bottom:10px; padding:12px; width:80%;">
-    <input type="password" id="log-pass" placeholder="Password" style="margin-bottom:15px; padding:12px; width:80%;">
-    <button onclick="prosesLogin()" style="padding:12px 24px; background:#007AFF; color:white; border-radius:8px; border:none; font-weight:bold;">MASUK</button>
-  </div>
+  <div id="app-container">
 
-  <div id="dashboard-layer" style="display:none; padding: 20px;">
-    
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 id="welcome-text">Halo, User</h3>
-        <div id="jam-tanggal" style="font-size:12px; font-weight:bold; color:#888;"></div>
-    </div>
+    <div id="login-view" class="view active">
+      <div class="brand-logo" style="margin-top: 100px;">
+        <div style="font-size: 64px;">💸</div>
+        <div>PinjamCash</div>
+      </div>
+      <p class="subtitle" style="margin-top:-10px;">Manajemen Pinjaman Modern</p>
 
-    <div id="admin-panel" class="glass card" style="display:none; margin-top:20px; background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);">
-        <h4>📊 Statistik Admin</h4>
-        <div style="display:flex; justify-content:space-between; margin-top:10px;">
-            <div><small>Total Modal Keluar:</small><br><b id="admin-modal" style="color:red;">Rp 0</b></div>
-            <div><small>Keuntungan Bersih (Lunas):</small><br><b id="admin-untung" style="color:green;">Rp 0</b></div>
+      <div class="glass" style="padding: 30px 24px;">
+        <div class="input-group">
+            <input type="text" id="log-user" class="custom-input" placeholder="Username" autocomplete="off">
         </div>
-        <button id="btn-add-staff" style="margin-top:15px; display:none;">+ Tambah Staff (SuperAdmin)</button>
-        <button onclick="bukaMenuApproval()" style="margin-top:5px; background:orange;">Cek Antrian Approval Edit</button>
+        <div class="input-group" style="margin-bottom: 12px;">
+            <input type="password" id="log-pass" class="custom-input" placeholder="Password">
+        </div>
+        <button class="btn-primary" onclick="prosesLogin()" type="button" style="margin-top: 16px;">Masuk Sistem</button>
+      </div>
     </div>
 
-    <div class="glass card" style="margin-top:20px;">
-        <h3>💸 Pengajuan Pinjaman</h3>
-        <input type="tel" id="input-hp" placeholder="No HP Pelanggan (Wajib)">
-        <input type="text" id="input-nama" placeholder="Nama Pelanggan">
+    <div id="dashboard-view" class="view">
+      
+      <div class="dash-header" style="margin-bottom: 16px;">
+        <div class="profile-info" title="Lihat Profil">
+          <div style="font-size:32px; margin-right:8px;">👨‍💼</div>
+          <div>
+            <div class="profile-name" style="font-size: 18px; font-weight: 800; letter-spacing:-0.5px;">Hi, <span id="user-name">Staff</span></div>
+            <div class="profile-role" id="user-role" style="font-weight: 600; font-size: 13px; color:var(--text-muted);">Status: Aktif</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="prosesLogout()" class="btn-logout-icon" title="Logout" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 24px;">
+        <div style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 24px; padding: 12px 24px; display: inline-flex; align-items: center; gap: 16px;">
+          <div style="display: flex; align-items: baseline; gap: 4px;">
+            <div id="live-clock" style="font-size: 26px; font-weight: 800; color: #000000; letter-spacing: 1px;">00:00</div>
+          </div>
+          <div style="width: 2px; height: 32px; background: rgba(0,0,0,0.06);"></div>
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span id="live-date" style="font-size: 13.5px; font-weight: 700; color: var(--text-main);">Tanggal Hari Ini</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="admin-section" style="display: none; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Dashboard Admin</h3>
+        <div class="glass" style="padding: 20px; background: linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(52,199,89,0.05) 100%);">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
+                <div>
+                    <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Modal Keluar</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--danger);" id="admin-modal">Rp 0</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Untung Bersih (Lunas)</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--success);" id="admin-untung">Rp 0</div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="bukaMenuApproval()" style="width:100%; margin-top:10px; background:rgba(255,149,0,0.1); color:var(--warning);">Cek Antrian Approval Edit</button>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Pengajuan Pinjaman Baru</h3>
+      <div class="glass" style="padding: 24px;">
         
-        <select id="input-nominal" onchange="hitungSistem()" style="margin-top:10px;">
-            <option value="">-- Pilih Nominal (100rb - 1Jt) --</option>
-            <option value="100000">100.000</option>
-            <option value="200000">200.000</option>
-            <option value="300000">300.000</option>
-            <option value="400000">400.000</option>
-            <option value="500000">500.000</option>
-            <option value="600000">600.000</option>
-            <option value="700000">700.000</option>
-            <option value="800000">800.000</option>
-            <option value="900000">900.000</option>
-            <option value="1000000">1.000.000</option>
-        </select>
-
-        <div id="preview-hitungan" style="display:none; margin-top:15px; padding:10px; background:#f0f0f0; border-radius:8px;">
-            <div>Bunga: <b id="out-bunga"></b></div>
-            <div>Tenor: <b id="out-tenor"></b></div>
-            <div>Total Tagihan: <b id="out-total"></b></div>
-            <hr>
-            <div style="font-size:12px; color:green;">Komisi Staff (10% dr bunga): <b id="out-komisi"></b></div>
+        <div class="input-group">
+          <label class="input-label">No Handphone Pelanggan (Wajib)</label>
+          <input type="tel" id="input-hp" class="custom-input" placeholder="Contoh: 08123456789">
+        </div>
+        
+        <div class="input-group">
+          <label class="input-label">Nama Lengkap (Wajib)</label>
+          <input type="text" id="input-nama" class="custom-input" placeholder="Masukkan Nama Pelanggan">
         </div>
 
-        <button onclick="submitPinjaman()" style="width:100%; margin-top:15px; padding:12px; background:#28a745; color:white; border-radius:8px; border:none; font-weight:bold;">SIMPAN PENGAJUAN</button>
+        <div class="input-group">
+          <label class="input-label">Nominal Pinjaman</label>
+          <select id="input-nominal" class="custom-input" onchange="hitungSistem()" style="appearance: none; background-color: white;">
+            <option value="" disabled selected>-- Pilih Nominal --</option>
+            <option value="100000">Rp 100.000</option>
+            <option value="200000">Rp 200.000</option>
+            <option value="300000">Rp 300.000</option>
+            <option value="400000">Rp 400.000</option>
+            <option value="500000">Rp 500.000</option>
+            <option value="600000">Rp 600.000</option>
+            <option value="700000">Rp 700.000</option>
+            <option value="800000">Rp 800.000</option>
+            <option value="900000">Rp 900.000</option>
+            <option value="1000000">Rp 1.000.000</option>
+          </select>
+        </div>
+
+        <div id="preview-hitungan" style="display:none; margin-top:20px; padding:16px; background:rgba(0,0,0,0.03); border-radius:16px; border: 1px dashed rgba(0,0,0,0.1);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Tenor (Lama Pinjam):</span> 
+                <b id="out-tenor" style="font-size:14px;"></b>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Bunga:</span> 
+                <b id="out-bunga" style="font-size:14px; color:var(--warning);"></b>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:12px;">
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Komisi Anda (10%):</span> 
+                <b id="out-komisi" style="font-size:14px; color:var(--success);"></b>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:16px; font-weight:800; color:var(--text-main);">Total Tagihan:</span> 
+                <b id="out-total" style="font-size:20px; color:var(--danger);"></b>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="submitPinjaman()" type="button" style="margin-top: 24px;">Simpan Pengajuan Pinjaman</button>
+      </div>
+
     </div>
-    
-    <button onclick="prosesLogout(true)" style="width:100%; margin-top:20px; padding:12px; background:#dc3545; color:white; border-radius:8px; border:none; font-weight:bold;">LOGOUT</button>
+
   </div>
 
   <script src="app.js"></script>
