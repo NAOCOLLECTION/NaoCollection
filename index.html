@@ -2,56 +2,142 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>PinjamCash - System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  
-  <link rel="stylesheet" href="./style.css">
-  
+  <title>PinjamCash - Modern System</title>
   <meta name="theme-color" content="#F2F2F7">
+  
+  <style>
+    /* =========================================================
+       CSS GLASSMORPHISM & iOS MODERN UI
+       ========================================================= */
+    :root {
+      --bg-color: #F2F2F7; 
+      --card-bg: rgba(255, 255, 255, 0.75); 
+      --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+      --primary: #007AFF; 
+      --primary-dark: #0056b3;
+      --text-main: #1C1C1E; 
+      --text-muted: #8E8E93;
+      --danger: #FF3B30; 
+      --success: #34C759; 
+      --warning: #FF9500; 
+      --radius: 24px;
+      --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+
+    body { 
+      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+      color: var(--text-main); 
+      -webkit-font-smoothing: antialiased; 
+      overflow-x: hidden; 
+      touch-action: manipulation; 
+      background-attachment: fixed;
+    }
+
+    #app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; position: relative; padding-bottom: 40px; }
+
+    /* --- CLASS UTAMA --- */
+    .glass { 
+      background: var(--card-bg); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); 
+      border: var(--glass-border); border-radius: var(--radius); box-shadow: var(--shadow-soft); 
+    }
+
+    .view { display: none; padding: 24px; animation: fadeSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .view.active { display: block; }
+
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- INPUT & TOMBOL --- */
+    .input-group { margin-bottom: 16px; width: 100%; }
+    .input-label { width: 100%; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display:block; text-transform: uppercase; letter-spacing: 0.5px;}
+    .custom-input { 
+      width: 100%; padding: 18px 20px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); 
+      background: rgba(255,255,255,0.9); font-size: 16px; outline: none; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+      color: var(--text-main); font-weight: 500; appearance: none;
+    }
+    .custom-input:focus { background: #ffffff; box-shadow: 0 0 0 3px rgba(0,122,255,0.15); border-color: var(--primary); transform: translateY(-2px);}
+
+    .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,122,255,0.3); transition: all 0.2s; }
+    .btn-primary:active { transform: scale(0.95); opacity: 0.9; box-shadow: 0 4px 10px rgba(0,122,255,0.2); }
+    
+    .btn-secondary { width: 100%; padding: 18px; background: rgba(0,0,0,0.05); color: var(--text-main); border: none; border-radius: 18px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-secondary:active { transform: scale(0.95); background: rgba(0,0,0,0.1);}
+
+    /* --- MODAL / POPUP --- */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); align-items: center; justify-content: center; opacity: 0; transition: 0.3s; z-index: 1000; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { width: 92%; max-width: 400px; padding: 32px 24px; transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+
+    /* --- TOAST NOTIFIKASI --- */
+    #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(25, 25, 27, 0.85); backdrop-filter: blur(20px); color: white; padding: 16px 24px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); font-weight: 600; z-index: 9999; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); text-align: center; font-size: 14px;}
+    #toast.show { top: 40px; } 
+    #toast.error { background: rgba(255, 59, 48, 0.9); } 
+    #toast.success { background: rgba(52, 199, 89, 0.9); }
+
+    /* --- HEADER DASHBOARD --- */
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px;}
+    .profile-info { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 16px 6px 6px; border-radius: 28px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .btn-icon { background: rgba(255,255,255,0.9); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 16px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 20px;}
+    .btn-icon:active { transform: scale(0.85); background: #f0f0f5; }
+    .btn-logout { color: var(--danger); background: rgba(255, 59, 48, 0.1); border-color: rgba(255, 59, 48, 0.2); }
+  </style>
 </head>
 <body>
+
+  <div id="toast">Notifikasi</div>
+
+  <div id="action-modal" class="modal-overlay">
+    <div class="glass modal-content">
+      <div style="font-size: 48px; margin-bottom: 16px; animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">🤔</div>
+      <h3 id="modal-title" style="font-size: 22px; margin-bottom: 12px; font-weight:800;">Konfirmasi</h3>
+      <p id="modal-desc" style="font-size: 15px; color: var(--text-muted); margin-bottom: 24px;">Yakin ingin melanjutkan?</p>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary" style="margin: 0; flex: 1;" onclick="closeModal()">Batal</button>
+        <button class="btn-primary" style="margin: 0; flex: 1;" id="btn-modal-confirm">Proses</button>
+      </div>
+    </div>
+  </div>
 
   <div id="app-container">
 
     <div id="login-view" class="view active">
-      <div class="brand-logo" style="margin-top: 100px;">
-        <div style="font-size: 64px;">💸</div>
-        <div>PinjamCash</div>
+      <div style="text-align: center; margin-top: 60px; margin-bottom: 40px; animation: floatLogo 4s ease-in-out infinite;">
+        <div style="font-size: 80px; filter: drop-shadow(0 10px 20px rgba(0,122,255,0.3));">💸</div>
+        <h1 style="font-size: 32px; font-weight: 800; color: var(--text-main); margin-top: 10px;">PinjamCash</h1>
+        <p style="color: var(--text-muted); font-weight: 600;">Sistem Manajemen Finansial</p>
       </div>
-      <p class="subtitle" style="margin-top:-10px;">Manajemen Pinjaman Modern</p>
 
       <div class="glass" style="padding: 30px 24px;">
         <div class="input-group">
-            <input type="text" id="log-user" class="custom-input" placeholder="Username" autocomplete="off">
+            <input type="text" id="log-user" class="custom-input" placeholder="Username">
         </div>
         <div class="input-group" style="margin-bottom: 12px;">
             <input type="password" id="log-pass" class="custom-input" placeholder="Password">
         </div>
-        <button class="btn-primary" onclick="prosesLogin()" type="button" style="margin-top: 16px;">Masuk Sistem</button>
+        <button class="btn-primary" onclick="prosesLogin()" style="margin-top: 16px;">Masuk Sistem</button>
       </div>
     </div>
 
     <div id="dashboard-view" class="view">
       
-      <div class="dash-header" style="margin-bottom: 16px;">
-        <div class="profile-info" title="Lihat Profil">
-          <div style="font-size:32px; margin-right:8px;">👨‍💼</div>
+      <div class="dash-header">
+        <div class="profile-info">
+          <div style="font-size:32px; margin-right:4px;">👨‍💻</div>
           <div>
-            <div class="profile-name" style="font-size: 18px; font-weight: 800; letter-spacing:-0.5px;">Hi, <span id="user-name">Staff</span></div>
-            <div class="profile-role" id="user-role" style="font-weight: 600; font-size: 13px; color:var(--text-muted);">Status: Aktif</div>
+            <div style="font-size: 16px; font-weight: 800; letter-spacing:-0.5px;">Hi, <span id="user-name">Staff</span></div>
+            <div style="font-weight: 600; font-size: 12px; color:var(--success);">● Aktif bekerja</div>
           </div>
         </div>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="prosesLogout()" class="btn-logout-icon" title="Logout" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          </button>
-        </div>
+        <button onclick="konfirmasiLogout()" class="btn-icon btn-logout" title="Logout">🚪</button>
       </div>
 
       <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 24px;">
-        <div style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 24px; padding: 12px 24px; display: inline-flex; align-items: center; gap: 16px;">
+        <div class="glass" style="padding: 12px 24px; display: inline-flex; align-items: center; gap: 16px;">
           <div style="display: flex; align-items: baseline; gap: 4px;">
-            <div id="live-clock" style="font-size: 26px; font-weight: 800; color: #000000; letter-spacing: 1px;">00:00</div>
+            <div id="live-clock" style="font-size: 26px; font-weight: 800; letter-spacing: 1px;">00:00</div>
           </div>
           <div style="width: 2px; height: 32px; background: rgba(0,0,0,0.06);"></div>
           <div style="display: flex; flex-direction: column; text-align: left;">
@@ -60,28 +146,28 @@
         </div>
       </div>
 
-      <div id="admin-section" style="display: none; margin-bottom: 24px;">
-        <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Dashboard Admin</h3>
+      <div id="admin-panel" style="display: none; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Overview Keuangan (Admin)</h3>
         <div class="glass" style="padding: 20px; background: linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(52,199,89,0.05) 100%);">
             <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
                 <div>
-                    <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Modal Keluar</div>
-                    <div style="font-size:20px; font-weight:800; color:var(--danger);" id="admin-modal">Rp 0</div>
+                    <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Total Modal Keluar</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--danger);" id="admin-modal">Rp 15.000.000</div>
                 </div>
                 <div style="text-align:right;">
-                    <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Untung Bersih (Lunas)</div>
-                    <div style="font-size:20px; font-weight:800; color:var(--success);" id="admin-untung">Rp 0</div>
+                    <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Untung Lunas</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--success);" id="admin-untung">Rp 3.500.000</div>
                 </div>
             </div>
-            <button class="btn-secondary" onclick="bukaMenuApproval()" style="width:100%; margin-top:10px; background:rgba(255,149,0,0.1); color:var(--warning);">Cek Antrian Approval Edit</button>
+            <button class="btn-secondary" style="width:100%; margin-top:10px; padding:12px; font-size:14px; background:rgba(255,149,0,0.1); color:var(--warning);">📋 Cek Antrian Approval (> 1 Jam)</button>
         </div>
       </div>
 
-      <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">Pengajuan Pinjaman Baru</h3>
+      <h3 style="margin-bottom: 14px; font-size: 17px; font-weight:800;">💸 Pengajuan Pinjaman Baru</h3>
       <div class="glass" style="padding: 24px;">
         
         <div class="input-group">
-          <label class="input-label">No Handphone Pelanggan (Wajib)</label>
+          <label class="input-label">No Handphone (Wajib)</label>
           <input type="tel" id="input-hp" class="custom-input" placeholder="Contoh: 08123456789">
         </div>
         
@@ -92,7 +178,7 @@
 
         <div class="input-group">
           <label class="input-label">Nominal Pinjaman</label>
-          <select id="input-nominal" class="custom-input" onchange="hitungSistem()" style="appearance: none; background-color: white;">
+          <select id="input-nominal" class="custom-input" onchange="hitungSistem()" style="background-color: rgba(255,255,255,0.9);">
             <option value="" disabled selected>-- Pilih Nominal --</option>
             <option value="100000">Rp 100.000</option>
             <option value="200000">Rp 200.000</option>
@@ -107,9 +193,9 @@
           </select>
         </div>
 
-        <div id="preview-hitungan" style="display:none; margin-top:20px; padding:16px; background:rgba(0,0,0,0.03); border-radius:16px; border: 1px dashed rgba(0,0,0,0.1);">
+        <div id="preview-hitungan" style="display:none; margin-top:20px; padding:16px; background:rgba(0,0,0,0.02); border-radius:16px; border: 1px dashed rgba(0,0,0,0.1);">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Tenor (Lama Pinjam):</span> 
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Tenor (Lama):</span> 
                 <b id="out-tenor" style="font-size:14px;"></b>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
@@ -117,7 +203,7 @@
                 <b id="out-bunga" style="font-size:14px; color:var(--warning);"></b>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:12px;">
-                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Komisi Anda (10%):</span> 
+                <span style="font-size:14px; font-weight:600; color:var(--text-muted);">Komisi Staff (10%):</span> 
                 <b id="out-komisi" style="font-size:14px; color:var(--success);"></b>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -126,13 +212,150 @@
             </div>
         </div>
 
-        <button class="btn-primary" onclick="submitPinjaman()" type="button" style="margin-top: 24px;">Simpan Pengajuan Pinjaman</button>
+        <button class="btn-primary" onclick="konfirmasiSimpan()" type="button" style="margin-top: 24px;">Simpan Pinjaman</button>
       </div>
 
     </div>
 
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    // --- UTILS & UI FUNCTIONS ---
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.className = type === 'error' ? 'error' : 'success';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    function showModal(title, desc, confirmCallback) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('action-modal').classList.add('active');
+      
+      const btn = document.getElementById('btn-modal-confirm');
+      btn.onclick = () => {
+          closeModal();
+          if(confirmCallback) confirmCallback();
+      };
+    }
+
+    function closeModal() {
+      document.getElementById('action-modal').classList.remove('active');
+    }
+
+    // --- REALTIME CLOCK ---
+    setInterval(() => {
+        let now = new Date();
+        document.getElementById('live-clock').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('live-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }, 1000);
+
+    // --- LOGIN LOGIC ---
+    let currentUser = null;
+
+    function prosesLogin() {
+        let u = document.getElementById('log-user').value;
+        let p = document.getElementById('log-pass').value;
+        
+        if(!u || !p) return showToast("Isi username & password!", "error");
+        
+        // Simulasi Login (Bisa disambung ke Google Apps Script nanti)
+        currentUser = { username: u, role: (u.toLowerCase() === 'admin' ? 'Admin' : 'Staff') };
+        
+        document.getElementById('user-name').innerText = currentUser.username.toUpperCase();
+        
+        if(currentUser.role === 'Admin') {
+            document.getElementById('admin-panel').style.display = 'block';
+        } else {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+
+        showToast("Login Berhasil!");
+        switchView('dashboard-view');
+    }
+
+    function konfirmasiLogout() {
+        showModal("Logout", "Sesi Anda akan diakhiri. Lanjutkan?", () => {
+            currentUser = null;
+            document.getElementById('log-user').value = '';
+            document.getElementById('log-pass').value = '';
+            switchView('login-view');
+            showToast("Berhasil Logout");
+        });
+    }
+
+    // --- KALKULASI PINJAMAN ---
+    let hitungCache = null;
+
+    function hitungSistem() {
+        let nominal = parseInt(document.getElementById('input-nominal').value);
+        if(!nominal) return;
+
+        let bunga = 0;
+        let tenorMinggu = (nominal <= 300000) ? 1 : 2; 
+        
+        // Aturan Bunga
+        if (nominal === 100000) bunga = 30000;
+        else if (nominal === 200000) bunga = 60000;
+        else if (nominal === 300000) bunga = 90000;
+        else if (nominal === 400000) bunga = 120000;
+        else if (nominal >= 500000 && nominal <= 700000) bunga = 150000;
+        else if (nominal >= 800000 && nominal <= 1000000) bunga = 200000;
+
+        let komisi = bunga * 0.10; // 10%
+        let total = nominal + bunga;
+        let tenorHari = tenorMinggu * 7;
+
+        hitungCache = { nominal, bunga, total, tenorHari, komisi };
+
+        // Tampilkan di UI
+        document.getElementById('out-tenor').innerText = `${tenorMinggu} Minggu (${tenorHari} Hari)`;
+        document.getElementById('out-bunga').innerText = `Rp ${bunga.toLocaleString('id-ID')}`;
+        document.getElementById('out-komisi').innerText = `Rp ${komisi.toLocaleString('id-ID')}`;
+        document.getElementById('out-total').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        
+        // Animasi muncul
+        let preview = document.getElementById('preview-hitungan');
+        preview.style.display = 'block';
+        preview.style.animation = 'fadeSlideIn 0.3s ease';
+    }
+
+    function konfirmasiSimpan() {
+        let hp = document.getElementById('input-hp').value;
+        let nama = document.getElementById('input-nama').value;
+        
+        if(!hp || !nama || !hitungCache) {
+            return showToast("Lengkapi No HP, Nama, dan Nominal!", "error");
+        }
+
+        showModal(
+            "Simpan Pinjaman", 
+            `Buat tagihan Rp ${hitungCache.total.toLocaleString('id-ID')} untuk ${nama}?`, 
+            submitDataKeDatabase
+        );
+    }
+
+    function submitDataKeDatabase() {
+        // Di sini nanti ditaruh fungsi 'fetch' ke Google Apps Script
+      const API_URL = "https://script.google.com/macros/s/AKfycbyjDAdWZU3vOC7OYeATq3w_UGe30nGp5K7f00HiN6cWzAQCgZD90lSIie7joKdTymB49A/exec";
+        // Simulasi sukses:
+        showToast("Data Pinjaman Berhasil Disimpan!", "success");
+        
+        // Reset Form
+        document.getElementById('input-hp').value = "";
+        document.getElementById('input-nama').value = "";
+        document.getElementById('input-nominal').value = "";
+        document.getElementById('preview-hitungan').style.display = 'none';
+        hitungCache = null;
+    }
+
+  </script>
 </body>
 </html>
