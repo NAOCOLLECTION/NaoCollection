@@ -33,19 +33,15 @@
     .cal-date-box { background:var(--primary); color:white; border-radius:12px; width:60px; height:65px; display:flex; flex-direction:column; text-align:center; overflow:hidden; flex-shrink:0; box-shadow:0 4px 10px rgba(0,122,255,0.2);}
     .cal-month { font-size:10px; font-weight:800; text-transform:uppercase; background:rgba(0,0,0,0.2); padding:4px 0;}
     .cal-day { font-size:24px; font-weight:900; line-height:1.2; padding-top:4px;}
-    .cal-info { flex:1; width: 100%;}
     .badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; display:inline-block;}
     
+    /* CUSTOM SYSTEM MODALS */
     .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index:99999; align-items:center; justify-content:center; padding: 20px; animation: fadeIn 0.2s;}
     .modal-overlay.active { display: flex; }
-    .sys-modal { background: white; width: 100%; max-width: 340px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.9); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    .sys-modal { background: white; width: 100%; max-width: 320px; border-radius: 24px; padding: 24px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.9); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} } @keyframes popUp { to{transform:scale(1);} }
     
-    .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
-    .filter-btn.active { background: var(--primary); color: white; }
-    .tag-btn { background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 8px;}
-    .tag-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
+    /* TIMELINE */
     .timeline { border-left: 2px solid var(--primary); margin-left: 10px; padding-left: 20px; position: relative; margin-top: 10px; }
     .timeline-item { margin-bottom: 16px; position: relative; font-size: 13px; }
     .timeline-item::before { content:''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);}
@@ -53,14 +49,20 @@
     .tl-desc { font-weight: 600; color: var(--text-main); line-height: 1.4;}
     .tl-danger::before { background: var(--danger); }
     .tl-approval { background: rgba(52,199,89,0.1); padding: 10px; border-radius: 8px; border: 1px dashed var(--success); margin-top:4px;}
+
+    /* TAGS BAJU */
+    .tag-btn { background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-block; margin-bottom: 8px;}
+    .tag-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
   </style>
 </head>
 <body>
 
+  <!-- TOAST -->
   <div id="custom-toast"><span id="t-icon"></span><span id="t-msg"></span></div>
 
+  <!-- CUSTOM ALERT/CONFIRM/PROMPT MODAL -->
   <div id="sys-modal" class="modal-overlay">
-     <div class="sys-modal" style="text-align:center;">
+     <div class="sys-modal">
         <div id="sys-icon" style="font-size:40px; margin-bottom:12px;">⚠️</div>
         <h3 id="sys-title" style="margin-bottom:8px; font-size:18px;">Konfirmasi</h3>
         <p id="sys-msg" style="font-size:14px; color:gray; margin-bottom:20px; line-height:1.4;">Pesan</p>
@@ -73,6 +75,7 @@
   </div>
 
   <div id="app-container">
+    <!-- LOGIN -->
     <div id="login-view" class="view active">
       <div class="brand-logo">✨ NAO Collection</div>
       <div class="glass" style="padding: 24px; margin-bottom: 20px;">
@@ -83,6 +86,7 @@
       <button class="btn-primary btn-secondary" id="btn-install-app" style="display:none; color:var(--success); border:1px solid rgba(52,199,89,0.3);">📲 Install Aplikasi NAO</button>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="dashboard-view" class="view">
       <div class="dash-header">
         <div><h2 style="font-size:20px; font-weight:800;">Hi, <span id="user-name">User</span></h2></div>
@@ -115,6 +119,7 @@
       </div>
     </div>
 
+    <!-- PENGAJUAN / EDIT FULL FORM -->
     <div id="pengajuan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -126,14 +131,9 @@
         <input type="hidden" id="form-mode" value="NEW"> <input type="hidden" id="form-edit-id" value="">
 
         <label class="input-label">Identitas Pelanggan</label>
-        <div style="display:flex; gap:10px; margin-bottom: 12px;">
-            <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1; margin-bottom:0;" onblur="cekDataPelanggan()">
-            <button class="btn-primary" style="width:auto; padding: 0 16px; margin:0;" onclick="cekDataPelanggan()">🔍</button>
-        </div>
-        
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-           <label class="input-label" style="margin:0;">Nama Peminjam</label>
-           <div id="cust-badge"></div>
+        <div style="display:flex; gap:10px;">
+            <input type="tel" id="no-hp" class="custom-input" placeholder="No WA (08...)" style="flex:1;" onblur="cekDataPelanggan()">
+            <button class="btn-primary" style="width:auto; padding: 0 16px; margin-bottom:16px;" onclick="cekDataPelanggan()">🔍</button>
         </div>
         <input type="text" id="nama-peminjam" class="custom-input" placeholder="Nama Lengkap">
         <input type="text" id="kode-cust" class="custom-input" placeholder="Kode CUST (Akan Auto-Generate)" readonly style="background:#f0f0f5; color:gray; font-size:12px;">
@@ -155,36 +155,32 @@
         </div>
 
         <div id="wrap-baju" style="display:none;">
-            <label class="input-label">Kategori Baju (Pilih Multi)</label>
+            <label class="input-label">Kategori Baju (Pilih Berapa Saja)</label>
             <div id="tag-baju-container" style="margin-bottom:12px;">
                <span class="tag-btn" onclick="toggleTag(this)">Daster</span> <span class="tag-btn" onclick="toggleTag(this)">Kaos</span>
                <span class="tag-btn" onclick="toggleTag(this)">Cardigan</span> <span class="tag-btn" onclick="toggleTag(this)">Bra</span>
                <span class="tag-btn" onclick="toggleTag(this)">Celana Dalam</span> <span class="tag-btn" onclick="toggleTag(this)">Baju Wanita</span>
-               <span class="tag-btn" onclick="toggleTag(this)">Sendal</span> <span class="tag-btn" onclick="toggleTag(this)">Baju Anak</span>
             </div>
             <label class="input-label">Total Harga Baju</label>
-            <input type="text" id="nominal-baju" class="custom-input" placeholder="Rp..." oninput="formatRupiahInput(this)">
-            
-            <div id="simulasi-cicilan" style="font-size:11px; font-weight:800; color:var(--warning); margin-bottom:16px; display:none; background:rgba(255,149,0,0.1); padding:10px; border-radius:12px;"></div>
+            <input type="number" id="nominal-baju" class="custom-input" placeholder="Rp..." oninput="kalkulasiBunga()">
         </div>
 
-        <div id="wrap-tempo">
-           <label class="input-label">Tenor / Jatuh Tempo</label>
-           <select id="tempo" class="custom-input" onchange="kalkulasiBunga()"></select>
-        </div>
+        <label class="input-label">Tenor / Jatuh Tempo</label>
+        <select id="tempo" class="custom-input" onchange="kalkulasiBunga()"></select>
 
         <div id="wrap-bunga" style="background: rgba(0,122,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px dashed rgba(0,122,255,0.2);">
           <span style="font-size: 11px; font-weight: 800; color: var(--primary);">BUNGA TETAP</span>
           <div id="bunga-text" style="font-size: 18px; font-weight: 800; color: var(--text-main);">Rp 30.000</div>
         </div>
 
-        <label class="input-label">Catatan Barang / Note Khusus</label>
+        <label class="input-label">Catatan (Kode/Harga Khusus)</label>
         <textarea id="catatan" class="custom-input" rows="2" placeholder="Gamis kode A231 = 80rb..."></textarea>
 
         <button class="btn-primary" id="btn-submit" onclick="submitPengajuan()">Simpan Data</button>
       </div>
     </div>
 
+    <!-- PELANGGAN VIEW -->
     <div id="pelanggan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -195,33 +191,21 @@
       <div id="list-pelanggan"></div>
     </div>
 
+    <!-- TIMELINE VIEW -->
     <div id="detail-riwayat-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('pelanggan-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
-        <h2 style="font-size:18px;">Riwayat CRM</h2><div style="width:48px;"></div>
+        <h2 style="font-size:18px;">Timeline Riwayat</h2><div style="width:48px;"></div>
       </div>
-      
-      <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, #1C1C1E, #3A3A3C); color:white;">
-         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:12px; font-weight:800; color:#ffd60a;" id="dr-kode"></div>
-            <div id="dr-badge-status"></div>
-         </div>
+      <div class="glass" style="padding:20px; margin-bottom:16px;">
+         <div style="font-size:12px; font-weight:800; color:var(--primary);" id="dr-kode"></div>
          <div style="font-size:20px; font-weight:900; margin-bottom:4px;" id="dr-nama"></div>
-         <div style="font-size:12px; opacity:0.8; font-weight:600; margin-bottom:16px;" id="dr-hp"></div>
-         
-         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:11px;">
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Bergabung:<br><b id="dr-gabung" style="font-size:13px;">-</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Total Lunas:<br><b id="dr-lunas" style="font-size:13px; color:#34C759;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Beli Cash:<br><b id="dr-bcash" style="font-size:13px;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px;">Beli Cicil:<br><b id="dr-bcicil" style="font-size:13px;">0x</b></div>
-            <div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px; grid-column:span 2;">Sering Bayar Bunga (Perpanjang): <b id="dr-bunga" style="color:#ffd60a;">0x</b></div>
-         </div>
+         <div style="font-size:14px; color:var(--text-muted); font-weight:600;" id="dr-hp"></div>
       </div>
-
-      <h3 style="font-size:14px; margin-bottom:12px;">Daftar Transaksi</h3>
       <div id="list-timeline"></div>
     </div>
 
+    <!-- TAGIHAN VIEW -->
     <div id="tagihan-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -236,6 +220,7 @@
       <div id="list-tagihan"></div>
     </div>
 
+    <!-- SETORAN STAFF -->
     <div id="setoran-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -270,6 +255,7 @@
       </div>
     </div>
 
+    <!-- ADMIN VIEW -->
     <div id="admin-view" class="view">
       <div class="dash-header">
         <button onclick="switchView('dashboard-view')" class="btn-primary btn-secondary" style="width: auto;">🔙</button>
@@ -282,15 +268,7 @@
         <div style="flex:1;"><div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">S/D TANGGAL</div><input type="date" id="adm-end" class="custom-input" style="padding:10px; font-size:13px; margin-bottom:0;" onchange="loadAdmin()"></div>
       </div>
 
-      <div class="glass" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size:15px; margin-bottom:12px;">Tambah Staff Baru</h3>
-        <input type="text" id="new-username" class="custom-input" placeholder="Username Login" style="padding:12px;">
-        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap" style="padding:12px;">
-        <input type="password" id="new-password" class="custom-input" placeholder="Password" style="padding:12px;">
-        <select id="new-role" class="custom-input" style="padding:12px;"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
-        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()" style="margin:0;">Buat Akun Staff</button>
-      </div>
-
+      <!-- STATS PINJAMAN -->
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--primary), #0056b3); color:white;">
          <div style="font-weight:900; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">🏷️ STATISTIK PINJAMAN UANG</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Modal Berjalan (Keluar - Belum Lunas)</div><div id="adm-p-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
@@ -301,6 +279,7 @@
          <div style="text-align:center;"><span style="font-size:11px;">LABA BERSIH (PINJAMAN)</span><br><b id="adm-p-laba" style="font-size:24px; color:#34C759; font-weight:900;">Rp 0</b></div>
       </div>
 
+      <!-- STATS BAJU -->
       <div class="glass" style="padding:20px; margin-bottom:16px; background:linear-gradient(135deg, var(--success), #248A3D); color:white;">
          <div style="font-weight:900; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">👗 STATISTIK PENJUALAN BAJU</div>
          <div style="font-size:11px; font-weight:700; opacity:0.8;">Nilai Baju Keluar (Belum Lunas)</div><div id="adm-b-out" style="font-size:20px; font-weight:900; margin-bottom:12px; color:#ffd60a;">Rp 0</div>
@@ -309,6 +288,15 @@
             <div style="text-align:center; width:100%;"><span style="font-size:10px;">Komisi Khusus Staff (Keluar)</span><br><b id="adm-b-komisi">Rp 0</b></div>
          </div>
          <div style="text-align:center;"><span style="font-size:11px;">PENDAPATAN BERSIH (BAJU)</span><br><b id="adm-b-laba" style="font-size:24px; color:#ffd60a; font-weight:900;">Rp 0</b></div>
+      </div>
+
+      <h3 style="font-size:15px; margin-bottom:12px; margin-top:24px;">Tambah Staff Baru</h3>
+      <div class="glass" style="padding: 16px; margin-bottom: 24px;">
+        <input type="text" id="new-username" class="custom-input" placeholder="Username Login">
+        <input type="text" id="new-name" class="custom-input" placeholder="Nama Lengkap">
+        <input type="password" id="new-password" class="custom-input" placeholder="Password">
+        <select id="new-role" class="custom-input"><option value="Staff">Staff Biasa</option><option value="Admin">Admin</option></select>
+        <button class="btn-primary" id="btn-add-staff" onclick="tambahStaff()">Buat Akun Staff</button>
       </div>
 
       <h3 style="font-size:15px; margin-bottom:12px; color:var(--primary);">Input Komisi Baju Khusus</h3>
@@ -325,29 +313,40 @@
       <div id="adm-list-log" style="max-height: 400px; overflow-y:auto; padding-right:6px; margin-bottom:40px;"></div>
     </div>
 
+    <!-- MODAL PILIH AKSI -->
+    <div id="modal-pilih-aksi" class="modal-overlay">
+      <div class="sys-modal">
+         <h3 style="margin-bottom:16px;">Pilih Aksi</h3>
+         <input type="hidden" id="pilih-id">
+         <button class="btn-primary" style="background:var(--warning);" onclick="bukaFormEdit()">✏️ Buka Form Edit Data</button>
+         <button class="btn-primary" style="background:var(--danger);" onclick="sysPrompt('Wajib Isi Alasan Hapus:', prosesHapus)">🗑️ Hapus Tagihan Ini</button>
+         <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-pilih-aksi').classList.remove('active')">Batal</button>
+      </div>
+    </div>
+
+    <!-- MODAL BAYAR -->
     <div id="modal-bayar" class="modal-overlay">
       <div class="sys-modal">
          <h3 style="margin-bottom:16px;" id="modal-title">Konfirmasi Bayar</h3>
          <input type="hidden" id="modal-id-bayar"> <input type="hidden" id="modal-jenis-bayar">
          <div id="wrap-nominal-bayar" style="display:none;">
             <label class="input-label">Nominal Uang</label>
-            <input type="text" id="nominal-bayar" class="custom-input" oninput="formatRupiahInput(this)">
+            <input type="number" id="nominal-bayar" class="custom-input">
          </div>
          
-         <div id="wrap-foto-bayar">
-            <label class="input-label">Upload Bukti Transfer</label>
-            <div style="display:flex; gap:10px; margin-bottom:16px;">
-               <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
-               <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
-            </div>
-            <div id="foto-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Foto Siap Diupload</div>
+         <label class="input-label">Upload Bukti / Barang</label>
+         <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">📸 Kamera <input type="file" accept="image/*" capture="environment" id="foto-cam" style="display:none;" onchange="handleFoto(this)"></label>
+            <label class="btn-secondary" style="flex:1; padding:12px; border-radius:12px; text-align:center; font-weight:800; font-size:12px; cursor:pointer;">🖼️ Galeri <input type="file" accept="image/*" id="foto-gal" style="display:none;" onchange="handleFoto(this)"></label>
          </div>
+         <div id="foto-preview" style="font-size:11px; color:var(--success); font-weight:bold; margin-bottom:12px; display:none;">✅ Foto Siap Diupload</div>
          
          <button class="btn-primary" id="btn-proses-bayar" onclick="prosesBayar()">Proses Pembayaran</button>
          <button class="btn-primary btn-secondary" onclick="document.getElementById('modal-bayar').classList.remove('active')">Batal</button>
       </div>
     </div>
 
+    <!-- MODAL SETORAN -->
     <div id="modal-setor" class="modal-overlay">
       <div class="sys-modal">
          <h3 style="margin-bottom:16px;" id="modal-setor-title">Form Setoran</h3>
@@ -379,11 +378,11 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxd6ufA3FJQwCrilDOah9d3Tv8ka0Xim33KAOCkPhuVOr-SEOtIRANkIoY1Xin8XpnTlA/exec"; 
     
-    let currentUser = null, sessionToken = "", listBayarUnsetor = [];
+    let currentUser = null, sessionToken = "";
     let globalPelangganData = [], globalTagihanData = [];
-    let fileUploadData = ""; 
+    let fileUploadData = ""; // Var penampung base64
 
-    // --- SYSTEM MODALS ---
+    // --- SYSTEM MODAL (REPLACE ALERT/CONFIRM) ---
     function closeSysModal() { document.getElementById('sys-modal').classList.remove('active'); document.getElementById('sys-input').value = ""; }
     function sysAlert(msg) {
        document.getElementById('sys-icon').innerText = '⚠️'; document.getElementById('sys-title').innerText = 'Perhatian'; document.getElementById('sys-msg').innerText = msg;
@@ -421,13 +420,7 @@
 
     function switchView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0,0); }
     function formatRp(a) { return "Rp " + parseInt(a).toLocaleString('id-ID'); }
-    function getNom(val) { return parseInt(String(val).replace(/[^0-9]/g, '')) || 0; }
-    
-    function formatRupiahInput(el) {
-       let v = el.value.replace(/[^0-9]/g, '');
-       el.value = v ? parseInt(v).toLocaleString('id-ID') : '';
-       if(el.id === 'nominal-baju') kalkulasiBunga();
-    }
+    function showToast(msg, type='success') { let t = document.getElementById('custom-toast'); document.getElementById('t-icon').innerText = type === 'success' ? '✅' : '⚠️'; document.getElementById('t-msg').innerText = msg; t.className = type; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
     function getBase64(file) { return new Promise((res, rej) => { if (!file) return res(""); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); r.onerror = e => rej(e); }); }
     async function handleFoto(el) { fileUploadData = await getBase64(el.files[0]); document.getElementById('foto-preview').style.display='block'; }
@@ -439,48 +432,45 @@
         if(v.startsWith('0')) v = '+62' + v.substring(1); else if(v.startsWith('8')) v = '+62' + v; hp.value = v;
         if (v.length > 9) {
             let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "cekPelanggan", username: currentUser.username, token: sessionToken, payload: {noHp: v} }) }).then(r => r.json());
-            if (res.success) { 
-                document.getElementById('nama-peminjam').value = res.nama; document.getElementById('nama-peminjam').readOnly = true; 
-                document.getElementById('kode-cust').value = res.kode; 
-                let b = document.getElementById('cust-badge');
-                b.innerHTML = `<span class="badge" style="background:${res.statusKredit.color}; color:white;">${res.statusKredit.label}</span>`;
-                showToast("Pelanggan lama ditemukan!"); 
-            } else { 
-                document.getElementById('nama-peminjam').readOnly = false; document.getElementById('kode-cust').value = ""; document.getElementById('cust-badge').innerHTML = ""; 
-            }
+            if (res.success) { document.getElementById('nama-peminjam').value = res.nama; document.getElementById('kode-cust').value = res.kode; showToast("Pelanggan lama ditemukan!"); }
+            else { document.getElementById('kode-cust').value = ""; }
         }
     }
 
     // --- FORM LOGIC & TAG BAJU ---
     let arrBaju = [];
     function toggleTag(el) {
-       let val = el.innerText; let noteEl = document.getElementById('catatan'); let cur = noteEl.value;
-       if(el.classList.contains('active')) { el.classList.remove('active'); arrBaju = arrBaju.filter(x => x !== val); let reg = new RegExp('\\[' + val + '\\][^\n]*\n?', 'g'); noteEl.value = cur.replace(reg, '').trim(); } 
-       else { el.classList.add('active'); arrBaju.push(val); let app = `[${val}] Rp `; noteEl.value = cur ? cur + '\n' + app : app; }
+       let val = el.innerText;
+       if(el.classList.contains('active')) { el.classList.remove('active'); arrBaju = arrBaju.filter(x => x !== val); } 
+       else { el.classList.add('active'); arrBaju.push(val); }
+       
+       let ctt = document.getElementById('catatan').value;
+       let baseNote = ctt.replace(/\[.*?\]\s*/g, ''); // Hapus tag lama di string
+       document.getElementById('catatan').value = (arrBaju.length > 0 ? `[${arrBaju.join(', ')}] ` : '') + baseNote;
     }
 
     function initForm(mode) {
        document.getElementById('form-mode').value = mode;
        if (mode === 'NEW') {
           document.getElementById('form-title').innerText = "Form Pengajuan Baru";
-          document.getElementById('nama-peminjam').value = ''; document.getElementById('nama-peminjam').readOnly = false; document.getElementById('no-hp').value = ''; document.getElementById('kode-cust').value = ''; document.getElementById('cust-badge').innerHTML = ''; document.getElementById('catatan').value = ''; arrBaju = []; document.querySelectorAll('.tag-btn').forEach(e=>e.classList.remove('active'));
+          document.getElementById('nama-peminjam').value = ''; document.getElementById('no-hp').value = ''; document.getElementById('kode-cust').value = ''; document.getElementById('catatan').value = ''; arrBaju = []; document.querySelectorAll('.tag-btn').forEach(e=>e.classList.remove('active'));
           updateFormLogic();
        } else { document.getElementById('form-title').innerText = "Form Edit Data"; }
     }
 
     function updateFormLogic() {
       let cat = document.getElementById('kategori').value;
-      let wPinj = document.getElementById('wrap-pinjaman'), wBaju = document.getElementById('wrap-baju'), tempo = document.getElementById('tempo'), wBunga = document.getElementById('wrap-bunga'), wTempo = document.getElementById('wrap-tempo');
+      let wPinj = document.getElementById('wrap-pinjaman'), wBaju = document.getElementById('wrap-baju'), tempo = document.getElementById('tempo'), wBunga = document.getElementById('wrap-bunga');
 
       if (cat === 'Pinjaman Uang') {
-          wPinj.style.display = 'block'; wBaju.style.display = 'none'; wBunga.style.display = 'block'; wTempo.style.display = 'block'; tempo.disabled = false;
+          wPinj.style.display = 'block'; wBaju.style.display = 'none'; wBunga.style.display = 'block'; tempo.disabled = false;
           let nom = parseInt(document.getElementById('nominal-pinjaman').value) || 0;
           if (nom < 400000) { tempo.innerHTML = '<option value="7">1 Minggu</option>'; } else { tempo.innerHTML = '<option value="7">1 Minggu</option><option value="14">2 Minggu</option>'; }
-      } else if (cat === 'Pembelian Baju (Cicilan)') {
-          wPinj.style.display = 'none'; wBaju.style.display = 'block'; wBunga.style.display = 'none'; wTempo.style.display = 'block';
-          tempo.innerHTML = '<option value="30">Max 1 Bulan (Cicilan Mingguan)</option>'; tempo.disabled = true;
-      } else if (cat === 'Pembelian Baju (Cash)') {
-          wPinj.style.display = 'none'; wBaju.style.display = 'block'; wBunga.style.display = 'none'; wTempo.style.display = 'none';
+      } else if (cat.includes('Cicil')) {
+          wPinj.style.display = 'none'; wBaju.style.display = 'block'; wBunga.style.display = 'none';
+          tempo.innerHTML = '<option value="30">Max 1 Bulan (30 Hari)</option>'; tempo.disabled = true;
+      } else if (cat.includes('Cash')) {
+          wPinj.style.display = 'none'; wBaju.style.display = 'block'; wBunga.style.display = 'none';
           tempo.innerHTML = '<option value="0">Lunas / Tanpa Tenor</option>'; tempo.disabled = true;
       } kalkulasiBunga();
     }
@@ -492,17 +482,7 @@
           let tHari = parseInt(document.getElementById('tempo').value) || 7; let tMinggu = tHari / 7;
           let bDasar = nom <= 400000 ? (nom/100000)*30000 : (nom <= 900000 ? 150000 : 200000);
           let bunga = bDasar * tMinggu; bTxt.innerText = formatRp(bunga); bTxt.dataset.val = bunga;
-      } else if (cat === 'Pembelian Baju (Cicilan)') {
-          bTxt.innerText = "Rp 0"; bTxt.dataset.val = 0;
-          let nom = getNom(document.getElementById('nominal-baju').value);
-          let sim = document.getElementById('simulasi-cicilan');
-          if(nom > 0) {
-             let base = Math.floor((nom / 4) / 500) * 500;
-             let w1 = nom - (base * 3);
-             sim.style.display = 'block';
-             sim.innerHTML = `Simulasi Mingguan:<br>Mg-1: ${formatRp(w1)}<br>Mg-2,3,4: ${formatRp(base)}/mg`;
-          } else { sim.style.display = 'none'; }
-      } else { bTxt.innerText = "Rp 0"; bTxt.dataset.val = 0; document.getElementById('simulasi-cicilan').style.display='none'; }
+      } else { bTxt.innerText = "Rp 0"; bTxt.dataset.val = 0; }
     }
 
     // --- AUTH ---
@@ -526,7 +506,7 @@
     // --- SUBMIT PENGAJUAN / EDIT ---
     async function submitPengajuan() {
       let btn = document.getElementById('btn-submit'); btn.innerText = "Menyimpan..."; btn.disabled = true;
-      let cat = document.getElementById('kategori').value, nom = cat==='Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : getNom(document.getElementById('nominal-baju').value);
+      let cat = document.getElementById('kategori').value, nom = cat==='Pinjaman Uang' ? document.getElementById('nominal-pinjaman').value : document.getElementById('nominal-baju').value;
       let tmp = parseInt(document.getElementById('tempo').value) || 0; let date = new Date(); if (tmp > 0) date.setDate(date.getDate() + tmp);
       
       let note = document.getElementById('catatan').value; let mode = document.getElementById('form-mode').value;
@@ -594,11 +574,12 @@
            btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'BUNGA', '${bngP}', 'Bayar Bunga')">Bunga Saja (${formatRp(bngP)})</button>
                       <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${nomP + bngP}', 'Lunas Full')">Lunas Full</button>`;
         } else {
-           let sisa = nomP - byrP; let base = Math.floor((nomP / 4) / 500) * 500; let cicilW = (byrP === 0) ? (nomP - (base * 3)) : base; 
+           let sisa = nomP - byrP; let cicilW = Math.ceil(nomP / 4); 
            btnHtml = `<button class="btn-primary" style="background:var(--warning); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'CICILAN', '${cicilW}', 'Cicil Baju')">Setor Cicilan</button>
                       <button class="btn-primary" style="background:var(--success); font-size:12px; padding:10px;" onclick="bukaModalBayar('${i.id}', 'LUNAS', '${sisa}', 'Lunas Baju')">Lunas Sisa (${formatRp(sisa)})</button>`;
         }
 
+        let rawData = encodeURIComponent(JSON.stringify(i));
         list.innerHTML += `
           <div class="cal-card">
              <div class="cal-date-box" style="background:${bgCal}"><div class="cal-month">${blnTeks}</div><div class="cal-day">${tglTeks}</div></div>
@@ -610,39 +591,42 @@
                    ${i.cat === 'Pinjaman Uang' ? `Bunga: <b style="color:var(--danger);">${formatRp(bngP)}</b>` : ''}
                 </div>
                 <div style="display:flex; gap:6px;">${btnHtml}</div>
-                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:var(--primary); text-decoration:underline; font-weight:800; cursor:pointer;" onclick="sysPrompt('Wajib isi alasan Edit/Hapus:', (a) => reqAksiEdit(a, '${encodeURIComponent(JSON.stringify(i))}'))">Edit / Hapus Data</span></div>
+                <div style="text-align:right; margin-top:4px;"><span style="font-size:10px; color:var(--primary); text-decoration:underline; font-weight:800; cursor:pointer;" onclick="bukaModalPilihAksi('${rawData}')">Edit / Hapus Data</span></div>
              </div>
           </div>`;
       });
     }
+
+    // --- POPUP PILIH AKSI (EDIT/HAPUS) ---
+    function bukaModalPilihAksi(rawStr) { document.getElementById('pilih-id').value = rawStr; document.getElementById('modal-pilih-aksi').classList.add('active'); }
     
-    function reqAksiEdit(alasan, rawStr) {
-       if(!alasan) return;
-       let i = JSON.parse(decodeURIComponent(rawStr));
-       sysConfirm(`Data Edit (OK) atau Hapus (Batal)?`, () => {
-          // YES -> Buka Form Edit
-          initForm('EDIT');
-          document.getElementById('form-edit-id').value = i.id; document.getElementById('no-hp').value = i.hp; document.getElementById('nama-peminjam').value = i.nama; document.getElementById('kode-cust').value = i.kode; document.getElementById('kategori').value = i.cat;
-          updateFormLogic();
-          if(i.cat === 'Pinjaman Uang') document.getElementById('nominal-pinjaman').value = i.nom; else document.getElementById('nominal-baju').value = formatRp(i.nom).replace('Rp ','');
-          document.getElementById('catatan').value = alasan; // Masukkan alasan otomatis ke catatan
-          kalkulasiBunga(); switchView('pengajuan-view');
-       }, () => {
-          // NO/BATAL -> Hapus Data
-          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => { showToast(res.message, res.success ? 'success' : 'error'); loadTagihan(); });
-       });
-       // Ubah teks tombol sysConfirm untuk trik opsi ganda
-       document.getElementById('sys-btn-yes').innerText = "Buka Edit Form";
-       document.getElementById('sys-btn-no').innerText = "Hapus Tagihan";
+    function prosesHapus() {
+       let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+       return function(alasan) {
+          if(!alasan) return;
+          fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "reqEditDelete", username: currentUser.username, token: sessionToken, payload: {id: i.id, tipe:'DELETE', alasan:alasan} }) }).then(r=>r.json()).then(res => {
+             showToast(res.message, res.success ? 'success' : 'error'); document.getElementById('modal-pilih-aksi').classList.remove('active'); loadTagihan();
+          });
+       };
+    }
+
+    function bukaFormEdit() {
+       let rawStr = document.getElementById('pilih-id').value; let i = JSON.parse(decodeURIComponent(rawStr));
+       document.getElementById('modal-pilih-aksi').classList.remove('active'); initForm('EDIT');
+       
+       document.getElementById('form-edit-id').value = i.id; document.getElementById('no-hp').value = i.hp; document.getElementById('nama-peminjam').value = i.nama;
+       document.getElementById('kode-cust').value = i.kode; document.getElementById('kategori').value = i.cat;
+       
+       updateFormLogic();
+       if(i.cat === 'Pinjaman Uang') document.getElementById('nominal-pinjaman').value = i.nom; else document.getElementById('nominal-baju').value = i.nom;
+       kalkulasiBunga(); switchView('pengajuan-view');
     }
 
     // --- BAYAR ---
-    function bukaModalBayar(id, jenis, nomRec, title) {
+    function bukaModalBayar(id, jenis, nominalRekomendasi, title) {
       document.getElementById('modal-id-bayar').value = id; document.getElementById('modal-jenis-bayar').value = jenis; document.getElementById('modal-title').innerText = title;
-      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar'), wrapFoto = document.getElementById('wrap-foto-bayar');
-      
-      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = formatRp(nomRec).replace('Rp ',''); wrapFoto.style.display = 'none'; } 
-      else { wrapNom.style.display = 'none'; inNom.value = nomRec; wrapFoto.style.display = 'block'; }
+      let wrapNom = document.getElementById('wrap-nominal-bayar'), inNom = document.getElementById('nominal-bayar');
+      if (jenis === 'CICILAN') { wrapNom.style.display = 'block'; inNom.value = nominalRekomendasi; } else { wrapNom.style.display = 'none'; inNom.value = nominalRekomendasi; }
       
       fileUploadData = ""; document.getElementById('foto-cam').value = ""; document.getElementById('foto-gal').value = ""; document.getElementById('foto-preview').style.display='none';
       document.getElementById('modal-bayar').classList.add('active');
@@ -650,10 +634,7 @@
 
     async function prosesBayar() {
       let btn = document.getElementById('btn-proses-bayar'); btn.innerText = "Memproses..."; btn.disabled = true;
-      let jenis = document.getElementById('modal-jenis-bayar').value;
-      if (jenis !== 'CICILAN' && !fileUploadData) { showToast("Wajib upload foto bukti!", "error"); btn.innerText = "Proses Pembayaran"; btn.disabled = false; return; }
-
-      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: jenis, nomBayar: getNom(document.getElementById('nominal-bayar').value), fotoBukti: fileUploadData };
+      let payload = { id: document.getElementById('modal-id-bayar').value, jenis: document.getElementById('modal-jenis-bayar').value, nomBayar: document.getElementById('nominal-bayar').value, fotoBukti: fileUploadData };
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarTagihan", username: currentUser.username, token: sessionToken, payload: payload }) }).then(r => r.json());
       if(res.success) { showToast("Pembayaran Sukses!"); document.getElementById('modal-bayar').classList.remove('active'); loadTagihan(); loadDataDashboard(); } else showToast(res.message, 'error');
       btn.innerText = "Proses Pembayaran"; btn.disabled = false;
@@ -670,7 +651,7 @@
     function renderPelanggan(data) {
       let list = document.getElementById('list-pelanggan'); list.innerHTML = ""; if(data.length === 0) return list.innerHTML = "<center style='color:gray;'>Data tidak ditemukan.</center>";
       data.forEach(p => {
-        let sBadge = `<span class="badge" style="background:${p.statusKredit.color}; color:white;">${p.statusKredit.label}</span>`;
+        let sBadge = p.statusLancar ? `<span class="badge" style="background:rgba(52,199,89,0.1); color:var(--success);">Kredit: BAIK</span>` : `<span class="badge" style="background:rgba(255,59,48,0.1); color:var(--danger);">Pernah Telat</span>`;
         list.innerHTML += `
           <div class="list-card" onclick="bukaRiwayatLengkap('${p.noHp}', '${p.nama}', '${p.kode}')" style="cursor:pointer;">
             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;"><span style="font-size:12px; font-weight:800; color:var(--primary);">${p.kode}</span> ${sBadge}</div>
@@ -688,27 +669,12 @@
       switchView('detail-riwayat-view'); let tl = document.getElementById('list-timeline'); tl.innerHTML = "<center style='font-weight:bold;'>Memuat Timeline...</center>";
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getRiwayatLengkap", username: currentUser.username, token: sessionToken, payload: {noHp: noHp} }) }).then(r => r.json());
       if(res.success) {
-         let c = res.crm;
-         document.getElementById('dr-gabung').innerText = c.tglDaftar ? new Date(c.tglDaftar).toLocaleDateString('id-ID', {month:'short', year:'numeric'}) : '-';
-         document.getElementById('dr-lunas').innerText = c.tLunas + 'x'; document.getElementById('dr-bcash').innerText = c.tBajuCash + 'x'; document.getElementById('dr-bcicil').innerText = c.tBajuCicil + 'x'; document.getElementById('dr-bunga').innerText = c.tBungaSaja + 'x';
-         document.getElementById('dr-badge-status').innerHTML = `<span class="badge" style="background:${c.statusKredit.color}; color:white;">${c.statusKredit.label}</span>`;
-
          tl.innerHTML = ""; if(res.data.length === 0) return tl.innerHTML = "<center style='color:gray;'>Tidak ada riwayat.</center>";
          res.data.forEach(item => {
-             let htmlBayar = ""; 
-             // Kelompokkan bayar bunga agar tidak panjang
-             let countBunga = 0; let bngTotal = 0;
-             item.bayar.forEach(b => { 
-                 if(b.jenisBayar === 'BUNGA') { countBunga++; bngTotal+=parseInt(b.nominal); } 
-                 else { let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short'}); htmlBayar += `<div class="timeline-item tl-success"><div class="tl-date">${tglB}</div><div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b>: ${formatRp(b.nominal)}</div></div>`; }
-             });
-             if(countBunga > 0) htmlBayar = `<div class="timeline-item tl-warning"><div class="tl-desc">🔄 Perpanjang (Bayar Bunga) sebanyak <b>${countBunga}x</b> (Total: ${formatRp(bngTotal)})</div></div>` + htmlBayar;
-
-             let jtStatus = ""; if (item.status === 'PENDING') { let jt = new Date(item.jatuhTempo); let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : ""; jtStatus = `<div class="timeline-item ${lewat ? 'tl-danger' : ''}"><div class="tl-date">Jatuh Tempo Saat Ini: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</div><div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div></div>`; }
-             else jtStatus = `<div class="timeline-item tl-success"><div class="tl-desc" style="color:var(--success)">✅ Status LUNAS</div></div>`;
-
-             let appCard = item.status === 'DELETED' ? 'tl-danger' : '';
-             tl.innerHTML += `<div class="glass ${appCard}" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);"><div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div><div class="timeline"><div class="timeline-item"><div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc">📥 <b>Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div></div>${htmlBayar}${jtStatus}</div></div>`;
+             let htmlBayar = ""; item.bayar.forEach(b => { let cls = b.jenisBayar === 'LUNAS' ? 'tl-success' : 'tl-warning'; let tglB = new Date(b.tglBayar).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'}); htmlBayar += `<div class="timeline-item ${cls}"><div class="tl-date">${tglB}</div><div class="tl-desc">Pembayaran <b>${b.jenisBayar}</b> senilai ${formatRp(b.nominal)}</div></div>`; });
+             let jtStatus = ""; if (item.status === 'PENDING') { let jt = new Date(item.jatuhTempo); let lewat = jt < new Date() ? " (LEWAT TEMPO!)" : ""; jtStatus = `<div class="timeline-item ${lewat ? 'tl-danger' : ''}"><div class="tl-date">Jatuh Tempo: ${jt.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc" style="color:var(--danger)">🔴 Belum Lunas${lewat}</div></div>`; }
+             let isAppr = item.status === 'DELETED' || item.status.includes('APP'); let appCard = isAppr ? 'tl-approval' : '';
+             tl.innerHTML += `<div class="glass ${appCard}" style="padding:16px; margin-bottom:16px; border:1px solid rgba(0,122,255,0.2);"><div style="font-weight:800; font-size:14px; margin-bottom:12px; color:gray;">📄 ID: ${item.id}</div><div class="timeline"><div class="timeline-item"><div class="tl-date">${new Date(item.tglCair).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}</div><div class="tl-desc">📥 <b>Cair/Transaksi</b> ${item.kategori} senilai ${formatRp(item.nominal)}</div></div>${htmlBayar}${jtStatus}</div></div>`;
          });
       }
     }
@@ -717,15 +683,16 @@
     async function loadSetoran() {
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSetoran", username: currentUser.username, token: sessionToken }) }).then(r => r.json());
       if(res.success) { 
-         let d = res.data; document.getElementById('tot-komisi').innerText = formatRp(Math.round((d.pb / 9) + d.bk)); 
-         document.getElementById('tot-pinj-bunga').innerText = formatRp(d.pb); document.getElementById('tot-pinj-pokok').innerText = formatRp(d.pp);
+         let d = res.data; document.getElementById('tot-komisi').innerText = formatRp(Math.round(d.pb / 9)); 
+         document.getElementById('tot-setor-bunga').innerText = formatRp(d.pb); document.getElementById('tot-pinj-bunga').innerText = formatRp(d.pb); document.getElementById('tot-pinj-pokok').innerText = formatRp(d.pp);
          document.getElementById('tot-baju-pokok').innerText = formatRp(d.bp); document.getElementById('tot-baju-komisi').innerText = formatRp(d.bk);
       }
     }
     function bukaModalSetor(cat) { 
-       document.getElementById('setor-kategori').value = cat; let sel = document.getElementById('tipe-setoran');
-       if(cat === 'PINJAMAN') { sel.innerHTML = '<option value="BUNGA_SAJA">Setor Bunga Saja (Modal Diputar)</option><option value="FULL">Setor Bunga & Modal Semua</option>'; document.getElementById('modal-setor-title').innerText = "Setor Pinjaman Uang"; }
-       else { sel.innerHTML = '<option value="FULL">Setor Uang Baju Semua</option>'; document.getElementById('modal-setor-title').innerText = "Setor Uang Baju"; }
+       document.getElementById('setor-kategori').value = cat; 
+       let sel = document.getElementById('tipe-setoran');
+       if(cat === 'PINJAMAN') { sel.innerHTML = '<option value="BUNGA_SAJA">Setor Bunga Saja (Modal Diputar)</option><option value="FULL">Setor Bunga & Modal Semua</option>'; }
+       else { sel.innerHTML = '<option value="FULL">Setor Uang Baju Semua</option>'; }
        fileUploadData = ""; document.getElementById('tf-cam').value = ""; document.getElementById('tf-gal').value = ""; document.getElementById('tf-preview').style.display='none';
        document.getElementById('modal-setor').classList.add('active'); 
     }
@@ -735,7 +702,7 @@
       
       let btn = document.getElementById('btn-proses-setor'); btn.innerText = "Mengirim..."; btn.disabled = true;
       let res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitSetoran", username: currentUser.username, token: sessionToken, payload: {kategori: cat, tipeSetoran: tipeS, metode: metode, catatan: document.getElementById('catatan-setor').value, fotoBukti: fileUploadData} }) }).then(r => r.json());
-      if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); switchView('dashboard-view'); } else showToast(res.message, "error");
+      if(res.success) { showToast("Berhasil Dikirim ke Admin!"); document.getElementById('modal-setor').classList.remove('active'); loadSetoran(); } else showToast(res.message, "error");
       btn.innerText = "Kirim Permintaan Setor"; btn.disabled = false;
     }
 
